@@ -1,0 +1,410 @@
+#!/usr/bin/env python3
+"""J/80 Race Coach: generates an AI coaching report for one race from the
+data in race_sessions.db, using the Claude API, and saves it to
+coach_reports/<race_id>.md for the race page to display.
+
+Requires ANTHROPIC_API_KEY in the environment (the Docker compose file
+passes it through from the host). Model: claude-opus-5, with Anthropic's
+default server-side fallback enabled so a safety-classifier decline is
+retried on a fallback model instead of failing the request.
+"""
+import json
+import math
+import os
+import sqlite3
+from pathlib import Path
+
+from polar import PolarTable
+from race_registry import load_registry
+
+ROOT = Path(__file__).parent
+DB_PATH = ROOT / "race_sessions.db"
+POLAR_PATH = ROOT / "j80_Polars.csv"
+REPORTS_DIR = ROOT / "coach_reports"
+
+MODEL = "claude-opus-5"
+
+COACH_SYSTEM_PROMPT = """You are an experienced sailboat racing coach analyzing performance data from one race. The boat is a J80 in one design configuration.
+Provide a concise coaching report using short bullet points. Support every conclusion with relevant data. Clearly distinguish:
+
+* Observations supported by the data
+* Likely explanations
+* Areas where the available data is insufficient
+
+Race analysis
+
+1. True wind conditions
+
+* Report minimum, maximum, and average true wind speed.
+* Report average true wind direction and total direction variation.
+* Identify meaningful wind shifts, trends, gusts, or lulls.
+* Note whether conditions were steady, oscillating, or changing progressively.
+
+2. Tacks and gybes
+
+* Analyze tacks and gybes separately.
+* Were entry and exit angles consistent across maneuvers?
+* For each maneuver, compare the heading or wind angle before entry with the stabilized angle after exit.
+* Identify unusually large angle losses or inconsistent maneuvers.
+* If available, report speed loss, lowest speed, and time to recover target speed.
+* Exclude maneuvers affected by mark roundings, traffic, or major wind shifts when possible.
+
+3. Upwind performance
+
+* Compare actual upwind boat speed, VMG, and true wind angle with the polar predictions for the observed wind speeds.
+* Report performance as a percentage of predicted values.
+* Note whether any shortfall was caused primarily by speed, sailing angle, or both.
+* Use stabilized upwind sailing segments rather than maneuvers or mark roundings.
+
+4. Power and boat handling
+
+* Did the boat appear overpowered, underpowered, or appropriately powered?
+* Support the assessment using available evidence such as heel, rudder angle, heading variability, speed variability, depowering actions, and loss of height or speed.
+* Do not infer power state if the necessary data is unavailable.
+
+5. Boat trim
+
+* Identify significant differences in heel, pitch, balance, or other available trim measurements between comparable sailing segments.
+* Explain whether trim may have contributed to performance.
+* Do not claim that trim caused a performance change unless the data supports that conclusion.
+
+Comparison with other races
+Compare only with races sailed in similar wind speed, wind variability, sea state, and configuration where those details are available.
+
+* How did tack and gybe consistency, speed loss, and recovery compare?
+* How did upwind speed, angle, and VMG relative to the polars compare?
+* State how many comparable races or maneuvers were used.
+* If there are no valid comparisons, say so rather than using dissimilar races.
+
+Coaching priorities
+
+* Identify the three highest-impact areas for the crew to focus on.
+* For each priority, include:
+   * The supporting evidence
+   * The likely performance impact
+   * One specific action or drill
+* Rank the priorities as high, medium, or low confidence.
+
+Keep the report brief, practical, and suitable for a post-race crew debrief. Do not invent missing measurements or present assumptions as facts."""
+
+
+# ------------------------------------------------------------------ data prep
+
+def _circular_mean_deg(angles):
+    if not angles:
+        return None
+    x = sum(math.cos(math.radians(a)) for a in angles)
+    y = sum(math.sin(math.radians(a)) for a in angles)
+    return math.degrees(math.atan2(y, x)) % 360.0
+
+
+def _circular_std_deg(angles):
+    """Circular standard deviation in degrees (0 = no spread)."""
+    if not angles:
+        return None
+    x = sum(math.cos(math.radians(a)) for a in angles) / len(angles)
+    y = sum(math.sin(math.radians(a)) for a in angles) / len(angles)
+    r = math.hypot(x, y)
+    if r <= 0:
+        return 180.0
+    return math.degrees(math.sqrt(-2.0 * math.log(r)))
+
+
+def _pct(sorted_vals, p):
+    if not sorted_vals:
+        return None
+    idx = min(len(sorted_vals) - 1, int(len(sorted_vals) * p))
+    return sorted_vals[idx]
+
+
+def _wind_summary(rows):
+    """rows: (utc, heading, twa, tws, stw) underway samples."""
+    tws = sorted(r[3] for r in rows if r[3] is not None)
+    twd = [ (r[1] + r[2]) % 360.0 for r in rows if r[1] is not None and r[2] is not None ]
+    if not tws:
+        return None
+
+    # per-15-minute TWD/TWS means, so the model can see shifts and trends
+    buckets = {}
+    for utc, heading, twa, tws_v, _stw in rows:
+        if heading is None or twa is None or tws_v is None:
+            continue
+        key = utc[:15] + ("0" if utc[15] < "3" else "3")  # 30-min bucket "YYYY-MM-DD HH:M_"
+        buckets.setdefault(key, []).append(((heading + twa) % 360.0, tws_v))
+    timeline = []
+    for key in sorted(buckets):
+        vals = buckets[key]
+        timeline.append({
+            "utc_30min_bucket": key + "0",
+            "avg_twd_deg": round(_circular_mean_deg([v[0] for v in vals]), 0),
+            "avg_tws_kn": round(sum(v[1] for v in vals) / len(vals), 1),
+            "n_samples": len(vals),
+        })
+
+    return {
+        "tws_kn": {
+            "min": round(tws[0], 1), "max": round(tws[-1], 1),
+            "avg": round(sum(tws) / len(tws), 1),
+            "p5": round(_pct(tws, 0.05), 1), "p95": round(_pct(tws, 0.95), 1),
+        },
+        "twd_deg": {
+            "circular_mean": round(_circular_mean_deg(twd), 0) if twd else None,
+            "circular_std": round(_circular_std_deg(twd), 0) if twd else None,
+            "note": "TWD computed per second as heading + TWA (mod 360); heading is magnetic",
+        },
+        "timeline_30min": timeline,
+        "n_underway_samples": len(rows),
+    }
+
+
+def _trim_summary(conn, sid):
+    out = {}
+    for pos, twa_cond in [("beat", "ABS(twa_deg) <= 75"),
+                           ("reach", "ABS(twa_deg) > 75 AND ABS(twa_deg) < 120"),
+                           ("run", "ABS(twa_deg) >= 120")]:
+        row = conn.execute(
+            f"SELECT COUNT(*), AVG(ABS(heel_deg)), AVG(heel_deg), AVG(pitch_deg), "
+            f"AVG(ABS(rot_deg_s)), AVG(stw_kn) "
+            f"FROM nav_1hz WHERE session_id=? AND {twa_cond} AND stw_kn >= 1.5 "
+            f"AND heel_deg IS NOT NULL", (sid,)
+        ).fetchone()
+        n, abs_heel, signed_heel, pitch, abs_rot, stw = row
+        if n and n > 0:
+            out[pos] = {
+                "n_samples": n,
+                "avg_abs_heel_deg": round(abs_heel, 1) if abs_heel is not None else None,
+                "avg_signed_heel_deg": round(signed_heel, 1) if signed_heel is not None else None,
+                "avg_pitch_deg": round(pitch, 2) if pitch is not None else None,
+                "avg_abs_rate_of_turn_deg_s": round(abs_rot, 2) if abs_rot is not None else None,
+                "avg_stw_kn": round(stw, 2) if stw is not None else None,
+            }
+    return out
+
+
+def _polar_summary(conn, polar, sid):
+    out = {}
+    for pos in ("beat", "reach", "run"):
+        row = conn.execute(
+            "SELECT COUNT(*), AVG(pct_of_target), AVG(tws_kn), AVG(ABS(twa_deg)), AVG(stw_kn) "
+            "FROM polar_performance WHERE session_id=? AND point_of_sail=?", (sid, pos)
+        ).fetchone()
+        n, avg_pct, avg_tws, avg_twa, avg_stw = row
+        if not n:
+            continue
+        entry = {
+            "n_samples": n,
+            "avg_pct_of_polar_target_speed": round(avg_pct, 1) if avg_pct is not None else None,
+            "avg_tws_kn": round(avg_tws, 1) if avg_tws is not None else None,
+            "avg_abs_twa_deg": round(avg_twa, 1) if avg_twa is not None else None,
+            "avg_stw_kn": round(avg_stw, 2) if avg_stw is not None else None,
+        }
+        if pos == "beat" and avg_tws is not None:
+            # actual VMG upwind vs polar target VMG at the observed wind
+            vmg_vals = conn.execute(
+                "SELECT stw_kn, twa_deg FROM polar_performance WHERE session_id=? AND point_of_sail='beat'",
+                (sid,),
+            ).fetchall()
+            vmgs = [s * math.cos(math.radians(abs(t))) for s, t in vmg_vals if s is not None and t is not None]
+            entry["avg_actual_vmg_kn"] = round(sum(vmgs) / len(vmgs), 2) if vmgs else None
+            entry["polar_target_beat_vmg_kn_at_avg_tws"] = round(polar.beat_vmg_target(avg_tws), 2)
+            entry["polar_target_beat_angle_deg_at_avg_tws"] = round(polar.beat_angle(avg_tws), 1)
+        if pos == "run" and avg_tws is not None:
+            entry["polar_target_run_vmg_kn_at_avg_tws"] = round(polar.run_vmg_target(avg_tws), 2)
+            entry["polar_target_run_angle_deg_at_avg_tws"] = round(polar.run_angle(avg_tws), 1)
+        out[pos] = entry
+    return out
+
+
+def _maneuvers(conn, sid):
+    cur = conn.execute(
+        "SELECT type, start_utc, duration_s, heading_before_deg, heading_after_deg, heading_change_deg, "
+        "twa_before_deg, twa_after_deg, speed_before_kn, speed_min_kn, speed_recovered_kn, "
+        "speed_loss_pct, recovery_time_s, distance_to_mark_m "
+        "FROM maneuvers WHERE session_id=? ORDER BY start_utc", (sid,)
+    )
+    cols = ["type", "start_utc", "duration_s", "heading_before_deg", "heading_after_deg",
+            "heading_change_deg", "twa_before_deg", "twa_after_deg", "speed_before_kn",
+            "speed_min_kn", "speed_recovered_kn", "speed_loss_pct", "recovery_time_s",
+            "distance_to_mark_m"]
+    return [dict(zip(cols, row)) for row in cur.fetchall()]
+
+
+def _race_overview(conn, sid):
+    """Compact per-race stats used both for the subject race and for the
+    cross-race comparison block."""
+    meta = conn.execute(
+        "SELECT race_date, local_start_time, series, boat, crew_count, notes, utc_start, utc_end "
+        "FROM sessions WHERE session_id=?", (sid,)
+    ).fetchone()
+    if meta is None:
+        return None
+    race_date, start, series, boat, crew, notes, utc_start, utc_end = meta
+
+    wind = conn.execute(
+        "SELECT AVG(tws_kn), MIN(tws_kn), MAX(tws_kn), COUNT(*) FROM nav_1hz "
+        "WHERE session_id=? AND tws_kn IS NOT NULL AND stw_kn >= 1.5", (sid,)
+    ).fetchone()
+
+    tacks = conn.execute(
+        "SELECT COUNT(*), AVG(duration_s), AVG(speed_loss_pct), AVG(recovery_time_s) "
+        "FROM maneuvers WHERE session_id=? AND type='tack'", (sid,)
+    ).fetchone()
+    gybes = conn.execute(
+        "SELECT COUNT(*), AVG(duration_s), AVG(speed_loss_pct) "
+        "FROM maneuvers WHERE session_id=? AND type='gybe'", (sid,)
+    ).fetchone()
+    beat = conn.execute(
+        "SELECT COUNT(*), AVG(pct_of_target), AVG(ABS(twa_deg)), AVG(tws_kn) "
+        "FROM polar_performance WHERE session_id=? AND point_of_sail='beat'", (sid,)
+    ).fetchone()
+
+    def r(v, nd=1):
+        return round(v, nd) if v is not None else None
+
+    return {
+        "race_date": race_date, "local_start_time": start, "series": series,
+        "boat": boat, "crew_count": crew, "notes": notes or "",
+        "utc_span": f"{utc_start} -> {utc_end}",
+        "avg_tws_kn": r(wind[0]), "min_tws_kn": r(wind[1]), "max_tws_kn": r(wind[2]),
+        "tacks": {"n": tacks[0], "avg_duration_s": r(tacks[1]), "avg_speed_loss_pct": r(tacks[2]),
+                   "avg_recovery_time_s": r(tacks[3])},
+        "gybes": {"n": gybes[0], "avg_duration_s": r(gybes[1]), "avg_speed_loss_pct": r(gybes[2])},
+        "beat": {"n_samples": beat[0], "avg_pct_of_polar_target": r(beat[1]),
+                  "avg_abs_twa_deg": r(beat[2]), "avg_tws_kn": r(beat[3])},
+    }
+
+
+def summarize_race_data(race_id):
+    conn = sqlite3.connect(DB_PATH)
+    polar = PolarTable(POLAR_PATH)
+
+    overview = _race_overview(conn, race_id)
+    if overview is None:
+        conn.close()
+        raise ValueError(f"race {race_id} not found in database")
+
+    rows = conn.execute(
+        "SELECT utc_timestamp, heading_deg, twa_deg, tws_kn, stw_kn FROM nav_1hz "
+        "WHERE session_id=? AND stw_kn >= 1.5 AND twa_deg IS NOT NULL AND tws_kn IS NOT NULL "
+        "ORDER BY utc_timestamp", (race_id,)
+    ).fetchall()
+
+    other_ids = [r[0] for r in conn.execute(
+        "SELECT session_id FROM sessions WHERE session_id != ? ORDER BY session_id", (race_id,)
+    ).fetchall()]
+
+    data = {
+        "race": overview,
+        "true_wind": _wind_summary(rows),
+        "maneuvers": _maneuvers(conn, race_id),
+        "polar_performance": _polar_summary(conn, polar, race_id),
+        "trim": _trim_summary(conn, race_id),
+        "other_races_for_comparison": [
+            {"race_id": oid, **(_race_overview(conn, oid) or {})} for oid in other_ids
+        ],
+        "data_availability_notes": [
+            "Available channels: GPS position/COG/SOG (1Hz), heading, rate of turn, "
+            "speed through water, apparent wind (speed/angle), computed true wind "
+            "(TWA/TWS/TWD), heel (roll) and pitch from attitude sensor, depth.",
+            "NOT available: rudder angle, forestay/rig load, sail selection or "
+            "depowering actions (traveler, cunningham, vang), sea state, current, "
+            "crew weight placement, and competitor positions/traffic.",
+            "Polar targets are from a standard J/80 crewed polar table; this boat "
+            f"sailed with {overview['crew_count']} crew, which may partly explain "
+            "gaps from target independent of technique.",
+            "Maneuver detection is automated (apparent-wind-side hysteresis with "
+            "noise filtering); 'rounding-turn' entries are large bear-away/head-up "
+            "turns near marks and should be excluded from tack/gybe technique analysis.",
+        ],
+    }
+    conn.close()
+    return data
+
+
+# ------------------------------------------------------------------ API call
+
+def generate_report(race_id):
+    """Generates and saves the coaching report. Returns the report text.
+    Raises RuntimeError with a user-displayable message on failure."""
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        raise RuntimeError(
+            "ANTHROPIC_API_KEY is not set. Export your Anthropic API key in the "
+            "environment the app runs in (for Docker: set it on the host and "
+            "restart with `docker compose up -d`), then try again."
+        )
+
+    import anthropic
+
+    data = summarize_race_data(race_id)
+    user_message = (
+        "Here is the complete data for the race to analyze, as JSON. All speeds "
+        "are in knots, angles in degrees, TWA is signed (positive = wind from "
+        "starboard).\n\n" + json.dumps(data, indent=1)
+    )
+
+    client = anthropic.Anthropic()
+    with client.beta.messages.stream(
+        model=MODEL,
+        max_tokens=8000,
+        betas=["server-side-fallback-2026-07-01"],
+        fallbacks="default",
+        system=COACH_SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": user_message}],
+    ) as stream:
+        response = stream.get_final_message()
+
+    if response.stop_reason == "refusal":
+        raise RuntimeError("The model declined to analyze this data (safety classifier). Try regenerating.")
+
+    text = "".join(b.text for b in response.content if b.type == "text")
+    if not text.strip():
+        raise RuntimeError("The model returned an empty report. Try regenerating.")
+
+    REPORTS_DIR.mkdir(exist_ok=True)
+    (REPORTS_DIR / f"{race_id}.md").write_text(text)
+    return text
+
+
+def load_report(race_id):
+    path = REPORTS_DIR / f"{race_id}.md"
+    return path.read_text() if path.exists() else None
+
+
+def delete_report(race_id):
+    path = REPORTS_DIR / f"{race_id}.md"
+    if path.exists():
+        path.unlink()
+
+
+def generate_missing_reports(race_ids=None):
+    """Generates a coach report for every race in race_ids (default: every
+    race in the registry) that doesn't already have one. Race data is fixed
+    once computed, so an existing report is never touched here -- callers
+    that need a refresh (e.g. after a trim edit changes the underlying data)
+    should delete_report() first. Non-fatal: this runs as a side effect of
+    the main data pipeline, so a failure on one race (missing API key, rate
+    limit, refusal) is collected and returned rather than raised, and does
+    not stop the other races from being processed.
+
+    Returns (generated_ids, failed) where failed is a list of (race_id, error_message).
+    """
+    ids = race_ids if race_ids is not None else [r["id"] for r in load_registry()["races"]]
+    generated, failed = [], []
+    for rid in ids:
+        if load_report(rid):
+            continue
+        try:
+            generate_report(rid)
+            generated.append(rid)
+        except Exception as e:
+            failed.append((rid, str(e)))
+    return generated, failed
+
+
+if __name__ == "__main__":
+    import sys
+    ids = [int(a) for a in sys.argv[1:]] or [r["id"] for r in load_registry()["races"]]
+    for rid in ids:
+        print(f"# Generating coach report for race {rid}...")
+        generate_report(rid)
+        print(f"# Saved coach_reports/{rid}.md")

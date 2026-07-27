@@ -1,0 +1,31 @@
+.git
+.venv
+__pycache__
+*.pyc
+.DS_Store
+
+# raw/archival source data -- large, and not needed to build the image
+# (mounted in at runtime by docker-compose instead)
+W2K_Dump
+ebl_data
+*.ebl
+
+# generated at runtime -- would just be stale/oversized in the image
+race_sessions.db
+races/
+index.html
+course_data.json
+polar_data.json
+ebl_manifest.json
+races.json
+
+# old exploratory artifacts from before the web app existed
+*.n2k.csv
+*x.n2kdecoded.csv
+out_008.csv
+config_008.json
+course_visualization.html
+polar_visualization.html
+w2k_dump_summary.*
+
+Docs
