@@ -239,7 +239,7 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
   .empty { padding: 40px 18px; text-align: center; color: var(--dim); font-size: 13px; }
 
   /* -- About -- */
-  .nav-btn.about-btn { margin-top: auto; }
+  .nav-btn.about-btn { font-size: 15px; color: var(--mark); }
   .about-overlay {
     display: none; position: fixed; inset: 0; z-index: 100;
     background: rgba(6, 14, 18, 0.72); backdrop-filter: blur(1px);
