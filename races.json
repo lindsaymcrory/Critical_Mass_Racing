@@ -1,0 +1,203 @@
+{
+  "next_id": 10,
+  "races": [
+    {
+      "id": 1,
+      "race_date": "2026-07-13",
+      "local_start_time": "18:15",
+      "series": "WoW",
+      "boat": "Critical Mass",
+      "crew_count": 2,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000009_003.ebl",
+        "000009_004.ebl",
+        "000009_005.ebl",
+        "000009_006.ebl",
+        "000009_007.ebl",
+        "000009_008.ebl",
+        "000009_009.ebl",
+        "000009_010.ebl",
+        "000009_011.ebl",
+        "000009_012.ebl"
+      ],
+      "notes": "",
+      "html_path": "races/1.html"
+    },
+    {
+      "id": 2,
+      "race_date": "2026-07-20",
+      "local_start_time": "18:15",
+      "series": "WoW",
+      "boat": "Critical Mass",
+      "crew_count": 2,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000009_020.ebl",
+        "000009_021.ebl",
+        "000009_022.ebl",
+        "000009_023.ebl",
+        "000009_024.ebl",
+        "000009_025.ebl",
+        "000009_026.ebl",
+        "000009_027.ebl",
+        "000009_028.ebl",
+        "000009_029.ebl"
+      ],
+      "notes": "~90 min dropout 19:00-20:29 UTC: dead battery",
+      "html_path": "races/2.html"
+    },
+    {
+      "id": 3,
+      "race_date": "2026-07-15",
+      "local_start_time": "19:50",
+      "series": "Practice",
+      "boat": "Critical Mass",
+      "crew_count": 2,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000009_013.ebl",
+        "000009_014.ebl",
+        "000009_015.ebl",
+        "000009_016.ebl",
+        "000009_017.ebl"
+      ],
+      "notes": "",
+      "html_path": "races/3.html"
+    },
+    {
+      "id": 4,
+      "race_date": "2026-06-17",
+      "local_start_time": "18:15",
+      "series": "Wed Nights",
+      "boat": "Critical Mass",
+      "crew_count": 2,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000008_031.ebl",
+        "000008_032.ebl",
+        "000008_033.ebl",
+        "000008_034.ebl",
+        "000008_035.ebl",
+        "000008_036.ebl",
+        "000008_037.ebl",
+        "000008_038.ebl",
+        "000008_039.ebl",
+        "000008_040.ebl",
+        "000008_041.ebl",
+        "000008_042.ebl",
+        "000008_043.ebl",
+        "000008_044.ebl",
+        "000008_045.ebl",
+        "000008_046.ebl",
+        "000008_047.ebl",
+        "000008_048.ebl",
+        "000008_049.ebl",
+        "000008_050.ebl",
+        "000008_051.ebl"
+      ],
+      "notes": "",
+      "html_path": "races/4.html"
+    },
+    {
+      "id": 5,
+      "race_date": "2026-06-24",
+      "local_start_time": "18:15",
+      "series": "Wed Nights",
+      "boat": "Critical Mass",
+      "crew_count": 2,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000008_076.ebl",
+        "000008_077.ebl",
+        "000008_078.ebl",
+        "000008_079.ebl",
+        "000008_080.ebl",
+        "000008_081.ebl",
+        "000008_082.ebl",
+        "000008_083.ebl"
+      ],
+      "notes": "",
+      "html_path": "races/5.html"
+    },
+    {
+      "id": 6,
+      "race_date": "2026-07-08",
+      "local_start_time": "18:15",
+      "series": "Wed Nights",
+      "boat": "Critical Mass",
+      "crew_count": 2,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000008_086.ebl",
+        "000008_087.ebl",
+        "000008_088.ebl",
+        "000008_089.ebl",
+        "000008_090.ebl",
+        "000008_091.ebl",
+        "000008_092.ebl",
+        "000008_093.ebl",
+        "000008_094.ebl"
+      ],
+      "notes": "",
+      "html_path": "races/6.html"
+    },
+    {
+      "id": 7,
+      "race_date": "2025-09-17",
+      "local_start_time": "18:00",
+      "series": "Wed Nights",
+      "boat": "Critical Mass",
+      "crew_count": 2,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000008_000.ebl",
+        "000008_001.ebl",
+        "000008_002.ebl"
+      ],
+      "notes": "",
+      "html_path": "races/7.html"
+    },
+    {
+      "id": 8,
+      "race_date": "2025-09-24",
+      "local_start_time": "18:00",
+      "series": "Wed Nights",
+      "boat": "Critical Mass",
+      "crew_count": 2,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000008_003.ebl",
+        "000008_004.ebl",
+        "000008_005.ebl",
+        "000008_006.ebl"
+      ],
+      "notes": "",
+      "html_path": "races/8.html"
+    },
+    {
+      "id": 9,
+      "race_date": "2026-07-27",
+      "local_start_time": "18:35",
+      "series": "WoW",
+      "boat": "Critical Mass",
+      "crew_count": 2,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000009_032.ebl",
+        "000009_033.ebl",
+        "000009_034.ebl",
+        "000009_035.ebl",
+        "000009_036.ebl",
+        "000009_037.ebl",
+        "000009_038.ebl",
+        "000009_039.ebl",
+        "000009_040.ebl",
+        "000009_041.ebl",
+        "000009_042.ebl"
+      ],
+      "notes": "",
+      "html_path": "races/9.html"
+    }
+  ]
+}

@@ -1,34 +1,4 @@
-#!/usr/bin/env python3
-"""Generates the static homepage (index.html): a narrow left nav column
-(Update EBL / Benchmark / Update HTML / Add Race) and a main content area
-listing every processed race, grouped by year (newest year first), each
-link showing its date + series and pointing at races/<id>.html."""
-from pathlib import Path
-
-from race_registry import load_registry
-
-ROOT = Path(__file__).parent
-OUT_PATH = ROOT / "index.html"
-
-# True when this instance has no local working data (ebl_data/) -- e.g. a
-# view-only deployment from the pushed Docker image, which ships the static
-# race pages but not the raw EBL logs or database needed to add/rebuild races.
-READ_ONLY = not (ROOT / "ebl_data").exists()
-
-_NAV_LIVE = (
-    '<a class="nav-btn" href="/add-race">Add Race<span class="hint">New race from logged data</span></a>'
-    '<a class="nav-btn" href="/update-ebl">Update EBL<span class="hint">Upload new .ebl files</span></a>'
-    '<form class="nav-form" method="post" action="/update-html">'
-    '<button type="submit" class="nav-btn">Update HTML<span class="hint">Rebuild all race pages</span></button>'
-    '</form>'
-)
-_NAV_READ_ONLY = (
-    '<span class="nav-btn disabled">Add Race<span class="hint">View-only deployment &mdash; edit locally</span></span>'
-    '<span class="nav-btn disabled">Update EBL<span class="hint">View-only deployment &mdash; edit locally</span></span>'
-    '<span class="nav-btn disabled">Update HTML<span class="hint">View-only deployment &mdash; edit locally</span></span>'
-)
-
-PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
+<title>Critical Mass Racing</title>
 <style>
   :root {
     --ink: #0a1a20; --panel: #122a32; --panel-2: #0e222a;
@@ -125,64 +95,16 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
 <div class="layout">
   <nav>
     <div class="nav-brand">Critical Mass<span class="sub">Race Analysis</span></div>
-    __NAV_ITEMS__
+    <a class="nav-btn" href="/add-race">Add Race<span class="hint">New race from logged data</span></a><a class="nav-btn" href="/update-ebl">Update EBL<span class="hint">Upload new .ebl files</span></a><form class="nav-form" method="post" action="/update-html"><button type="submit" class="nav-btn">Update HTML<span class="hint">Rebuild all race pages</span></button></form>
     <a class="nav-btn" href="/benchmark">Benchmark<span class="hint">Coming soon</span></a>
   </nav>
   <main>
     <div class="content">
-      __FLASH__
+      
       <div class="banner"><img src="Jacket_Front.png" alt="Critical Mass Racing"></div>
       <div class="page-title">Race Results</div>
-      <div class="page-sub">__RACE_COUNT__ processed race__PLURAL__</div>
-      __YEARS__
+      <div class="page-sub">9 processed races</div>
+      <div class="year-box"><div class="year-head">2026 Racing Season</div><a class="race-row" href="races/9.html"><div><div class="race-date mono">2026-07-27</div><div class="race-series">WoW</div></div><div class="race-go">Results &rarr;</div></a><a class="race-row" href="races/2.html"><div><div class="race-date mono">2026-07-20</div><div class="race-series">WoW</div></div><div class="race-go">Results &rarr;</div></a><a class="race-row" href="races/3.html"><div><div class="race-date mono">2026-07-15</div><div class="race-series">Practice</div></div><div class="race-go">Results &rarr;</div></a><a class="race-row" href="races/1.html"><div><div class="race-date mono">2026-07-13</div><div class="race-series">WoW</div></div><div class="race-go">Results &rarr;</div></a><a class="race-row" href="races/6.html"><div><div class="race-date mono">2026-07-08</div><div class="race-series">Wed Nights</div></div><div class="race-go">Results &rarr;</div></a><a class="race-row" href="races/5.html"><div><div class="race-date mono">2026-06-24</div><div class="race-series">Wed Nights</div></div><div class="race-go">Results &rarr;</div></a><a class="race-row" href="races/4.html"><div><div class="race-date mono">2026-06-17</div><div class="race-series">Wed Nights</div></div><div class="race-go">Results &rarr;</div></a></div><div class="year-box"><div class="year-head">2025 Racing Season</div><a class="race-row" href="races/8.html"><div><div class="race-date mono">2025-09-24</div><div class="race-series">Wed Nights</div></div><div class="race-go">Results &rarr;</div></a><a class="race-row" href="races/7.html"><div><div class="race-date mono">2025-09-17</div><div class="race-series">Wed Nights</div></div><div class="race-go">Results &rarr;</div></a></div>
     </div>
   </main>
 </div>
-"""
-
-
-def _year_box(year, races):
-    rows = "".join(
-        f'<a class="race-row" href="{r["html_path"]}">'
-        f'<div><div class="race-date mono">{r["race_date"]}</div>'
-        f'<div class="race-series">{r["series"]}</div></div>'
-        f'<div class="race-go">Results &rarr;</div></a>'
-        for r in races
-    )
-    return f'<div class="year-box"><div class="year-head">{year} Racing Season</div>{rows}</div>'
-
-
-def render_homepage(flash_message=None, flash_kind="success"):
-    registry = load_registry()
-    races = sorted(registry["races"], key=lambda r: r["race_date"], reverse=True)
-
-    by_year = {}
-    for r in races:
-        year = r["race_date"][:4]
-        by_year.setdefault(year, []).append(r)
-
-    years_html = "".join(
-        _year_box(year, by_year[year]) for year in sorted(by_year, reverse=True)
-    ) if by_year else '<div class="empty">No races processed yet -- use Add Race to get started.</div>'
-
-    flash_html = ""
-    if flash_message:
-        flash_html = f'<div class="flash {flash_kind}">{flash_message}</div>'
-
-    html = (PAGE_TEMPLATE
-            .replace("__FLASH__", flash_html)
-            .replace("__RACE_COUNT__", str(len(races)))
-            .replace("__PLURAL__", "" if len(races) == 1 else "s")
-            .replace("__YEARS__", years_html)
-            .replace("__NAV_ITEMS__", _NAV_READ_ONLY if READ_ONLY else _NAV_LIVE))
-    return html
-
-
-def main():
-    html = render_homepage()
-    OUT_PATH.write_text(html)
-    print(f"# Wrote {OUT_PATH} ({OUT_PATH.stat().st_size/1024:.0f} KB)")
-
-
-if __name__ == "__main__":
-    main()

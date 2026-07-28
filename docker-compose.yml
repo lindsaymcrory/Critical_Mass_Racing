@@ -11,6 +11,3 @@ services:
     environment:
       - HOST=0.0.0.0
       - PORT=8000
-      # for the J/80 Race Coach AI reports -- set on the host before
-      # `docker compose up` (empty default keeps the app working without it)
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}

@@ -9,22 +9,18 @@ __pycache__/
 # Claude Code local settings (personal permissions, not shared config)
 .claude/settings.local.json
 
-# Raw/archival EBL source data -- large binary sailing logs, not source code.
-# Keep your own backup of these; only ebl_data/ + races.json define what the
-# app actually knows about.
+# Raw/archival EBL source data and the working database -- large, local-only
+# working data. Races are added and reviewed locally (Claude Code + the
+# pipeline scripts); only the *generated static site* (races/*.html,
+# index.html, races.json) is versioned and shipped -- see build_race_db.py /
+# render_*.py for how it's produced from these.
 W2K_Dump/
 ebl_data/
 *.ebl
-
-# Generated at runtime by build_race_db.py / render_*.py / the web app --
-# reproducible from ebl_data/ + races.json, so there's no need to version them.
 race_sessions.db
-races/
-index.html
+ebl_manifest.json
 course_data.json
 polar_data.json
-ebl_manifest.json
-races.json
 
 # Old exploratory artifacts from before the web app existed
 *.n2k.csv

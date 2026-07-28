@@ -4,20 +4,18 @@ __pycache__
 *.pyc
 .DS_Store
 
-# raw/archival source data -- large, and not needed to build the image
-# (mounted in at runtime by docker-compose instead)
+# raw/archival source data and the working database -- large, local-only
+# working data (mounted in at runtime by docker-compose for local use).
+# The generated static site (races/, index.html, races.json) IS shipped in
+# the image -- this is a view-only deployment; Add Race/Update EBL require
+# the local working data and won't function on a pushed image.
 W2K_Dump
 ebl_data
 *.ebl
-
-# generated at runtime -- would just be stale/oversized in the image
 race_sessions.db
-races/
-index.html
+ebl_manifest.json
 course_data.json
 polar_data.json
-ebl_manifest.json
-races.json
 
 # old exploratory artifacts from before the web app existed
 *.n2k.csv

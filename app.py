@@ -38,6 +38,26 @@ def pop_flash():
     return m, k
 
 
+def _blocked_if_read_only():
+    """Returns a response if this instance has no local working data (a
+    view-only deployment from the pushed Docker image), else None. Routes
+    that add/rebuild race data call this first and return early on a hit --
+    the nav already hides these actions, but this guards direct URL access
+    from a raw 500 (missing race_sessions.db / ebl_data/)."""
+    if not render_homepage.READ_ONLY:
+        return None
+    if request.method == "POST":
+        set_flash("This is a view-only deployment -- race data is added and rebuilt locally.", "error")
+        return redirect("/")
+    body = (
+        "<a class='back' href='/'>&larr; Back to races</a>"
+        "<h1>View-only deployment</h1>"
+        "<p class='sub'>This instance ships the built static site only. "
+        "Race data is added and rebuilt locally, then republished.</p>"
+    )
+    return page("View-only", body)
+
+
 PAGE_CHROME_CSS = """
 <style>
   :root {
@@ -125,6 +145,9 @@ def benchmark():
 # ---------------------------------------------------------------- Update EBL
 @app.route("/update-ebl", methods=["GET"])
 def update_ebl_form():
+    blocked = _blocked_if_read_only()
+    if blocked:
+        return blocked
     body = (
         "<a class='back' href='/'>&larr; Back to races</a>"
         "<h1>Update EBL</h1>"
@@ -141,6 +164,9 @@ def update_ebl_form():
 
 @app.route("/update-ebl", methods=["POST"])
 def update_ebl_submit():
+    blocked = _blocked_if_read_only()
+    if blocked:
+        return blocked
     files = request.files.getlist("files")
     files = [f for f in files if f and f.filename]
     if not files:
@@ -173,23 +199,20 @@ def update_ebl_submit():
 # ---------------------------------------------------------------- Update HTML
 @app.route("/update-html", methods=["POST"])
 def update_html():
+    blocked = _blocked_if_read_only()
+    if blocked:
+        return blocked
     try:
         build_race_db.main()
         detect_maneuvers.main()
         polar_analysis.main()
-        # generate coach reports for any race that doesn't have one yet, before
-        # the final render so the new report is baked into its page
-        _, coach_failed = coach.generate_missing_reports()
         written = render_race_page.render_all()
         render_homepage.main()
     except Exception:
         set_flash(f"Update HTML failed: {traceback.format_exc(limit=1).splitlines()[-1]}", "error")
         return redirect("/")
 
-    message = f"Rebuilt {len(written)} race page(s) from current data."
-    if coach_failed:
-        message += f" ({len(coach_failed)} coach report(s) failed: {coach_failed[0][1]})"
-    set_flash(message, "success")
+    set_flash(f"Rebuilt {len(written)} race page(s) from current data.", "success")
     return redirect("/")
 
 
@@ -199,6 +222,9 @@ def save_trim():
     """Persists (or clears, when trim_end_utc is null) a race's trimmed end
     time, then rebuilds just that race's data and page so maneuvers and
     polar stats no longer include the trimmed tail (the trip to the dock)."""
+    if render_homepage.READ_ONLY:
+        return {"ok": False, "error": "This is a view-only deployment -- trims are saved locally."}, 403
+
     data = request.get_json(silent=True) or {}
     race_id = data.get("race_id")
     trim_end_utc = data.get("trim_end_utc")  # None clears the trim
@@ -221,33 +247,10 @@ def save_trim():
         detect_maneuvers.main()
         polar_analysis.main()
         # the trim changed this race's underlying data, so any existing coach
-        # report is now stale -- drop it and regenerate
+        # report is now stale -- drop it (a new one gets written by hand, in
+        # a Claude session, once the trimmed data is settled)
         coach.delete_report(race_id)
-        _, coach_failed = coach.generate_missing_reports([race_id])
         render_race_page.render_one(race_id)
-    except Exception:
-        return {"ok": False, "error": traceback.format_exc(limit=1).splitlines()[-1]}, 500
-
-    if coach_failed:
-        return {"ok": True, "coach_error": coach_failed[0][1]}
-    return {"ok": True}
-
-
-# ---------------------------------------------------------------- Race Coach
-@app.route("/coach-report", methods=["POST"])
-def coach_report():
-    """Generates (or regenerates) the J/80 Race Coach AI report for one race,
-    saves it, and re-renders that race's page so it displays the report."""
-    data = request.get_json(silent=True) or {}
-    race_id = data.get("race_id")
-    if not isinstance(race_id, int):
-        return {"ok": False, "error": "race_id required"}, 400
-
-    try:
-        coach.generate_report(race_id)
-        render_race_page.render_one(race_id)
-    except RuntimeError as e:
-        return {"ok": False, "error": str(e)}, 400
     except Exception:
         return {"ok": False, "error": traceback.format_exc(limit=1).splitlines()[-1]}, 500
 
@@ -257,6 +260,9 @@ def coach_report():
 # ---------------------------------------------------------------- Add Race
 @app.route("/add-race", methods=["GET"])
 def add_race_form():
+    blocked = _blocked_if_read_only()
+    if blocked:
+        return blocked
     registry = load_registry()
     assigned = {f for r in registry["races"] for f in r["files"]}
     files = [f for f in list_files_with_ranges() if f["filename"] not in assigned]
@@ -288,6 +294,9 @@ def add_race_form():
 
 @app.route("/add-race", methods=["POST"])
 def add_race_submit():
+    blocked = _blocked_if_read_only()
+    if blocked:
+        return blocked
     race_date = request.form.get("race_date", "").strip()
     local_start_time = request.form.get("local_start_time", "").strip()
     series = request.form.get("series", "").strip()
@@ -302,7 +311,6 @@ def add_race_submit():
         build_race_db.main()
         detect_maneuvers.main()
         polar_analysis.main()
-        coach.generate_missing_reports([race["id"]])
         render_race_page.render_all()
         render_homepage.main()
     except Exception:

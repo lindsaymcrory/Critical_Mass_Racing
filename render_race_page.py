@@ -176,8 +176,6 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
   .curve-key .details { color: var(--dim); font-size: 10.5px; }
 
   /* -- J/80 Race Coach -- */
-  #coach-section .section-head { align-items: center; }
-  .coach-actions { display: flex; align-items: center; gap: 12px; }
   .coach-box {
     margin: 14px 24px 24px; padding: 20px 24px;
     border: 1px solid var(--hair); border-radius: var(--radius);
@@ -257,10 +255,6 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
 <section id="coach-section">
   <div class="section-head">
     <span class="section-title">J/80 Race Coach</span>
-    <span class="coach-actions">
-      <span class="trim-status" id="coachStatus"></span>
-      <button id="coachBtn" class="trim-btn" type="button">__COACH_BTN_LABEL__</button>
-    </span>
   </div>
   <div class="coach-box">__COACH_HTML__</div>
 </section>
@@ -318,11 +312,12 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
       return COURSE.maneuvers.filter(m => m.start_utc <= lastTs);
     }
     function fmtLocalTs(ts) {
+      // The logger's own clock records local (ADT) time already, despite
+      // the field being named "utc" -- no timezone conversion needed here.
       const t = new Date(ts.replace(" ", "T") + "Z");
-      const l = new Date(t.getTime() - 3 * 3600 * 1000);
-      return String(l.getUTCHours()).padStart(2, "0") + ":" +
-             String(l.getUTCMinutes()).padStart(2, "0") + ":" +
-             String(l.getUTCSeconds()).padStart(2, "0");
+      return String(t.getUTCHours()).padStart(2, "0") + ":" +
+             String(t.getUTCMinutes()).padStart(2, "0") + ":" +
+             String(t.getUTCSeconds()).padStart(2, "0");
     }
 
     function speedColor(kn, minKn, maxKn) {
@@ -408,11 +403,12 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
         const row = document.createElement("div");
         row.className = "maneuver-row";
         row.tabIndex = 0;
+        // The logger's own clock records local (ADT) time already, despite
+        // the field being named "utc" -- no timezone conversion needed here.
         const t = new Date(m.start_utc.replace(" ", "T") + "Z");
-        const localT = new Date(t.getTime() - 3 * 3600 * 1000);
-        const hh = String(localT.getUTCHours()).padStart(2, "0");
-        const mm = String(localT.getUTCMinutes()).padStart(2, "0");
-        const ss = String(localT.getUTCSeconds()).padStart(2, "0");
+        const hh = String(t.getUTCHours()).padStart(2, "0");
+        const mm = String(t.getUTCMinutes()).padStart(2, "0");
+        const ss = String(t.getUTCSeconds()).padStart(2, "0");
         let detail = "";
         if (m.speed_loss_pct !== null) detail += `-${m.speed_loss_pct}% spd`;
         if (m.distance_to_mark !== null) detail += (detail ? " &middot; " : "") + `${m.distance_to_mark}m to mark`;
@@ -800,32 +796,6 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
     window.addEventListener("resize", drawChart);
   })();
 
-  /* ---------------- J/80 Race Coach ---------------- */
-  (function () {
-    const meta = JSON.parse(document.getElementById("race-meta").textContent);
-    const btn = document.getElementById("coachBtn");
-    const status = document.getElementById("coachStatus");
-    btn.addEventListener("click", async () => {
-      btn.disabled = true;
-      status.classList.remove("err");
-      status.textContent = "generating report… this can take a few minutes";
-      try {
-        const r = await fetch("/coach-report", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ race_id: meta.id }),
-        });
-        const body = await r.json().catch(() => ({}));
-        if (!r.ok || !body.ok) throw new Error(body.error || ("server returned " + r.status));
-        location.reload();
-      } catch (e) {
-        btn.disabled = false;
-        status.classList.add("err");
-        status.textContent = "failed: " + e.message;
-      }
-    });
-  })();
-
   buildMeta();
 })();
 </script>
@@ -905,10 +875,8 @@ def render_race_page(conn, polar, race_meta):
     report_text = coach.load_report(sid)
     if report_text:
         coach_html = _coach_markdown_to_html(report_text)
-        coach_btn_label = "Regenerate report"
     else:
-        coach_html = "<p class='coach-empty'>No report yet &mdash; click Generate report to run the AI coach on this race's data.</p>"
-        coach_btn_label = "Generate report"
+        coach_html = "<p class='coach-empty'>No report yet for this race.</p>"
 
     html = (PAGE_TEMPLATE
             .replace("__TITLE__", title)
@@ -917,8 +885,7 @@ def render_race_page(conn, polar, race_meta):
             .replace("__RACE_META__", json.dumps(meta))
             .replace("__COURSE_DATA__", json.dumps(course, separators=(",", ":")))
             .replace("__POLAR_DATA__", json.dumps(polar_data, separators=(",", ":")))
-            .replace("__COACH_HTML__", coach_html)
-            .replace("__COACH_BTN_LABEL__", coach_btn_label))
+            .replace("__COACH_HTML__", coach_html))
     return html
 
 
