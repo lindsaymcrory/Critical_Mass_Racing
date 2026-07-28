@@ -130,6 +130,11 @@ def jacket_image():
     return send_from_directory(ROOT, "Jacket_Front.png")
 
 
+@app.route("/CM_Instruments.png")
+def instruments_image():
+    return send_from_directory(ROOT, "CM_Instruments.png")
+
+
 # ---------------------------------------------------------------- Benchmark
 @app.route("/benchmark")
 def benchmark():

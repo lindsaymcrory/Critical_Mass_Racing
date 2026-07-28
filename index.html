@@ -28,6 +28,7 @@
   nav {
     background: var(--panel-2); border-right: 1px solid var(--hair);
     display: flex; flex-direction: column; padding: 22px 16px; gap: 8px;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
   }
   .nav-brand { font-size: 14px; font-weight: 700; letter-spacing: 0.02em; margin-bottom: 6px; padding: 0 4px; }
   .nav-brand .sub { display: block; font-size: 10.5px; font-weight: 500; color: var(--dim); margin-top: 2px; text-transform: none; letter-spacing: normal; }
@@ -57,6 +58,11 @@
     margin: 0 auto 28px; background: #10182b; width: 70%;
   }
   .banner img { display: block; width: 100%; height: auto; }
+
+  .tagline {
+    text-align: center; font-size: 14px; font-style: italic; color: var(--dim);
+    margin: 0 0 28px;
+  }
 
   .flash {
     padding: 12px 16px; border-radius: var(--radius); margin-bottom: 22px;
@@ -90,6 +96,42 @@
   .race-go { font-size: 11px; color: var(--mark); font-weight: 700; }
 
   .empty { padding: 40px 18px; text-align: center; color: var(--dim); font-size: 13px; }
+
+  /* -- About -- */
+  .nav-btn.about-btn { margin-top: auto; }
+  .about-overlay {
+    display: none; position: fixed; inset: 0; z-index: 100;
+    background: rgba(6, 14, 18, 0.72); backdrop-filter: blur(1px);
+    padding: 5vh 20px; overflow-y: auto;
+  }
+  .about-overlay.open { display: flex; justify-content: center; align-items: flex-start; }
+  .about-panel {
+    position: relative; width: 100%; max-width: 720px; max-height: 90vh;
+    background: var(--panel); border: 1px solid var(--hair); border-radius: 6px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .about-close {
+    position: absolute; top: 12px; right: 12px; z-index: 1;
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 1px solid var(--hair); background: var(--panel-2); color: var(--paper);
+    font-size: 16px; line-height: 1; cursor: pointer; appearance: none;
+  }
+  .about-close:hover { border-color: var(--mark); color: var(--mark); }
+  .about-content {
+    overflow-y: auto; padding: 44px 40px 40px;
+  }
+  .about-content h2 { font-size: 22px; margin: 8px 0 14px; }
+  .about-content h3 { font-size: 17px; margin: 28px 0 10px; color: var(--mark); }
+  .about-content h4 { font-size: 14px; margin: 18px 0 6px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--dim); }
+  .about-content p { font-size: 14px; line-height: 1.65; margin: 0 0 12px; }
+  .about-content ul { margin: 0 0 14px; padding-left: 22px; }
+  .about-content li { font-size: 14px; line-height: 1.6; margin: 3px 0; }
+  .about-content a { color: var(--mark); text-decoration: underline; }
+  .about-content strong { color: var(--paper); }
+  .about-meta { list-style: none; padding: 0; margin: 0 0 16px; }
+  .about-meta li { font-size: 13.5px; }
+  .about-instruments-img { display: block; width: 100%; height: auto; margin-top: 24px; border-radius: var(--radius); border: 1px solid var(--hair); }
 </style>
 
 <div class="layout">
@@ -97,14 +139,147 @@
     <div class="nav-brand">Critical Mass<span class="sub">Race Analysis</span></div>
     <a class="nav-btn" href="/add-race">Add Race<span class="hint">New race from logged data</span></a><a class="nav-btn" href="/update-ebl">Update EBL<span class="hint">Upload new .ebl files</span></a><form class="nav-form" method="post" action="/update-html"><button type="submit" class="nav-btn">Update HTML<span class="hint">Rebuild all race pages</span></button></form>
     <a class="nav-btn" href="/benchmark">Benchmark<span class="hint">Coming soon</span></a>
+    <button type="button" class="nav-btn about-btn" id="aboutBtn">About<span class="hint">Project, boat &amp; instruments</span></button>
   </nav>
   <main>
     <div class="content">
       
       <div class="banner"><img src="Jacket_Front.png" alt="Critical Mass Racing"></div>
+      <div class="tagline">Turning every race into data &mdash; maneuvers, strategy, and polar performance measured, not remembered.</div>
       <div class="page-title">Race Results</div>
       <div class="page-sub">9 processed races</div>
       <div class="year-box"><div class="year-head">2026 Racing Season</div><a class="race-row" href="races/9.html"><div><div class="race-date mono">2026-07-27</div><div class="race-series">WoW</div></div><div class="race-go">Results &rarr;</div></a><a class="race-row" href="races/2.html"><div><div class="race-date mono">2026-07-20</div><div class="race-series">WoW</div></div><div class="race-go">Results &rarr;</div></a><a class="race-row" href="races/3.html"><div><div class="race-date mono">2026-07-15</div><div class="race-series">Practice</div></div><div class="race-go">Results &rarr;</div></a><a class="race-row" href="races/1.html"><div><div class="race-date mono">2026-07-13</div><div class="race-series">WoW</div></div><div class="race-go">Results &rarr;</div></a><a class="race-row" href="races/6.html"><div><div class="race-date mono">2026-07-08</div><div class="race-series">Wed Nights</div></div><div class="race-go">Results &rarr;</div></a><a class="race-row" href="races/5.html"><div><div class="race-date mono">2026-06-24</div><div class="race-series">Wed Nights</div></div><div class="race-go">Results &rarr;</div></a><a class="race-row" href="races/4.html"><div><div class="race-date mono">2026-06-17</div><div class="race-series">Wed Nights</div></div><div class="race-go">Results &rarr;</div></a></div><div class="year-box"><div class="year-head">2025 Racing Season</div><a class="race-row" href="races/8.html"><div><div class="race-date mono">2025-09-24</div><div class="race-series">Wed Nights</div></div><div class="race-go">Results &rarr;</div></a><a class="race-row" href="races/7.html"><div><div class="race-date mono">2025-09-17</div><div class="race-series">Wed Nights</div></div><div class="race-go">Results &rarr;</div></a></div>
     </div>
   </main>
 </div>
+
+<div class="about-overlay" id="aboutOverlay">
+  <div class="about-panel">
+    <button type="button" class="about-close" id="aboutClose" aria-label="Close">&times;</button>
+    <div class="about-content">
+<h2>About Critical Mass Racing</h2>
+<p>Critical Mass Racing is an open-source, AI-assisted race-analysis platform developed for our J/80 sailing program.</p>
+<ul class="about-meta">
+  <li><strong>Author</strong> &mdash; Lindsay McRory</li>
+  <li><strong>Contact</strong> &mdash; <a href="mailto:Lindsay.McRory@gmail.com">Lindsay.McRory@gmail.com</a></li>
+  <li><strong>Licence</strong> &mdash; Apache License 2.0</li>
+  <li><strong>Source code</strong> &mdash; <a href="https://github.com/lindsaymcrory/Critical_Mass_Racing" target="_blank" rel="noopener">https://github.com/lindsaymcrory/Critical_Mass_Racing</a></li>
+  <li><strong>Docker image</strong> &mdash; <a href="https://hub.docker.com/r/lmcrory/critical_mass_racing" target="_blank" rel="noopener">https://hub.docker.com/r/lmcrory/critical_mass_racing</a></li>
+</ul>
+<p>The software may be used, modified, and distributed under the terms of the Apache License 2.0. See the LICENSE file in the GitHub repository for the complete licence terms.</p>
+
+<h3>About Critical Mass</h3>
+<p>Critical Mass is a J/80 raced in one-design configuration. We are weeknight &ldquo;beer can&rdquo; racers who want to better understand where we make gains, where we lose time, and where the biggest performance gaps lie.</p>
+<p>This project turns our onboard instrument data into practical post-race coaching. It is designed specifically for a J/80 and tailored to the instruments installed on Critical Mass. It is not intended to replace crew judgment, tactical discussion, or time on the water. Its purpose is to give those conversations a reliable baseline.</p>
+
+<h3>Onboard instruments</h3>
+<p>Our data-logging system includes:</p>
+<ul>
+  <li><strong>Speed and depth</strong> &mdash; B&amp;G DST810</li>
+  <li><strong>Wind</strong> &mdash; B&amp;G WS310</li>
+  <li><strong>GPS and compass</strong> &mdash; B&amp;G ZG100</li>
+  <li><strong>Data recorder and gateway</strong> &mdash; Actisense W2K-1</li>
+  <li><strong>Additional race data</strong> &mdash; Velocitek ProStart and Vakaros instruments</li>
+</ul>
+<p>The system records available instrument data throughout each race, creating a second-by-second account of the boat&rsquo;s speed, heading, wind conditions, position, heel, and other measurements.</p>
+
+<h3>What the analysis does</h3>
+<p>Post-race analysis turns a gut feeling about &ldquo;how we sailed&rdquo; into evidence. Each race is divided into three main areas: maneuvers, boat performance, and strategy.</p>
+
+<h4>Maneuvers</h4>
+<p>Every tack and gybe is measured for speed loss, duration, consistency, and recovery time.</p>
+<p>Instead of remembering that &ldquo;one tack felt slow,&rdquo; we can see that it lost 45% of the boat&rsquo;s speed and took 18 seconds to recover, while the best tack that evening lost only 9% and recovered in six seconds.</p>
+<p>Patterns emerge quickly:</p>
+<ul>
+  <li>Which maneuvers cost the most time</li>
+  <li>Whether entry and exit angles are consistent</li>
+  <li>How quickly the boat accelerates after each maneuver</li>
+  <li>Whether performance changes as the race progresses</li>
+  <li>Which techniques appear in our best maneuvers</li>
+  <li>Which specific skills are worth practising</li>
+</ul>
+<p>Mark roundings can also be reviewed to understand approach angles, speed through the rounding, distance from the mark, and acceleration onto the next leg.</p>
+
+<h4>Boat performance and polars</h4>
+<p>Actual boat speed, sailing angle, and velocity made good are compared with the J/80&rsquo;s predicted performance for the wind conditions.</p>
+<p>This helps answer questions such as:</p>
+<ul>
+  <li>Were we sailing close to the boat&rsquo;s target speed?</li>
+  <li>Were we pointing too high and sacrificing speed?</li>
+  <li>Were we sailing too low and giving away height?</li>
+  <li>Was the performance gap caused by speed, angle, or both?</li>
+  <li>Did excessive heel, steering activity, or inconsistent trim contribute?</li>
+  <li>Were we overpowered or underpowered for the conditions?</li>
+</ul>
+<p>The comparison helps separate equipment, trim, steering, and execution issues from changes caused by wind strength or direction.</p>
+<p>Polar predictions are a reference, not an unquestionable standard. Their usefulness depends on the quality of the polar data, instrument calibration, sea state, crew weight, current, and local conditions.</p>
+
+<h4>Strategy</h4>
+<p>The boat&rsquo;s actual track is plotted against the recorded course marks, showing the course we sailed rather than the course we remember sailing.</p>
+<p>The analysis can examine:</p>
+<ul>
+  <li>Which side of each leg we selected</li>
+  <li>Whether that side gained or lost distance</li>
+  <li>How wind shifts affected each tack or gybe</li>
+  <li>Distance sailed compared with the most direct course</li>
+  <li>Layline positioning and overstanding</li>
+  <li>Approaches to and exits from mark roundings</li>
+  <li>Where gains and losses occurred during each leg</li>
+</ul>
+<p>Instrument data cannot always explain why a tactical decision was made. Other boats, bad air, traffic, waves, and visual observations may not appear in the data. The analysis therefore identifies outcomes and likely explanations without pretending to know everything that happened on the water.</p>
+
+<h3>Comparing races</h3>
+<p>The value of the system increases as more races are recorded.</p>
+<p>Individual maneuvers and sailing segments can be compared with previous races in similar wind conditions. This gives us a team-specific baseline based on how Critical Mass has actually performed &mdash; not only on a theoretical target.</p>
+<p>Cross-race analysis can show:</p>
+<ul>
+  <li>Whether our tacks and gybes are becoming faster and more consistent</li>
+  <li>Which wind ranges create the largest performance gaps</li>
+  <li>Whether we are improving against our polar targets</li>
+  <li>Which recurring trim or handling patterns are associated with better speed</li>
+  <li>Whether certain tactical choices repeatedly produce gains or losses</li>
+  <li>Which areas offer the greatest opportunity for improvement</li>
+</ul>
+<p>Over time, every tack, gybe, rounding, and leg becomes part of the team&rsquo;s performance history.</p>
+
+<h3>AI-assisted coaching</h3>
+<p>The system uses specialized AI agents for two types of analysis:</p>
+<ul>
+  <li><strong>Race analysis</strong> &mdash; reviews one race and produces a concise post-race coaching report.</li>
+  <li><strong>Comparative analysis</strong> &mdash; compares the race with previous races and maneuvers sailed in similar conditions.</li>
+</ul>
+<p>The AI is instructed to support conclusions with data, distinguish observations from likely explanations, and clearly identify when the available information is insufficient.</p>
+<p>Its recommendations are starting points for crew discussion, not absolute conclusions. Sensor errors, calibration problems, incomplete course information, current, sea state, traffic, and tactical context can all affect the results.</p>
+
+<h3>The goal</h3>
+<p>The goal is to establish a useful baseline for what went well and where we can improve at three levels:</p>
+<ul>
+  <li>How well we executed our tacks, gybes, and roundings</li>
+  <li>Whether we sailed to our target polars</li>
+  <li>Whether we chose the right or wrong side of the course</li>
+</ul>
+<p>Put together, these views turn each race into a data point instead of just a memory. With enough races, we can begin to distinguish between nights that were fast because of favourable conditions and nights that were fast because of better technique.</p>
+<p>That distinction is what makes the information coachable &mdash; and gives us something specific to work on the next time we leave the dock.</p>
+
+<img class="about-instruments-img" src="CM_Instruments.png" alt="Critical Mass instrument diagram">
+</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const btn = document.getElementById("aboutBtn");
+  const overlay = document.getElementById("aboutOverlay");
+  const closeBtn = document.getElementById("aboutClose");
+
+  function open() { overlay.classList.add("open"); }
+  function close() { overlay.classList.remove("open"); }
+
+  btn.addEventListener("click", open);
+  closeBtn.addEventListener("click", close);
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && overlay.classList.contains("open")) close();
+  });
+})();
+</script>
