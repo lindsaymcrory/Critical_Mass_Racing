@@ -38,7 +38,7 @@
       "local_start_time": "18:15",
       "series": "WoW",
       "boat": "Critical Mass",
-      "crew_count": 2,
+      "crew_count": 3,
       "timezone": "America/Halifax (ADT, UTC-3)",
       "files": [
         "000009_020.ebl",
@@ -237,7 +237,7 @@
       "local_start_time": "18:35",
       "series": "WoW",
       "boat": "Critical Mass",
-      "crew_count": 2,
+      "crew_count": 3,
       "timezone": "America/Halifax (ADT, UTC-3)",
       "files": [
         "000009_032.ebl",
