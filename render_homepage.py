@@ -328,14 +328,16 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
 
 def _conditions_cell(r):
     tws, bsp = r.get("tws_range"), r.get("bsp_range")
-    if not tws or not bsp:
+    lines = []
+    if tws and bsp:
+        lines.append(f'TWS: <span class="mono">{tws[0]}&ndash;{tws[1]} kn</span>')
+        lines.append(f'BSP: <span class="mono">{bsp[0]}&ndash;{bsp[1]} kn</span>')
+    crew_count = r.get("crew_count")
+    if crew_count is not None:
+        lines.append(f'#Crew: <span class="mono">{crew_count}</span>')
+    if not lines:
         return '<div class="race-conditions">&mdash;</div>'
-    return (
-        '<div class="race-conditions">'
-        f'TWS: <span class="mono">{tws[0]}&ndash;{tws[1]} kn</span><br>'
-        f'BSP: <span class="mono">{bsp[0]}&ndash;{bsp[1]} kn</span>'
-        '</div>'
-    )
+    return f'<div class="race-conditions">{"<br>".join(lines)}</div>'
 
 
 def _year_box(year, races):
