@@ -38,7 +38,7 @@ from ebl2csv.decoder import decode_message
 from ebl2csv.fastpacket import FastPacketAssembler
 from ebl2csv.schema import CanboatSchema
 from ebl_store import EBL_DATA_DIR
-from race_registry import load_registry
+from race_registry import load_registry, save_registry
 
 ROOT = Path(__file__).parent
 EBL_DIR = EBL_DATA_DIR
@@ -392,6 +392,28 @@ def build_nav_1hz(conn, sid, utc_min, utc_max):
     return len(rows)
 
 
+def update_speed_stats(conn, race_id):
+    """Caches this race's TWS/boat-speed ranges (underway samples only) into
+    races.json, so the homepage can show them without needing a database
+    connection -- it's a static, view-only summary shipped with the site."""
+    tws_min, tws_max, stw_min, stw_max = conn.execute(
+        "SELECT MIN(tws_kn), MAX(tws_kn), MIN(stw_kn), MAX(stw_kn) FROM nav_1hz "
+        "WHERE session_id=? AND stw_kn >= 1.5 AND tws_kn IS NOT NULL", (race_id,)
+    ).fetchone()
+
+    registry = load_registry()
+    race = next((r for r in registry["races"] if r["id"] == race_id), None)
+    if race is None:
+        return
+    if tws_min is None:
+        race.pop("tws_range", None)
+        race.pop("bsp_range", None)
+    else:
+        race["tws_range"] = [round(tws_min, 1), round(tws_max, 1)]
+        race["bsp_range"] = [round(stw_min, 1), round(stw_max, 1)]
+    save_registry(registry)
+
+
 # every table keyed by session_id; used by rebuild_race to surgically remove
 # one race before re-inserting it (maneuvers/polar_performance are excluded:
 # their scripts DROP and rebuild the whole table from nav_1hz afterwards)
@@ -432,6 +454,7 @@ def rebuild_race(race_id):
     utc_min, utc_max = build_session(conn, schema, cfg)
     n_wp = build_waypoints(conn, race_id)
     n_1hz = build_nav_1hz(conn, race_id, utc_min, utc_max)
+    update_speed_stats(conn, race_id)
     print(f"#   {n_wp} distinct waypoints, {n_1hz:,} rows in nav_1hz")
     conn.close()
 
@@ -466,6 +489,7 @@ def main(race_ids=None):
         utc_min, utc_max = build_session(conn, schema, cfg)
         n_wp = build_waypoints(conn, cfg["session_id"])
         n_1hz = build_nav_1hz(conn, cfg["session_id"], utc_min, utc_max)
+        update_speed_stats(conn, cfg["session_id"])
         print(f"#   {n_wp} distinct waypoints, {n_1hz:,} rows in nav_1hz\n")
 
     conn.executescript(INDEX_SQL)

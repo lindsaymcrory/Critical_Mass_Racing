@@ -3,6 +3,7 @@
 (Update EBL / Benchmark / Update HTML / Add Race) and a main content area
 listing every processed race, grouped by year (newest year first), each
 link showing its date + series and pointing at races/<id>.html."""
+import html
 from pathlib import Path
 
 from race_registry import load_registry
@@ -227,14 +228,18 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
   }
   :root[data-theme="light"] .year-head { background: rgba(244,248,247,0.7); }
   .race-row {
-    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    display: grid; grid-template-columns: 130px 1fr 130px auto;
+    align-items: center; gap: 16px;
     padding: 13px 18px; border-top: 1px solid var(--hair); transition: background .1s;
   }
   .race-row:first-of-type { border-top: none; }
   .race-row:hover { background: rgba(245, 185, 66, 0.08); }
   .race-date { font-size: 14px; font-weight: 700; }
   .race-series { font-size: 11.5px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.06em; }
-  .race-go { font-size: 11px; color: var(--mark); font-weight: 700; }
+  .race-notes { font-size: 12px; font-style: italic; color: var(--dim); line-height: 1.4; }
+  .race-conditions { font-size: 11.5px; line-height: 1.5; color: var(--dim); white-space: nowrap; }
+  .race-conditions .mono { color: var(--paper); }
+  .race-go { font-size: 15px; color: var(--mark); font-weight: 700; }
 
   .empty { padding: 40px 18px; text-align: center; color: var(--dim); font-size: 13px; }
 
@@ -321,11 +326,25 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
 """
 
 
+def _conditions_cell(r):
+    tws, bsp = r.get("tws_range"), r.get("bsp_range")
+    if not tws or not bsp:
+        return '<div class="race-conditions">&mdash;</div>'
+    return (
+        '<div class="race-conditions">'
+        f'TWS: <span class="mono">{tws[0]}&ndash;{tws[1]} kn</span><br>'
+        f'BSP: <span class="mono">{bsp[0]}&ndash;{bsp[1]} kn</span>'
+        '</div>'
+    )
+
+
 def _year_box(year, races):
     rows = "".join(
         f'<a class="race-row" href="{r["html_path"]}">'
         f'<div><div class="race-date mono">{r["race_date"]}</div>'
         f'<div class="race-series">{r["series"]}</div></div>'
+        f'<div class="race-notes">{html.escape(r.get("notes") or "")}</div>'
+        f'{_conditions_cell(r)}'
         f'<div class="race-go">Results &rarr;</div></a>'
         for r in races
     )
