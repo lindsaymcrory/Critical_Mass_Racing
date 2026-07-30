@@ -26,6 +26,12 @@ app.secret_key = "critical-mass-local-dev"  # local personal tool, no auth/sessi
 
 _pending_flash = {"message": None, "kind": "success"}
 
+# In-memory homepage view counter -- deliberately not persisted to disk, so
+# it resets to 0 whenever the process restarts (a new release/deploy, or a
+# local `docker compose up --force-recreate`), per the "resets each release"
+# requirement -- no separate reset step needed.
+_view_count = 0
+
 
 def set_flash(message, kind="success"):
     _pending_flash["message"] = message
@@ -106,8 +112,10 @@ def page(title, body):
 
 @app.route("/")
 def home():
+    global _view_count
+    _view_count += 1
     message, kind = pop_flash()
-    return render_homepage.render_homepage(flash_message=message, flash_kind=kind)
+    return render_homepage.render_homepage(flash_message=message, flash_kind=kind, view_count=_view_count)
 
 
 @app.route("/index.html")

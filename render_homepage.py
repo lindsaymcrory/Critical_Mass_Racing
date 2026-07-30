@@ -293,7 +293,7 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
       <div class="banner"><img src="Jacket_Front.png" alt="Critical Mass Racing"></div>
       <div class="tagline">Turning every race into data &mdash; maneuvers, strategy, and polar performance measured, not remembered.</div>
       <div class="page-title">Race Results</div>
-      <div class="page-sub">__RACE_COUNT__ processed race__PLURAL__</div>
+      <div class="page-sub">__RACE_COUNT__ processed race__PLURAL__ &nbsp;&middot;&nbsp; __VIEW_COUNT__ Views</div>
       __YEARS__
     </div>
   </main>
@@ -353,7 +353,7 @@ def _year_box(year, races):
     return f'<div class="year-box"><div class="year-head">{year} Racing Season</div>{rows}</div>'
 
 
-def render_homepage(flash_message=None, flash_kind="success"):
+def render_homepage(flash_message=None, flash_kind="success", view_count=0):
     registry = load_registry()
     races = sorted(registry["races"], key=lambda r: r["race_date"], reverse=True)
 
@@ -374,6 +374,7 @@ def render_homepage(flash_message=None, flash_kind="success"):
             .replace("__FLASH__", flash_html)
             .replace("__RACE_COUNT__", str(len(races)))
             .replace("__PLURAL__", "" if len(races) == 1 else "s")
+            .replace("__VIEW_COUNT__", str(view_count))
             .replace("__YEARS__", years_html)
             .replace("__NAV_ITEMS__", _NAV_READ_ONLY if READ_ONLY else _NAV_LIVE)
             .replace("__ABOUT_HTML__", ABOUT_HTML))
