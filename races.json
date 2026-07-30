@@ -1,5 +1,5 @@
 {
-  "next_id": 10,
+  "next_id": 11,
   "races": [
     {
       "id": 1,
@@ -261,6 +261,35 @@
       "bsp_range": [
         1.5,
         6.6
+      ]
+    },
+    {
+      "id": 10,
+      "race_date": "2026-07-29",
+      "local_start_time": "18:15",
+      "series": "Wednesday Night",
+      "boat": "Critical Mass",
+      "crew_count": 3,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000009_044.ebl",
+        "000009_045.ebl",
+        "000009_046.ebl",
+        "000009_047.ebl",
+        "000009_048.ebl",
+        "000009_049.ebl",
+        "000009_050.ebl",
+        "000009_051.ebl"
+      ],
+      "notes": "Long course with light to moderate conditions.",
+      "html_path": "races/10.html",
+      "tws_range": [
+        1.1,
+        16.0
+      ],
+      "bsp_range": [
+        1.5,
+        6.9
       ]
     }
   ]
