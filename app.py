@@ -133,14 +133,19 @@ def race_page(filename):
     return send_from_directory(RACES_DIR, filename)
 
 
-@app.route("/Jacket_Front.png")
-def jacket_image():
-    return send_from_directory(ROOT, "Jacket_Front.png")
+@app.route("/CM_Logo.png")
+def logo_image():
+    return send_from_directory(ROOT, "CM_Logo.png")
 
 
 @app.route("/CM_Instruments.png")
 def instruments_image():
     return send_from_directory(ROOT, "CM_Instruments.png")
+
+
+@app.route("/how_it_fits.png")
+def how_it_fits_image():
+    return send_from_directory(ROOT, "how_it_fits.png")
 
 
 # ---------------------------------------------------------------- Benchmark

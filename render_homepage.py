@@ -60,6 +60,7 @@ ABOUT_HTML = f"""
   <li><strong>Docker image</strong> &mdash; <a href="{DOCKERHUB_URL}" target="_blank" rel="noopener">{DOCKERHUB_URL}</a></li>
 </ul>
 <p>The software may be used, modified, and distributed under the terms of the Apache License 2.0. See the LICENSE file in the GitHub repository for the complete licence terms.</p>
+<p>Technical details are contained in the <a href="{GITHUB_URL}/blob/main/README.md" target="_blank" rel="noopener">README.md</a> and <a href="{GITHUB_URL}/blob/main/ARCHITECTURE.md" target="_blank" rel="noopener">ARCHITECTURE.md</a> files.</p>
 
 <h3>About Critical Mass</h3>
 <p>Critical Mass is a J/80 raced in one-design configuration. We are weeknight &ldquo;beer can&rdquo; racers who want to better understand where we make gains, where we lose time, and where the biggest performance gaps lie.</p>
@@ -155,6 +156,14 @@ ABOUT_HTML = f"""
 <p>That distinction is what makes the information coachable &mdash; and gives us something specific to work on the next time we leave the dock.</p>
 
 <img class="about-instruments-img" src="CM_Instruments.png" alt="Critical Mass instrument diagram">
+
+<h3>Fitting It All into the J/80</h3>
+<p>All electronics are removed from Critical Mass at the end of each season, as we are constantly experimenting with new equipment.</p>
+<p>We use custom 3D-printed mounts for the Vakaros instruments and Velocitek ProStart&mdash;thanks, Dwayne! These mounts are necessary because of the location of our Cunningham.</p>
+<p>We have also developed several temporary companionway sliding-hatch mounting systems, allowing instruments to be added, removed, and repositioned easily.</p>
+<p>The NMEA 2000 bus is zip-tied to the mast, keeping it accessible for maintenance and equipment changes.</p>
+<p>The Actisense W2K-1 is mounted for quick removal. It comes home after every race, along with the Vakaros instruments and ProStart, because these devices contain our race data.</p>
+<img class="about-instruments-img" src="how_it_fits.png" alt="How the instruments fit into the J/80">
 """
 
 PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
@@ -308,8 +317,8 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
   <main>
     <div class="content">
       __FLASH__
-      <div class="banner"><img src="Jacket_Front.png" alt="Critical Mass Racing"></div>
-      <div class="tagline">Turning every race into data &mdash; maneuvers, strategy, and polar performance measured, not remembered.</div>
+      <div class="banner"><img src="CM_Logo.png" alt="Critical Mass Racing"></div>
+      <div class="tagline">We may not always place well, but we always know why.</div>
       <div class="page-title">Race Results</div>
       <div class="page-sub">__RACE_COUNT__ processed race__PLURAL__ &nbsp;&middot;&nbsp; __VIEW_COUNT__ Views</div>
       __YEARS__

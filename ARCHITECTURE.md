@@ -143,7 +143,7 @@ connection to render a homepage or a race page.
 | `/` | GET | Homepage — dynamically rendered every request (race list, view counter, Coach Says.., About) |
 | `/index.html` | GET | Redirects to `/` (the static file on disk is a snapshot, not served directly) |
 | `/races/<file>.html` | GET | Serves a static race page |
-| `/Jacket_Front.png`, `/CM_Instruments.png` | GET | Static image assets |
+| `/CM_Logo.png`, `/CM_Instruments.png`, `/how_it_fits.png` | GET | Static image assets |
 | `/benchmark` | GET | Placeholder page (planned: dedicated cross-race analytics) |
 | `/update-ebl` | GET/POST | Upload form + handler for ingesting new `.ebl` files |
 | `/update-html` | POST | Re-runs the full pipeline and re-renders every race page |
