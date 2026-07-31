@@ -101,38 +101,38 @@
 
   .empty { padding: 40px 18px; text-align: center; color: var(--dim); font-size: 13px; }
 
-  /* -- About -- */
+  /* -- modal (shared by About and Coach Says) -- */
   .nav-btn.about-btn { font-size: 15px; color: var(--mark); }
-  .about-overlay {
+  .modal-overlay {
     display: none; position: fixed; inset: 0; z-index: 100;
     background: rgba(6, 14, 18, 0.72); backdrop-filter: blur(1px);
     padding: 5vh 20px; overflow-y: auto;
   }
-  .about-overlay.open { display: flex; justify-content: center; align-items: flex-start; }
-  .about-panel {
+  .modal-overlay.open { display: flex; justify-content: center; align-items: flex-start; }
+  .modal-panel {
     position: relative; width: 100%; max-width: 720px; max-height: 90vh;
     background: var(--panel); border: 1px solid var(--hair); border-radius: 6px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
     display: flex; flex-direction: column; overflow: hidden;
   }
-  .about-close {
+  .modal-close {
     position: absolute; top: 12px; right: 12px; z-index: 1;
     width: 32px; height: 32px; border-radius: 50%;
     border: 1px solid var(--hair); background: var(--panel-2); color: var(--paper);
     font-size: 16px; line-height: 1; cursor: pointer; appearance: none;
   }
-  .about-close:hover { border-color: var(--mark); color: var(--mark); }
-  .about-content {
+  .modal-close:hover { border-color: var(--mark); color: var(--mark); }
+  .modal-content {
     overflow-y: auto; padding: 44px 40px 40px;
   }
-  .about-content h2 { font-size: 22px; margin: 8px 0 14px; }
-  .about-content h3 { font-size: 17px; margin: 28px 0 10px; color: var(--mark); }
-  .about-content h4 { font-size: 14px; margin: 18px 0 6px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--dim); }
-  .about-content p { font-size: 14px; line-height: 1.65; margin: 0 0 12px; }
-  .about-content ul { margin: 0 0 14px; padding-left: 22px; }
-  .about-content li { font-size: 14px; line-height: 1.6; margin: 3px 0; }
-  .about-content a { color: var(--mark); text-decoration: underline; }
-  .about-content strong { color: var(--paper); }
+  .modal-content h2 { font-size: 22px; margin: 8px 0 14px; }
+  .modal-content h3 { font-size: 17px; margin: 28px 0 10px; color: var(--mark); }
+  .modal-content h4 { font-size: 14px; margin: 18px 0 6px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--dim); }
+  .modal-content p { font-size: 14px; line-height: 1.65; margin: 0 0 12px; }
+  .modal-content ul, .modal-content ol { margin: 0 0 14px; padding-left: 22px; }
+  .modal-content li { font-size: 14px; line-height: 1.6; margin: 3px 0; }
+  .modal-content a { color: var(--mark); text-decoration: underline; }
+  .modal-content strong { color: var(--paper); }
   .about-meta { list-style: none; padding: 0; margin: 0 0 16px; }
   .about-meta li { font-size: 13.5px; }
   .about-instruments-img { display: block; width: 100%; height: auto; margin-top: 24px; border-radius: var(--radius); border: 1px solid var(--hair); }
@@ -141,7 +141,8 @@
 <div class="layout">
   <nav>
     <div class="nav-brand">Critical Mass<span class="sub">Race Analysis</span></div>
-    <a class="nav-btn" href="/add-race">Add Race<span class="hint">New race from logged data</span></a><a class="nav-btn" href="/update-ebl">Update EBL<span class="hint">Upload new .ebl files</span></a><form class="nav-form" method="post" action="/update-html"><button type="submit" class="nav-btn">Update HTML<span class="hint">Rebuild all race pages</span></button></form>
+    <button type="button" class="nav-btn about-btn" id="coachSaysBtn">Coach Says..<span class="hint">Season summary &amp; priorities</span></button>
+    <a class="nav-btn" href="/update-ebl">Update EBL<span class="hint">Upload new .ebl files</span></a><form class="nav-form" method="post" action="/update-html"><button type="submit" class="nav-btn">Update HTML<span class="hint">Rebuild all race pages</span></button></form>
     <a class="nav-btn" href="/benchmark">Benchmark<span class="hint">Coming soon</span></a>
     <button type="button" class="nav-btn about-btn" id="aboutBtn">About<span class="hint">Project, boat &amp; instruments</span></button>
   </nav>
@@ -157,10 +158,33 @@
   </main>
 </div>
 
-<div class="about-overlay" id="aboutOverlay">
-  <div class="about-panel">
-    <button type="button" class="about-close" id="aboutClose" aria-label="Close">&times;</button>
-    <div class="about-content">
+<div class="modal-overlay" id="coachSaysOverlay">
+  <div class="modal-panel">
+    <button type="button" class="modal-close" id="coachSaysClose" aria-label="Close">&times;</button>
+    <div class="modal-content"><h2>Summary as of the last race: 2026-07-29</h2><h3>Season overview</h3>
+<ul>
+<li><strong>Light air is where the boat gives up the most speed, by a wide margin.</strong> Pooled across all races, boat speed as a percentage of polar target climbs steadily with wind strength: <strong>60.3%</strong> at 0–6 kn TWS, <strong>66.6%</strong> at 6–9 kn, <strong>73.4%</strong> at 9–12 kn, <strong>79.2%</strong> at 12–16 kn. That&#x27;s a ~19-point gap between light and moderate air — the single most consistent pattern in the data.</li>
+<li><strong>Tacks cost roughly 1.6x what gybes do.</strong> Season-wide: tacks lose <strong>37.1%</strong> of boat speed on average (106 logged); gybes lose <strong>23.5%</strong> (39 logged). Tacking is the bigger of the two maneuver gaps.</li>
+<li><strong>Reach is the weakest point of sail, season-wide</strong> — not just in isolated races: beat averages 70.4% of target, run 69.0%, but reach only <strong>63.6%</strong>.</li>
+<li><strong>Heel correlates with performance even at a fixed wind speed.</strong> Checked separately within the 6–9 kn and 9–12 kn bands (to rule out heel just tracking wind strength): in 9–12 kn, samples under 15° of heel averaged 62.8% of target vs. 87.3% at 25°+. This is consistent with being under-powered or under-trimmed at times — worth a crew conversation, not a hard rule, since sail force and heel can also be eased deliberately in gusts.</li>
+<li><strong>Mark roundings are a real, untracked opportunity.</strong> 25 logged roundings lose <strong>36.0%</strong> of boat speed on average — about the same as tacks — but they&#x27;re currently excluded from every coaching write-up (by design, since they&#x27;re mark-influenced rather than pure technique).</li>
+<li><strong>Two things the data can&#x27;t say yet:</strong> there&#x27;s no clean season-over-season improvement trend (tack loss swings 23–43% race to race, tracking each night&#x27;s wind more than a practice curve), and crew-count effects (2/3/4 aboard) are confounded — only one race has a 2-person crew with usable data, and it happens to be the lightest-air night of the season, so that comparison isn&#x27;t meaningful yet.</li>
+</ul>
+<h3>Improvement priorities</h3>
+<ol>
+<li><strong>Light-air boat speed (high confidence).</strong> The clearest, most consistent gap all season — roughly 19 points of target speed lost between the lightest and moderate wind bands. <em>Action:</em> dedicated light-air speed work (crew weight, sail shape, minimal helm) in the 0–9 kn range, where the gap is largest.</li>
+<li><strong>Tacking technique (high confidence).</strong> Tacks lose ~1.6x what gybes do (37.1% vs. 23.5%), and per-race reports repeatedly show the same pattern: tight, quick tacks lose far less speed than wide, slow ones. <em>Action:</em> drill roll-tacks aiming for a heading swing under ~90° and duration under ~8s, using each race&#x27;s own best tacks as the benchmark.</li>
+<li><strong>Reaching performance (medium-high confidence).</strong> The weakest point of sail pooled across the whole season (63.6% vs. 69–70% for beat/run). <em>Action:</em> a dedicated look at reach trim and angle — this hasn&#x27;t had focused attention the way upwind and downwind sailing has.</li>
+<li><strong>Power and trim in light-to-moderate air (medium confidence).</strong> Heel tracks performance even within a fixed wind band, suggesting the boat isn&#x27;t always powered up to its potential. <em>Action:</em> check sheeting and power decisions specifically in 6–12 kn TWS, where the heel/performance link is clearest.</li>
+<li><strong>Mark-rounding technique (medium confidence — new area, not yet analyzed in depth).</strong> Roundings lose about as much speed as tacks (36.0%) but have never been broken down the way tacks and gybes have. <em>Action:</em> start tracking rounding entry angle, speed through the turn, and exit acceleration the same way tacks/gybes are tracked now.</li>
+</ol></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="aboutOverlay">
+  <div class="modal-panel">
+    <button type="button" class="modal-close" id="aboutClose" aria-label="Close">&times;</button>
+    <div class="modal-content">
 <h2>About Critical Mass Racing</h2>
 <p>Critical Mass Racing is an open-source, AI-assisted race-analysis platform developed for our J/80 sailing program.</p>
 <ul class="about-meta">
@@ -272,18 +296,23 @@
 
 <script>
 (function () {
-  const btn = document.getElementById("aboutBtn");
-  const overlay = document.getElementById("aboutOverlay");
-  const closeBtn = document.getElementById("aboutClose");
+  function wireModal(btnId, overlayId, closeId) {
+    const btn = document.getElementById(btnId);
+    const overlay = document.getElementById(overlayId);
+    const closeBtn = document.getElementById(closeId);
 
-  function open() { overlay.classList.add("open"); }
-  function close() { overlay.classList.remove("open"); }
+    function open() { overlay.classList.add("open"); }
+    function close() { overlay.classList.remove("open"); }
 
-  btn.addEventListener("click", open);
-  closeBtn.addEventListener("click", close);
-  overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && overlay.classList.contains("open")) close();
-  });
+    btn.addEventListener("click", open);
+    closeBtn.addEventListener("click", close);
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.classList.contains("open")) close();
+    });
+  }
+
+  wireModal("coachSaysBtn", "coachSaysOverlay", "coachSaysClose");
+  wireModal("aboutBtn", "aboutOverlay", "aboutClose");
 })();
 </script>

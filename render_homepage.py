@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 """Generates the static homepage (index.html): a narrow left nav column
-(Update EBL / Benchmark / Update HTML / Add Race) and a main content area
-listing every processed race, grouped by year (newest year first), each
-link showing its date + series and pointing at races/<id>.html."""
+(Coach Says / Update EBL / Update HTML / Benchmark / About) and a main
+content area listing every processed race, grouped by year (newest year
+first), each link showing its date + series and pointing at races/<id>.html."""
 import html
 from pathlib import Path
 
 from race_registry import load_registry
+from render_race_page import _coach_markdown_to_html
 
 ROOT = Path(__file__).parent
 OUT_PATH = ROOT / "index.html"
+SEASON_SUMMARY_PATH = ROOT / "season_summary.md"
 
 # True when this instance has no local working data (ebl_data/) -- e.g. a
 # view-only deployment from the pushed Docker image, which ships the static
@@ -17,20 +19,35 @@ OUT_PATH = ROOT / "index.html"
 READ_ONLY = not (ROOT / "ebl_data").exists()
 
 _NAV_LIVE = (
-    '<a class="nav-btn" href="/add-race">Add Race<span class="hint">New race from logged data</span></a>'
     '<a class="nav-btn" href="/update-ebl">Update EBL<span class="hint">Upload new .ebl files</span></a>'
     '<form class="nav-form" method="post" action="/update-html">'
     '<button type="submit" class="nav-btn">Update HTML<span class="hint">Rebuild all race pages</span></button>'
     '</form>'
 )
 _NAV_READ_ONLY = (
-    '<span class="nav-btn disabled">Add Race<span class="hint">View-only deployment &mdash; edit locally</span></span>'
     '<span class="nav-btn disabled">Update EBL<span class="hint">View-only deployment &mdash; edit locally</span></span>'
     '<span class="nav-btn disabled">Update HTML<span class="hint">View-only deployment &mdash; edit locally</span></span>'
 )
 
 GITHUB_URL = "https://github.com/lindsaymcrory/Critical_Mass_Racing"
 DOCKERHUB_URL = "https://hub.docker.com/r/lmcrory/critical_mass_racing"
+
+
+def _coach_says_html(races):
+    """Season-level summary + improvement priorities, written by hand (in a
+    Claude session, from querying race_sessions.db across all races) and
+    saved to season_summary.md -- re-run that analysis and update the file
+    after adding new races, rather than computing it live, so this works the
+    same in a view-only deployment with no database."""
+    last_race_date = max((r["race_date"] for r in races), default=None)
+    heading = (
+        f"<h2>Summary as of the last race: {last_race_date}</h2>" if last_race_date
+        else "<h2>Summary</h2><p>No races processed yet.</p>"
+    )
+    body = ""
+    if SEASON_SUMMARY_PATH.exists():
+        body = _coach_markdown_to_html(SEASON_SUMMARY_PATH.read_text())
+    return heading + body
 
 ABOUT_HTML = f"""
 <h2>About Critical Mass Racing</h2>
@@ -243,38 +260,38 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
 
   .empty { padding: 40px 18px; text-align: center; color: var(--dim); font-size: 13px; }
 
-  /* -- About -- */
+  /* -- modal (shared by About and Coach Says) -- */
   .nav-btn.about-btn { font-size: 15px; color: var(--mark); }
-  .about-overlay {
+  .modal-overlay {
     display: none; position: fixed; inset: 0; z-index: 100;
     background: rgba(6, 14, 18, 0.72); backdrop-filter: blur(1px);
     padding: 5vh 20px; overflow-y: auto;
   }
-  .about-overlay.open { display: flex; justify-content: center; align-items: flex-start; }
-  .about-panel {
+  .modal-overlay.open { display: flex; justify-content: center; align-items: flex-start; }
+  .modal-panel {
     position: relative; width: 100%; max-width: 720px; max-height: 90vh;
     background: var(--panel); border: 1px solid var(--hair); border-radius: 6px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
     display: flex; flex-direction: column; overflow: hidden;
   }
-  .about-close {
+  .modal-close {
     position: absolute; top: 12px; right: 12px; z-index: 1;
     width: 32px; height: 32px; border-radius: 50%;
     border: 1px solid var(--hair); background: var(--panel-2); color: var(--paper);
     font-size: 16px; line-height: 1; cursor: pointer; appearance: none;
   }
-  .about-close:hover { border-color: var(--mark); color: var(--mark); }
-  .about-content {
+  .modal-close:hover { border-color: var(--mark); color: var(--mark); }
+  .modal-content {
     overflow-y: auto; padding: 44px 40px 40px;
   }
-  .about-content h2 { font-size: 22px; margin: 8px 0 14px; }
-  .about-content h3 { font-size: 17px; margin: 28px 0 10px; color: var(--mark); }
-  .about-content h4 { font-size: 14px; margin: 18px 0 6px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--dim); }
-  .about-content p { font-size: 14px; line-height: 1.65; margin: 0 0 12px; }
-  .about-content ul { margin: 0 0 14px; padding-left: 22px; }
-  .about-content li { font-size: 14px; line-height: 1.6; margin: 3px 0; }
-  .about-content a { color: var(--mark); text-decoration: underline; }
-  .about-content strong { color: var(--paper); }
+  .modal-content h2 { font-size: 22px; margin: 8px 0 14px; }
+  .modal-content h3 { font-size: 17px; margin: 28px 0 10px; color: var(--mark); }
+  .modal-content h4 { font-size: 14px; margin: 18px 0 6px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--dim); }
+  .modal-content p { font-size: 14px; line-height: 1.65; margin: 0 0 12px; }
+  .modal-content ul, .modal-content ol { margin: 0 0 14px; padding-left: 22px; }
+  .modal-content li { font-size: 14px; line-height: 1.6; margin: 3px 0; }
+  .modal-content a { color: var(--mark); text-decoration: underline; }
+  .modal-content strong { color: var(--paper); }
   .about-meta { list-style: none; padding: 0; margin: 0 0 16px; }
   .about-meta li { font-size: 13.5px; }
   .about-instruments-img { display: block; width: 100%; height: auto; margin-top: 24px; border-radius: var(--radius); border: 1px solid var(--hair); }
@@ -283,6 +300,7 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
 <div class="layout">
   <nav>
     <div class="nav-brand">Critical Mass<span class="sub">Race Analysis</span></div>
+    <button type="button" class="nav-btn about-btn" id="coachSaysBtn">Coach Says..<span class="hint">Season summary &amp; priorities</span></button>
     __NAV_ITEMS__
     <a class="nav-btn" href="/benchmark">Benchmark<span class="hint">Coming soon</span></a>
     <button type="button" class="nav-btn about-btn" id="aboutBtn">About<span class="hint">Project, boat &amp; instruments</span></button>
@@ -299,28 +317,40 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
   </main>
 </div>
 
-<div class="about-overlay" id="aboutOverlay">
-  <div class="about-panel">
-    <button type="button" class="about-close" id="aboutClose" aria-label="Close">&times;</button>
-    <div class="about-content">__ABOUT_HTML__</div>
+<div class="modal-overlay" id="coachSaysOverlay">
+  <div class="modal-panel">
+    <button type="button" class="modal-close" id="coachSaysClose" aria-label="Close">&times;</button>
+    <div class="modal-content">__COACH_SAYS_HTML__</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="aboutOverlay">
+  <div class="modal-panel">
+    <button type="button" class="modal-close" id="aboutClose" aria-label="Close">&times;</button>
+    <div class="modal-content">__ABOUT_HTML__</div>
   </div>
 </div>
 
 <script>
 (function () {
-  const btn = document.getElementById("aboutBtn");
-  const overlay = document.getElementById("aboutOverlay");
-  const closeBtn = document.getElementById("aboutClose");
+  function wireModal(btnId, overlayId, closeId) {
+    const btn = document.getElementById(btnId);
+    const overlay = document.getElementById(overlayId);
+    const closeBtn = document.getElementById(closeId);
 
-  function open() { overlay.classList.add("open"); }
-  function close() { overlay.classList.remove("open"); }
+    function open() { overlay.classList.add("open"); }
+    function close() { overlay.classList.remove("open"); }
 
-  btn.addEventListener("click", open);
-  closeBtn.addEventListener("click", close);
-  overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && overlay.classList.contains("open")) close();
-  });
+    btn.addEventListener("click", open);
+    closeBtn.addEventListener("click", close);
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.classList.contains("open")) close();
+    });
+  }
+
+  wireModal("coachSaysBtn", "coachSaysOverlay", "coachSaysClose");
+  wireModal("aboutBtn", "aboutOverlay", "aboutClose");
 })();
 </script>
 """
@@ -364,7 +394,7 @@ def render_homepage(flash_message=None, flash_kind="success", view_count=0):
 
     years_html = "".join(
         _year_box(year, by_year[year]) for year in sorted(by_year, reverse=True)
-    ) if by_year else '<div class="empty">No races processed yet -- use Add Race to get started.</div>'
+    ) if by_year else '<div class="empty">No races processed yet.</div>'
 
     flash_html = ""
     if flash_message:
@@ -377,7 +407,8 @@ def render_homepage(flash_message=None, flash_kind="success", view_count=0):
             .replace("__VIEW_COUNT__", str(view_count))
             .replace("__YEARS__", years_html)
             .replace("__NAV_ITEMS__", _NAV_READ_ONLY if READ_ONLY else _NAV_LIVE)
-            .replace("__ABOUT_HTML__", ABOUT_HTML))
+            .replace("__ABOUT_HTML__", ABOUT_HTML)
+            .replace("__COACH_SAYS_HTML__", _coach_says_html(races)))
     return html
 
 
