@@ -42,7 +42,7 @@ def _coach_says_html(races):
 
 ABOUT_HTML = f"""
 <h2>About Critical Mass Racing</h2>
-<p>Critical Mass Racing is an open-source, AI-assisted race-analysis platform developed for our J/80 sailing program.</p>
+<p>Critical Mass Racing is an open-source, AI-assisted race-analysis platform developed for our J/80 sailing program. It is a personal productivity tool rather than a finished, turnkey application for end users. We have made it open source in the hope that other developers and data scientists will find it useful for their own projects.</p>
 <ul class="about-meta">
   <li><strong>Author</strong> &mdash; Lindsay McRory</li>
   <li><strong>Contact</strong> &mdash; <a href="mailto:Lindsay.McRory@gmail.com">Lindsay.McRory@gmail.com</a></li>
