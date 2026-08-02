@@ -203,8 +203,8 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
     const W = Math.max(240, rect.width), H = Math.max(260, rect.height);
     const allSpeeds = [...portPts, ...stbdPts].map(p => p.avg_stw);
     const maxSpeed = (allSpeeds.length ? Math.max(...allSpeeds) : 1) * 1.15;
-    const originX = W / 2, originY = H * 0.88;
-    const usable = Math.min(W / 2, H * 0.8);
+    const originX = W / 2, originY = H * 0.5;
+    const usable = Math.min(W / 2, H * 0.46);
     const scale = usable / maxSpeed;
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.innerHTML = "";
@@ -215,7 +215,7 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
       const [x180, y180] = toXY(180, r, -1, originX, originY, scale);
       const path = document.createElementNS(svgNS, "path");
       path.setAttribute("d", `M ${x0} ${y0} A ${r * scale} ${r * scale} 0 0 0 ${x180} ${y180}`);
-      path.setAttribute("fill", "none"); path.setAttribute("stroke", "var(--grid)"); path.setAttribute("stroke-width", "1");
+      path.setAttribute("fill", "none"); path.setAttribute("stroke", "var(--grid)"); path.setAttribute("stroke-width", "1.5");
       svg.appendChild(path);
     }
     [20, 90, 180].forEach(a => {
@@ -224,7 +224,7 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
         const line = document.createElementNS(svgNS, "line");
         line.setAttribute("x1", originX); line.setAttribute("y1", originY);
         line.setAttribute("x2", x); line.setAttribute("y2", y);
-        line.setAttribute("stroke", "var(--grid)"); line.setAttribute("stroke-width", "1");
+        line.setAttribute("stroke", "var(--grid)"); line.setAttribute("stroke-width", "1.5");
         svg.appendChild(line);
       });
     });
@@ -238,7 +238,7 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
       }).join(" ");
       const path = document.createElementNS(svgNS, "path");
       path.setAttribute("d", d); path.setAttribute("fill", "none");
-      path.setAttribute("stroke", color); path.setAttribute("stroke-width", "3");
+      path.setAttribute("stroke", color); path.setAttribute("stroke-width", "4");
       if (dashed) path.setAttribute("stroke-dasharray", "7,4");
       svg.appendChild(path);
       sorted.forEach(p => {
@@ -275,14 +275,14 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
     const zero = document.createElementNS(svgNS, "line");
     zero.setAttribute("x1", padL); zero.setAttribute("x2", W - padR);
     zero.setAttribute("y1", yScale(0)); zero.setAttribute("y2", yScale(0));
-    zero.setAttribute("stroke", "var(--grid-strong)"); zero.setAttribute("stroke-width", "2");
+    zero.setAttribute("stroke", "var(--grid-strong)"); zero.setAttribute("stroke-width", "2.5");
     svg.appendChild(zero);
 
     if (diffs.length > 1) {
       const d = diffs.map((p, i) => `${i === 0 ? "M" : "L"}${xScale(p.angle).toFixed(1)},${yScale(p.diff).toFixed(1)}`).join(" ");
       const path = document.createElementNS(svgNS, "path");
       path.setAttribute("d", d); path.setAttribute("fill", "none");
-      path.setAttribute("stroke", "var(--mark)"); path.setAttribute("stroke-width", "3");
+      path.setAttribute("stroke", "var(--mark)"); path.setAttribute("stroke-width", "4");
       svg.appendChild(path);
     }
     diffs.forEach(p => {
@@ -336,7 +336,7 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
       const line = document.createElementNS(svgNS, "line");
       line.setAttribute("x1", padL); line.setAttribute("x2", W - padR);
       line.setAttribute("y1", y); line.setAttribute("y2", y);
-      line.setAttribute("stroke", "var(--grid)"); line.setAttribute("stroke-width", "1");
+      line.setAttribute("stroke", "var(--grid)"); line.setAttribute("stroke-width", "1.5");
       svg.appendChild(line);
       const label = document.createElementNS(svgNS, "text");
       label.setAttribute("x", padL - 6); label.setAttribute("y", y + 3);
@@ -363,7 +363,7 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
         const d = sorted.map((e, i) => `${i === 0 ? "M" : "L"}${xScale(e.race_date).toFixed(1)},${yScale(e.avg_stw).toFixed(1)}`).join(" ");
         const path = document.createElementNS(svgNS, "path");
         path.setAttribute("d", d); path.setAttribute("fill", "none");
-        path.setAttribute("stroke", color); path.setAttribute("stroke-width", "3");
+        path.setAttribute("stroke", color); path.setAttribute("stroke-width", "4");
         svg.appendChild(path);
       }
       sorted.forEach(e => {
