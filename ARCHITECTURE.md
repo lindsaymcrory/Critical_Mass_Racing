@@ -105,9 +105,10 @@ flowchart LR
    This is *not* sent to a live API — it's the input a Claude Code session
    uses to hand-author `coach_reports/<id>.md` (per-race) or
    `season_summary.md` (season-level), following the coaching-report
-   prompt template. `load_report()` / `save_report()` / `delete_report()`
-   manage those files; `delete_report()` is called automatically when a
-   race's trim changes, since the old report is now based on stale data.
+   template in `coach_system_prompt.md`. `load_report()` / `save_report()` /
+   `delete_report()` manage those files; `delete_report()` is called
+   automatically when a race's trim changes, since the old report is now
+   based on stale data.
 8. **JSON export** (`export_course_data.py`, `export_polar_data.py`) —
    projects lat/lon to local metres and packages the track, maneuvers,
    waypoints (from `dyc_marks.py`), and polar points/curves/stats into
@@ -167,6 +168,7 @@ polar.py                   PolarTable: parses j80_Polars.csv, interpolates targe
 polar_analysis.py          nav_1hz vs. polar targets -> polar_performance table
 coach.py                   Per-race data summary for hand-authored coach reports;
                            load/save/delete coach_reports/<id>.md
+coach_system_prompt.md     Coaching-report analysis template/style guide
 export_course_data.py      race_sessions.db -> course JSON (track, maneuvers, marks)
 export_polar_data.py       race_sessions.db -> polar JSON (points, curves, stats)
 render_race_page.py        JSON + coach report -> races/<id>.html
