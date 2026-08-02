@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Generates the static homepage (index.html): a narrow left nav column
-(Coach Says / Update EBL / Update HTML / Boat Check / About) and a main
-content area listing every processed race, grouped by year (newest year
-first), each link showing its date + series and pointing at races/<id>.html."""
+(Coach Says / Boat Check / About) and a main content area listing every
+processed race, grouped by year (newest year first), each link showing its
+date + series and pointing at races/<id>.html. Update EBL / Update HTML were
+removed from the nav: race data is now added and rebuilt via Claude Code
+sessions instead of the web UI."""
 import html
 from pathlib import Path
 
@@ -17,17 +19,6 @@ SEASON_SUMMARY_PATH = ROOT / "season_summary.md"
 # view-only deployment from the pushed Docker image, which ships the static
 # race pages but not the raw EBL logs or database needed to add/rebuild races.
 READ_ONLY = not (ROOT / "ebl_data").exists()
-
-_NAV_LIVE = (
-    '<a class="nav-btn" href="/update-ebl">Update EBL<span class="hint">Upload new .ebl files</span></a>'
-    '<form class="nav-form" method="post" action="/update-html">'
-    '<button type="submit" class="nav-btn">Update HTML<span class="hint">Rebuild all race pages</span></button>'
-    '</form>'
-)
-_NAV_READ_ONLY = (
-    '<span class="nav-btn disabled">Update EBL<span class="hint">View-only deployment &mdash; edit locally</span></span>'
-    '<span class="nav-btn disabled">Update HTML<span class="hint">View-only deployment &mdash; edit locally</span></span>'
-)
 
 GITHUB_URL = "https://github.com/lindsaymcrory/Critical_Mass_Racing"
 DOCKERHUB_URL = "https://hub.docker.com/r/lmcrory/critical_mass_racing"
@@ -200,7 +191,6 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
   }
   .nav-brand { font-size: 14px; font-weight: 700; letter-spacing: 0.02em; margin-bottom: 6px; padding: 0 4px; }
   .nav-brand .sub { display: block; font-size: 10.5px; font-weight: 500; color: var(--dim); margin-top: 2px; text-transform: none; letter-spacing: normal; }
-  .nav-form { margin: 0; }
   .nav-btn {
     display: flex; flex-direction: column; gap: 2px; width: 100%;
     padding: 10px 12px; border-radius: var(--radius); border: 1px solid var(--hair);
@@ -213,8 +203,6 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
   .nav-btn.primary { background: var(--mark); color: #201404; border-color: var(--mark); }
   .nav-btn.primary .hint { color: #4a3410; }
   .nav-btn.primary:hover { filter: brightness(1.05); }
-  .nav-btn.disabled { cursor: default; opacity: 0.5; }
-  .nav-btn.disabled:hover { border-color: var(--hair); }
 
   main { background-color: var(--ink); }
   .content { padding: 32px 40px 60px; max-width: 980px; margin: 0 auto; }
@@ -310,7 +298,6 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
   <nav>
     <div class="nav-brand">Critical Mass<span class="sub">Race Analysis</span></div>
     <button type="button" class="nav-btn about-btn" id="coachSaysBtn">Coach Says..<span class="hint">Season summary &amp; priorities</span></button>
-    __NAV_ITEMS__
     <a class="nav-btn about-btn" href="/boat-check">Boat Check<span class="hint">Speed, Rig &amp; Bottom</span></a>
     <button type="button" class="nav-btn about-btn" id="aboutBtn">About<span class="hint">Project, boat &amp; instruments</span></button>
   </nav>
@@ -415,7 +402,6 @@ def render_homepage(flash_message=None, flash_kind="success", view_count=0):
             .replace("__PLURAL__", "" if len(races) == 1 else "s")
             .replace("__VIEW_COUNT__", str(view_count))
             .replace("__YEARS__", years_html)
-            .replace("__NAV_ITEMS__", _NAV_READ_ONLY if READ_ONLY else _NAV_LIVE)
             .replace("__ABOUT_HTML__", ABOUT_HTML)
             .replace("__COACH_SAYS_HTML__", _coach_says_html(races)))
     return html

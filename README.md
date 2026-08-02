@@ -51,16 +51,24 @@ use on your own machine, not meant to be exposed to the internet.
 
 ## Using the site
 
-The left nav has four actions:
+The left nav has three actions:
 
 | Button | What it does |
 |---|---|
-| **Add Race** | Form for race date, start time, and series name, plus a checklist of already-imported `.ebl` files (with their recorded time span shown) to assign to the race. Creates the race's static page and adds it to the homepage. |
-| **Update EBL** | Upload one or more `.ebl` files. Each is hashed and skipped if already imported, so re-uploading or re-copying a file from your logger never creates duplicate data. |
-| **Update HTML** | Re-decodes everything and regenerates every race page + the homepage from current data. Use this after editing `dyc_marks.py`, `j80_Polars.csv`, or any of the analysis scripts. |
+| **Coach Says..** | Season-level summary and prioritized improvement list. |
 | **Boat Check** | Season-wide analysis: port/starboard tack symmetry by wind range, a hull-drag (bottom fouling) trend chart, and the Boat Setup Log (tuning/maintenance history). |
+| **About** | Project background, license, and instrument-mounting notes. |
 
 Race pages are grouped by year on the homepage, most recent year first.
+
+Adding races, uploading `.ebl` files, and rebuilding the site are no longer
+done through the web UI -- they're run directly (typically in a Claude Code
+session): drop new `.ebl` files in `ebl_staging/`, then run the pipeline
+scripts below (`ebl_store.py` to ingest, `build_race_db.py` /
+`detect_maneuvers.py` / `polar_analysis.py` to decode and analyze,
+`render_race_page.py` / `render_homepage.py` to regenerate the static
+pages). The `/add-race` form still exists and works, but isn't linked from
+the nav.
 
 ## Deploying to Digital Ocean
 
@@ -84,7 +92,7 @@ docker push registry.digitalocean.com/<registry>/critical-mass-race-app:latest
 
 **On the droplet**, pull and run it with a persistent data directory (copy
 your `ebl_data/`, `race_sessions.db`, `races.json`, and `races/` there first,
-or start empty and use Add Race / Update EBL from scratch):
+or start empty and add races from scratch via `/add-race` or the pipeline scripts):
 
 ```bash
 mkdir -p ~/critical-mass-data && cd ~/critical-mass-data
@@ -113,7 +121,7 @@ Field definitions come from `canboat.json`, the same public PGN database
 [go-nmea-client](https://github.com/aldas/go-nmea-client) and
 [canboat](https://github.com/canboat/canboat) itself use.
 
-**The pipeline**, run in order by `Add Race` / `Update HTML`:
+**The pipeline**, run in order (by `/add-race`, or directly in a Claude Code session):
 
 1. `build_race_db.py` -- decodes the `.ebl` files assigned to each race
    (`races.json`) into `race_sessions.db`: per-PGN tables (position,
@@ -139,7 +147,7 @@ Field definitions come from `canboat.json`, the same public PGN database
 ## Project structure
 
 ```
-app.py                  Flask app: homepage + race pages + the 4 nav actions
+app.py                  Flask app: homepage + race pages + nav actions
 ebl_store.py             .ebl file ingest/dedup (ebl_data/, ebl_manifest.json)
 race_registry.py         races.json read/write
 build_race_db.py         EBL -> race_sessions.db

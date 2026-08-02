@@ -45,7 +45,7 @@ flowchart LR
     end
 
     subgraph App["Flask app.py"]
-        Routes["homepage / race pages /\nUpdate EBL / Update HTML /\nSave Trim / Boat Check"]
+        Routes["homepage / race pages /\nSave Trim / Boat Check"]
     end
 
     W2K --> Stage --> Store --> Data
@@ -128,7 +128,7 @@ at import time by `render_homepage.READ_ONLY = not (ROOT / "ebl_data").exists()`
 | Where | Your Mac, via `docker compose up` (bind-mounts the whole repo) | Docker Hub image on Digital Ocean / anywhere else |
 | Has `ebl_data/`, `race_sessions.db`, `W2K_Dump/`? | Yes | No — gitignored/dockerignored, too large to ship |
 | Has `races.json`, `races/*.html`, `index.html`, `coach_reports/`? | Yes | Yes — these are the generated static site, committed to git and baked into the image |
-| Add Race / Update EBL / Update HTML | Fully functional | Nav shows them disabled; hitting the routes directly returns a "view-only deployment" page/redirect instead of crashing on a missing database |
+| Add Race / Save Trim | Fully functional | Hitting the routes directly returns a "view-only deployment" page/redirect instead of crashing on a missing database |
 | Homepage view counter | In-memory, resets on process restart | Same — a new deploy is a new process, so it resets automatically with no extra logic |
 
 This means: **races are added and reviewed locally**, then the resulting
@@ -146,15 +146,15 @@ connection to render a homepage or a race page.
 | `/races/<file>.html` | GET | Serves a static race page |
 | `/CM_Logo.png`, `/CM_Instruments.png`, `/how_it_fits.png` | GET | Static image assets |
 | `/boat-check` | GET | Season-wide tack symmetry, hull-drag trend, and the Boat Setup Log table |
-| `/update-ebl` | GET/POST | Upload form + handler for ingesting new `.ebl` files |
-| `/update-html` | POST | Re-runs the full pipeline and re-renders every race page |
 | `/save-trim` | POST (JSON) | Persists a race's trim cutoff, rebuilds just that race, deletes its now-stale coach report |
 | `/add-race` | GET/POST | Manual race-creation form (functional but no longer linked from the nav) |
 
-All of the mutating routes (`update-ebl`, `update-html`, `save-trim`,
-`add-race`) are guarded by `_blocked_if_read_only()` / a `READ_ONLY` check,
-so they degrade to a clear message instead of an unhandled exception on the
-published image.
+`update-ebl` and `update-html` were removed — race data is now added and
+rebuilt via Claude Code sessions (running `ebl_store.py` / `build_race_db.py`
+/ etc. directly) instead of through the web UI. The remaining mutating
+routes (`save-trim`, `add-race`) are still guarded by
+`_blocked_if_read_only()` / a `READ_ONLY` check, so they degrade to a clear
+message instead of an unhandled exception on the published image.
 
 ## Module reference
 
@@ -206,8 +206,9 @@ ebl_data/, ebl_manifest.json   Canonical raw-log store (local only, gitignored)
   count, trim) should be made.
 - **Fast single-race rebuild path.** `build_race_db.rebuild_race(id)` +
   `render_race_page.render_one(id)` avoid re-decoding every race's EBL data
-  just to pick up one change (e.g. a saved trim) — full rebuilds are
-  reserved for Update HTML / Add Race.
+  just to pick up one change (e.g. a saved trim) — full rebuilds (run
+  directly via `build_race_db.main()`, or through the `/add-race` form) are
+  reserved for adding or re-processing races.
 - **Coaching content is hand-authored, not API-generated.** An earlier
   version called the Anthropic API live from the Flask app; that dependency
   was removed. `coach.py` now only builds the data summary — the actual

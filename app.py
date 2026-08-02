@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Local web app for the Critical Mass race-analysis site: serves the
-homepage and static race pages, and handles the four nav actions (Update
-EBL, Boat Check, Update HTML, Add Race) that need server-side logic."""
+homepage and static race pages, and handles the remaining server-side nav
+actions (Boat Check, Save Trim, Add Race -- unlinked but still functional).
+Update EBL / Update HTML were removed: race data is now added and rebuilt
+via Claude Code sessions instead of the web UI."""
 import os
-import tempfile
 import traceback
 from pathlib import Path
 
@@ -16,7 +17,7 @@ import polar_analysis
 import render_boat_check
 import render_homepage
 import render_race_page
-from ebl_store import ingest_files, list_files_with_ranges
+from ebl_store import list_files_with_ranges
 from race_registry import add_race, load_registry, save_registry
 
 ROOT = Path(__file__).parent
@@ -153,80 +154,6 @@ def how_it_fits_image():
 @app.route("/boat-check")
 def boat_check():
     return render_boat_check.render_page()
-
-
-# ---------------------------------------------------------------- Update EBL
-@app.route("/update-ebl", methods=["GET"])
-def update_ebl_form():
-    blocked = _blocked_if_read_only()
-    if blocked:
-        return blocked
-    body = (
-        "<a class='back' href='/'>&larr; Back to races</a>"
-        "<h1>Update EBL</h1>"
-        "<p class='sub'>Upload one or more .ebl files. Files already imported "
-        "(matched by content, not name) are skipped automatically.</p>"
-        "<form method='post' enctype='multipart/form-data'>"
-        "<label>EBL files</label>"
-        "<input type='file' name='files' multiple accept='.ebl' required>"
-        "<button type='submit'>Upload</button>"
-        "</form>"
-    )
-    return page("Update EBL", body)
-
-
-@app.route("/update-ebl", methods=["POST"])
-def update_ebl_submit():
-    blocked = _blocked_if_read_only()
-    if blocked:
-        return blocked
-    files = request.files.getlist("files")
-    files = [f for f in files if f and f.filename]
-    if not files:
-        set_flash("No files were selected.", "error")
-        return redirect("/")
-
-    try:
-        with tempfile.TemporaryDirectory() as tmp:
-            tmp_paths = []
-            for f in files:
-                dest = Path(tmp) / Path(f.filename).name
-                f.save(dest)
-                tmp_paths.append(dest)
-            added, duplicates, errors = ingest_files(tmp_paths)
-    except Exception as e:
-        set_flash(f"Update EBL failed: {e}", "error")
-        return redirect("/")
-
-    if errors:
-        set_flash(f"Added {len(added)}, skipped {len(duplicates)} duplicate(s), "
-                   f"{len(errors)} failed: {errors[0][0]} ({errors[0][1]})", "error")
-    else:
-        parts = [f"Added {len(added)} new file(s)"]
-        if duplicates:
-            parts.append(f"skipped {len(duplicates)} already-imported duplicate(s)")
-        set_flash(", ".join(parts) + ".", "success")
-    return redirect("/")
-
-
-# ---------------------------------------------------------------- Update HTML
-@app.route("/update-html", methods=["POST"])
-def update_html():
-    blocked = _blocked_if_read_only()
-    if blocked:
-        return blocked
-    try:
-        build_race_db.main()
-        detect_maneuvers.main()
-        polar_analysis.main()
-        written = render_race_page.render_all()
-        render_homepage.main()
-    except Exception:
-        set_flash(f"Update HTML failed: {traceback.format_exc(limit=1).splitlines()[-1]}", "error")
-        return redirect("/")
-
-    set_flash(f"Rebuilt {len(written)} race page(s) from current data.", "success")
-    return redirect("/")
 
 
 # ---------------------------------------------------------------- Save trim
