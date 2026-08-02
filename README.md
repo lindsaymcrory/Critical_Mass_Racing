@@ -58,7 +58,7 @@ The left nav has four actions:
 | **Add Race** | Form for race date, start time, and series name, plus a checklist of already-imported `.ebl` files (with their recorded time span shown) to assign to the race. Creates the race's static page and adds it to the homepage. |
 | **Update EBL** | Upload one or more `.ebl` files. Each is hashed and skipped if already imported, so re-uploading or re-copying a file from your logger never creates duplicate data. |
 | **Update HTML** | Re-decodes everything and regenerates every race page + the homepage from current data. Use this after editing `dyc_marks.py`, `j80_Polars.csv`, or any of the analysis scripts. |
-| **Benchmark** | Placeholder for cross-race performance comparison -- not built yet. |
+| **Boat Check** | Season-wide analysis: port/starboard tack symmetry by wind range, a hull-drag (bottom fouling) trend chart, and the Boat Setup Log (tuning/maintenance history). |
 
 Race pages are grouped by year on the homepage, most recent year first.
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Local web app for the Critical Mass race-analysis site: serves the
 homepage and static race pages, and handles the four nav actions (Update
-EBL, Benchmark, Update HTML, Add Race) that need server-side logic."""
+EBL, Boat Check, Update HTML, Add Race) that need server-side logic."""
 import os
 import tempfile
 import traceback
@@ -13,6 +13,7 @@ import build_race_db
 import coach
 import detect_maneuvers
 import polar_analysis
+import render_boat_check
 import render_homepage
 import render_race_page
 from ebl_store import ingest_files, list_files_with_ranges
@@ -148,16 +149,10 @@ def how_it_fits_image():
     return send_from_directory(ROOT, "how_it_fits.png")
 
 
-# ---------------------------------------------------------------- Benchmark
-@app.route("/benchmark")
-def benchmark():
-    body = (
-        "<a class='back' href='/'>&larr; Back to races</a>"
-        "<h1>Benchmark</h1><p class='sub'>Compare performance across races.</p>"
-        "<div class='placeholder'>This page is a placeholder &mdash; benchmark analysis "
-        "is planned for a future update.</div>"
-    )
-    return page("Benchmark", body)
+# --------------------------------------------------------------- Boat Check
+@app.route("/boat-check")
+def boat_check():
+    return render_boat_check.render_page()
 
 
 # ---------------------------------------------------------------- Update EBL

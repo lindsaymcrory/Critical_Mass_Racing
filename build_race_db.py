@@ -33,6 +33,7 @@ from bisect import bisect_right
 from datetime import datetime, timedelta
 from pathlib import Path
 
+import boat_setup_analysis
 from ebl2csv import ebl_reader
 from ebl2csv.decoder import decode_message
 from ebl2csv.fastpacket import FastPacketAssembler
@@ -457,6 +458,7 @@ def rebuild_race(race_id):
     update_speed_stats(conn, race_id)
     print(f"#   {n_wp} distinct waypoints, {n_1hz:,} rows in nav_1hz")
     conn.close()
+    boat_setup_analysis.compute_and_cache()
 
 
 def main(race_ids=None):
@@ -502,6 +504,9 @@ def main(race_ids=None):
 
     conn.close()
     print(f"\n# Wrote {DB_PATH}")
+
+    boat_setup_analysis.compute_and_cache()
+    print(f"# Wrote {boat_setup_analysis.ANALYSIS_PATH.name}")
 
 
 if __name__ == "__main__":

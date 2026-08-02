@@ -45,7 +45,7 @@ flowchart LR
     end
 
     subgraph App["Flask app.py"]
-        Routes["homepage / race pages /\nUpdate EBL / Update HTML /\nSave Trim / Benchmark"]
+        Routes["homepage / race pages /\nUpdate EBL / Update HTML /\nSave Trim / Boat Check"]
     end
 
     W2K --> Stage --> Store --> Data
@@ -145,7 +145,7 @@ connection to render a homepage or a race page.
 | `/index.html` | GET | Redirects to `/` (the static file on disk is a snapshot, not served directly) |
 | `/races/<file>.html` | GET | Serves a static race page |
 | `/CM_Logo.png`, `/CM_Instruments.png`, `/how_it_fits.png` | GET | Static image assets |
-| `/benchmark` | GET | Placeholder page (planned: dedicated cross-race analytics) |
+| `/boat-check` | GET | Season-wide tack symmetry, hull-drag trend, and the Boat Setup Log table |
 | `/update-ebl` | GET/POST | Upload form + handler for ingesting new `.ebl` files |
 | `/update-html` | POST | Re-runs the full pipeline and re-renders every race page |
 | `/save-trim` | POST (JSON) | Persists a race's trim cutoff, rebuilds just that race, deletes its now-stale coach report |
@@ -173,6 +173,9 @@ export_course_data.py      race_sessions.db -> course JSON (track, maneuvers, ma
 export_polar_data.py       race_sessions.db -> polar JSON (points, curves, stats)
 render_race_page.py        JSON + coach report -> races/<id>.html
 render_homepage.py         races.json + season_summary.md -> index.html
+boat_setup_log.py          boat_setup_log.json read/write (tuning/maintenance log)
+boat_setup_analysis.py     nav_1hz -> tack symmetry + hull-drag stats (season-wide)
+render_boat_check.py       boat_setup_analysis.json + log + notes -> /boat-check page
 dyc_marks.py               Club racing marks (number, name, lat/lon)
 j80_Polars.csv             Target polar table (TWS x TWA grid)
 canboat.json               Canboat PGN field-decoding schema
@@ -180,6 +183,9 @@ ebl2csv/                   Pure-Python NMEA2000/EBL decoder (frame parsing,
                            fast-packet reassembly, PGN field decoding)
 coach_reports/<id>.md      Per-race hand-authored coaching report
 season_summary.md          Season-level hand-authored summary + priorities
+boat_setup_log.json        Boat Setup Log entries (hand-edited, versioned)
+boat_setup_analysis.json   Cached tack-symmetry + hull-drag stats (build-time output)
+boat_setup_notes.md        Hand-authored rig-symmetry / hull-condition write-ups
 races.json                 The race registry (versioned)
 race_sessions.db           Decoded working database (local only, gitignored)
 ebl_data/, ebl_manifest.json   Canonical raw-log store (local only, gitignored)
