@@ -49,14 +49,14 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
     position: sticky; top: 0; z-index: 30;
   }
   .brand { display: flex; flex-direction: column; gap: 2px; }
-  .brand .title { font-size: 17px; font-weight: 700; letter-spacing: 0.02em; }
-  .brand .sub { font-size: 11.5px; color: var(--dim); }
-  .intro { padding: 16px 24px 4px; font-size: 13.5px; color: var(--dim); max-width: 820px; }
+  .brand .title { font-size: 19px; font-weight: 700; letter-spacing: 0.02em; }
+  .brand .sub { font-size: 13px; color: var(--dim); }
+  .intro { padding: 16px 24px 4px; font-size: 15px; color: var(--dim); max-width: 820px; }
 
   section { border-bottom: 1px solid var(--hair); padding-bottom: 8px; }
   .section-head { padding: 20px 24px 4px; }
-  .section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
-  .section-sub { font-size: 12.5px; color: var(--dim); margin-top: 4px; }
+  .section-title { font-size: 14.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+  .section-sub { font-size: 14px; color: var(--dim); margin-top: 4px; }
 
   .chart-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -68,21 +68,21 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
   }
   .chart-card svg { width: 100%; height: 100%; display: block; }
   .chart-card .card-title {
-    position: absolute; top: 8px; left: 12px; font-size: 11.5px; font-weight: 700; color: var(--dim); z-index: 2;
+    position: absolute; top: 8px; left: 12px; font-size: 13px; font-weight: 700; color: var(--dim); z-index: 2;
   }
   .hull-chart-wrap {
     background: var(--panel-2); border: 1px solid var(--hair); border-radius: var(--radius);
     margin: 12px 24px; height: 380px; position: relative;
   }
   .hull-chart-wrap svg { width: 100%; height: 100%; display: block; }
-  .chart-legend { display: flex; gap: 16px; flex-wrap: wrap; padding: 0 24px 8px; font-size: 11.5px; color: var(--dim); }
+  .chart-legend { display: flex; gap: 16px; flex-wrap: wrap; padding: 0 24px 8px; font-size: 13px; color: var(--dim); }
   .chart-legend .row { display: flex; align-items: center; gap: 6px; }
-  .chart-legend .ln { width: 16px; height: 3px; border-radius: 2px; display: inline-block; }
+  .chart-legend .ln { width: 16px; height: 4px; border-radius: 2px; display: inline-block; }
 
   .tooltip {
     position: absolute; pointer-events: none; background: var(--panel);
     border: 1px solid var(--grid-strong); border-radius: var(--radius);
-    padding: 7px 9px; font-size: 11px; line-height: 1.5; white-space: nowrap;
+    padding: 8px 10px; font-size: 12.5px; line-height: 1.5; white-space: nowrap;
     box-shadow: 0 4px 16px rgba(0,0,0,0.35); opacity: 0; transition: opacity 0.08s; z-index: 20;
   }
   .tooltip.show { opacity: 1; }
@@ -90,19 +90,19 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
   .note-box {
     margin: 4px 24px 20px; padding: 16px 20px;
     border: 1px solid var(--hair); border-radius: var(--radius);
-    background: var(--panel); font-size: 13px; line-height: 1.6; max-width: 900px;
+    background: var(--panel); font-size: 14.5px; line-height: 1.6; max-width: 900px;
   }
   .note-box ul { margin: 4px 0; padding-left: 20px; }
   .note-box li { margin: 5px 0; }
 
   .log-table-wrap { margin: 4px 24px 24px; border: 1px solid var(--hair); border-radius: var(--radius); overflow: hidden; }
-  table.log-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.log-table { width: 100%; border-collapse: collapse; font-size: 14px; }
   table.log-table th, table.log-table td { padding: 9px 14px; text-align: left; border-top: 1px solid var(--hair); }
-  table.log-table th { text-transform: uppercase; letter-spacing: 0.06em; font-size: 10.5px; color: var(--dim); background: var(--panel-2); border-top: none; }
+  table.log-table th { text-transform: uppercase; letter-spacing: 0.06em; font-size: 12px; color: var(--dim); background: var(--panel-2); border-top: none; }
   table.log-table tr:first-child td { border-top: none; }
   table.log-table td.values { font-family: ui-monospace, "SF Mono", "Cascadia Mono", monospace; }
 
-  footer { padding: 12px 24px; background: var(--panel-2); font-size: 10.5px; color: var(--dim-2); }
+  footer { padding: 12px 24px; background: var(--panel-2); font-size: 12px; color: var(--dim-2); }
   ::-webkit-scrollbar { width: 9px; height: 9px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--hair); border-radius: 5px; }
@@ -125,7 +125,7 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
   </div>
   <div class="chart-grid" id="polarGrid"></div>
   <div class="chart-legend">
-    <span class="row"><span class="ln" style="border-top:2px dashed var(--port);height:0;width:16px"></span>port (dashed)</span>
+    <span class="row"><span class="ln" style="border-top:3px dashed var(--port);height:0;width:16px"></span>port (dashed)</span>
     <span class="row"><span class="ln" style="background:var(--starboard)"></span>starboard (solid)</span>
   </div>
   <div class="section-head" style="padding-top:6px">
@@ -238,8 +238,8 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
       }).join(" ");
       const path = document.createElementNS(svgNS, "path");
       path.setAttribute("d", d); path.setAttribute("fill", "none");
-      path.setAttribute("stroke", color); path.setAttribute("stroke-width", "2");
-      if (dashed) path.setAttribute("stroke-dasharray", "5,3");
+      path.setAttribute("stroke", color); path.setAttribute("stroke-width", "3");
+      if (dashed) path.setAttribute("stroke-dasharray", "7,4");
       svg.appendChild(path);
       sorted.forEach(p => {
         const [x, y] = toXY(p.angle, p.avg_stw, side, originX, originY, scale);
@@ -275,14 +275,14 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
     const zero = document.createElementNS(svgNS, "line");
     zero.setAttribute("x1", padL); zero.setAttribute("x2", W - padR);
     zero.setAttribute("y1", yScale(0)); zero.setAttribute("y2", yScale(0));
-    zero.setAttribute("stroke", "var(--grid-strong)"); zero.setAttribute("stroke-width", "1.4");
+    zero.setAttribute("stroke", "var(--grid-strong)"); zero.setAttribute("stroke-width", "2");
     svg.appendChild(zero);
 
     if (diffs.length > 1) {
       const d = diffs.map((p, i) => `${i === 0 ? "M" : "L"}${xScale(p.angle).toFixed(1)},${yScale(p.diff).toFixed(1)}`).join(" ");
       const path = document.createElementNS(svgNS, "path");
       path.setAttribute("d", d); path.setAttribute("fill", "none");
-      path.setAttribute("stroke", "var(--mark)"); path.setAttribute("stroke-width", "2");
+      path.setAttribute("stroke", "var(--mark)"); path.setAttribute("stroke-width", "3");
       svg.appendChild(path);
     }
     diffs.forEach(p => {
@@ -340,7 +340,7 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
       svg.appendChild(line);
       const label = document.createElementNS(svgNS, "text");
       label.setAttribute("x", padL - 6); label.setAttribute("y", y + 3);
-      label.setAttribute("fill", "var(--dim)"); label.setAttribute("font-size", "9.5"); label.setAttribute("text-anchor", "end");
+      label.setAttribute("fill", "var(--dim)"); label.setAttribute("font-size", "11.5"); label.setAttribute("text-anchor", "end");
       label.textContent = v.toFixed(1);
       svg.appendChild(label);
     }
@@ -348,7 +348,7 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
       const x = xScale(d);
       const label = document.createElementNS(svgNS, "text");
       label.setAttribute("x", x); label.setAttribute("y", H - padB + 16);
-      label.setAttribute("fill", "var(--dim)"); label.setAttribute("font-size", "9.5"); label.setAttribute("text-anchor", "middle");
+      label.setAttribute("fill", "var(--dim)"); label.setAttribute("font-size", "11.5"); label.setAttribute("text-anchor", "middle");
       label.setAttribute("transform", `rotate(-35 ${x} ${H - padB + 16})`);
       label.textContent = d;
       svg.appendChild(label);
@@ -363,7 +363,7 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
         const d = sorted.map((e, i) => `${i === 0 ? "M" : "L"}${xScale(e.race_date).toFixed(1)},${yScale(e.avg_stw).toFixed(1)}`).join(" ");
         const path = document.createElementNS(svgNS, "path");
         path.setAttribute("d", d); path.setAttribute("fill", "none");
-        path.setAttribute("stroke", color); path.setAttribute("stroke-width", "2");
+        path.setAttribute("stroke", color); path.setAttribute("stroke-width", "3");
         svg.appendChild(path);
       }
       sorted.forEach(e => {

@@ -311,7 +311,7 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
     <div class="nav-brand">Critical Mass<span class="sub">Race Analysis</span></div>
     <button type="button" class="nav-btn about-btn" id="coachSaysBtn">Coach Says..<span class="hint">Season summary &amp; priorities</span></button>
     __NAV_ITEMS__
-    <a class="nav-btn" href="/boat-check">Boat Check<span class="hint">Speed, Rig &amp; Bottom</span></a>
+    <a class="nav-btn about-btn" href="/boat-check">Boat Check<span class="hint">Speed, Rig &amp; Bottom</span></a>
     <button type="button" class="nav-btn about-btn" id="aboutBtn">About<span class="hint">Project, boat &amp; instruments</span></button>
   </nav>
   <main>
