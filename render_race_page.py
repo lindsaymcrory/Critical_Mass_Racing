@@ -3,13 +3,16 @@
 analysis, and polar performance, in that order, each its own labeled
 section. Combines the rendering JS from course_visualization.html and
 polar_visualization.html (single-race: no session switcher needed, since
-each race gets its own static page)."""
+each race gets its own static page). Races with a hand-entered
+"fleet_results" table in races.json also get a Fleet Comparison section
+(see fleet_comparison.py) -- omitted entirely for every other race."""
 import html as html_mod
 import json
 import re
 import sqlite3
 from pathlib import Path
 
+import fleet_comparison
 from export_course_data import export_for_race as export_course
 from export_polar_data import export_for_race as export_polar
 from polar import PolarTable
@@ -191,6 +194,22 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
   .coach-box strong { color: var(--paper); }
   .coach-empty { color: var(--dim); font-style: italic; }
 
+  /* -- Fleet Comparison -- */
+  .fleet-summary {
+    margin: 4px 24px 20px; padding: 16px 20px;
+    border: 1px solid var(--hair); border-radius: var(--radius);
+    background: var(--panel); font-size: 13.5px; line-height: 1.6; max-width: 900px;
+  }
+  .fleet-table-wrap { margin: 4px 24px 24px; border: 1px solid var(--hair); border-radius: var(--radius); overflow-x: auto; }
+  table.fleet-table { width: 100%; border-collapse: collapse; font-size: 12.5px; white-space: nowrap; }
+  table.fleet-table th, table.fleet-table td { padding: 9px 14px; text-align: left; border-top: 1px solid var(--hair); }
+  table.fleet-table th { text-transform: uppercase; letter-spacing: 0.06em; font-size: 10.5px; color: var(--dim); background: var(--panel-2); border-top: none; }
+  table.fleet-table tr:first-child td { border-top: none; }
+  table.fleet-table td.mono, table.fleet-table th.mono { font-family: ui-monospace, "SF Mono", "Cascadia Mono", monospace; }
+  table.fleet-table tr.us { background: rgba(245, 185, 66, 0.1); }
+  table.fleet-table tr.us td:first-child { border-left: 2px solid var(--mark); }
+  .fleet-subhead { padding: 20px 24px 8px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim); }
+
   footer {
     padding: 12px 24px; background: var(--panel-2);
     font-size: 10.5px; color: var(--dim-2); display: flex; gap: 18px; flex-wrap: wrap;
@@ -258,7 +277,7 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
   </div>
   <div class="coach-box">__COACH_HTML__</div>
 </section>
-
+__FLEET_COMPARISON_SECTION__
 <footer>
   <span>Course: GPS position, 1 Hz, decimated 1:3</span>
   <span>Tack/gybe: hysteresis on apparent-wind side, min 45&deg; heading change, min 1.5 kn</span>
@@ -853,6 +872,116 @@ def _coach_markdown_to_html(text):
     return "\n".join(out)
 
 
+_DAY_PREFIX_RE = re.compile(r"^(-?)0:(\d+:\d+:\d+)$")
+
+
+def _short_time(s):
+    """'0:01:29:57' -> '1:29:57', '-0:00:01:15' -> '-0:01:15'; passes
+    non-matching strings (e.g. 'DNC - 12') through unchanged."""
+    m = _DAY_PREFIX_RE.match(s or "")
+    return f"{m.group(1)}{m.group(2)}" if m else s
+
+
+def _fleet_comparison_html(comparison):
+    """Builds the Fleet Comparison section's inner HTML from
+    fleet_comparison.compute()'s result, or '' if the race has no fleet
+    data (the section is simply omitted for every other race)."""
+    if comparison is None:
+        return ""
+
+    target = comparison["target_name"]
+
+    rows = []
+    for r in comparison["fleet_results"]:
+        is_us = r.get("boat_name") == target
+        rows.append(
+            f"<tr{' class=\"us\"' if is_us else ''}>"
+            f"<td class='mono'>{r.get('rank', '')}</td>"
+            f"<td class='mono'>{html_mod.escape(r.get('sail_number') or '—')}</td>"
+            f"<td>{html_mod.escape(r.get('boat_name') or '—')}</td>"
+            f"<td>{html_mod.escape(r.get('boat_type') or '—')}</td>"
+            f"<td>{html_mod.escape(r.get('skipper') or '—')}</td>"
+            f"<td class='mono'>{r.get('handicap', '')}</td>"
+            f"<td class='mono'>{html_mod.escape(_short_time(r.get('elapsed_time', '')))}</td>"
+            f"<td class='mono'>{html_mod.escape(_short_time(r.get('corrected_time', '')))}</td>"
+            f"<td class='mono'>{html_mod.escape(_short_time(r.get('delta', '')))}</td>"
+            f"<td class='mono'>{html_mod.escape(r.get('finish_time') or '—')}</td>"
+            f"</tr>"
+        )
+    fleet_table = (
+        "<table class='fleet-table'><thead><tr>"
+        "<th>Pos</th><th>Sail</th><th>Boat</th><th>Type</th><th>Skipper</th>"
+        "<th>HCap</th><th class='mono'>Elapsed</th><th class='mono'>Corrected</th>"
+        "<th class='mono'>Delta</th><th>Finish</th></tr></thead>"
+        f"<tbody>{''.join(rows)}</tbody></table>"
+    )
+
+    loss_rows = []
+    for typ in comparison["loss_order"]:
+        b = comparison["losses"][typ]
+        label = fleet_comparison.TYPE_LABELS.get(typ, typ)
+        loss_rows.append(
+            f"<tr><td>{label}</td><td class='mono'>{b['n']}</td>"
+            f"<td class='mono'>{b['total_s']:.1f}s</td><td class='mono'>{b['avg_s']:.1f}s</td></tr>"
+        )
+    loss_table = (
+        "<table class='fleet-table'><thead><tr><th>Mistake type</th><th>Count</th>"
+        "<th class='mono'>Total lost</th><th class='mono'>Avg / event</th></tr></thead>"
+        f"<tbody>{''.join(loss_rows)}"
+        f"<tr><td><strong>Total</strong></td><td class='mono'></td>"
+        f"<td class='mono'><strong>{comparison['total_lost_s']:.1f}s</strong></td><td class='mono'></td></tr>"
+        "</tbody></table>"
+    )
+
+    tier_rows = []
+    for t in comparison["tiers"]:
+        gap = f"{t['gap_to_next_s']:.0f}s behind {t['next_boat']}" if t["gap_to_next_s"] is not None else "in the lead"
+        tier_rows.append(
+            f"<tr><td>{html_mod.escape(t['label'])}</td>"
+            f"<td class='mono'>{fleet_comparison.format_hms(t['elapsed_s'])}</td>"
+            f"<td class='mono'>{fleet_comparison.format_hms(t['corrected_s'])}</td>"
+            f"<td class='mono'>{t['rank']} / {comparison['n_finishers']}</td>"
+            f"<td>{html_mod.escape(gap)}</td></tr>"
+        )
+    tier_table = (
+        "<table class='fleet-table'><thead><tr><th>Scenario</th>"
+        "<th class='mono'>Elapsed</th><th class='mono'>Corrected</th><th>Rank</th><th>Gap</th></tr></thead>"
+        f"<tbody>{''.join(tier_rows)}</tbody></table>"
+    )
+
+    final_tier = comparison["tiers"][-1]
+    if comparison["boats_beaten"]:
+        beaten = ", ".join(comparison["boats_beaten"])
+        summary = (
+            f"<p>Sailing every tack, gybe, and rounding turn with zero loss (an estimated "
+            f"{comparison['total_lost_s']:.0f}s of the {target}'s own detected losses) would have "
+            f"moved {target} from {comparison['actual_rank']}th to {final_tier['rank']}th of "
+            f"{comparison['n_finishers']}, ahead of {beaten}.</p>"
+        )
+    else:
+        gap = final_tier["gap_to_next_s"]
+        next_boat = final_tier["next_boat"]
+        summary = (
+            f"<p>Removing all {comparison['total_lost_s']:.0f}s of detected tack/gybe/rounding losses "
+            f"still leaves {target} {final_tier['rank']}th of {comparison['n_finishers']} — the gap to "
+            f"{next_boat} narrows from {comparison['tiers'][0]['gap_to_next_s']:.0f}s to {gap:.0f}s, but "
+            f"no boat was actually within reach today. No fabricated placements here — the numbers just "
+            f"don't stretch that far.</p>"
+        )
+
+    return f"""
+<section id="fleet-section">
+  <div class="section-head"><span class="section-title">Fleet Comparison</span></div>
+  <div class="fleet-table-wrap">{fleet_table}</div>
+  <div class="fleet-subhead">Mistakes by type</div>
+  <div class="fleet-table-wrap">{loss_table}</div>
+  <div class="fleet-subhead">Progression if mistakes had not been made</div>
+  <div class="fleet-table-wrap">{tier_table}</div>
+  <div class="fleet-summary">{summary}</div>
+</section>
+"""
+
+
 def render_race_page(conn, polar, race_meta):
     sid = race_meta["id"]
     course = export_course(conn, sid)
@@ -878,6 +1007,8 @@ def render_race_page(conn, polar, race_meta):
     else:
         coach_html = "<p class='coach-empty'>No report yet for this race.</p>"
 
+    fleet_section_html = _fleet_comparison_html(fleet_comparison.compute(conn, race_meta))
+
     html = (PAGE_TEMPLATE
             .replace("__TITLE__", title)
             .replace("__SERIES__", race_meta["series"])
@@ -885,7 +1016,8 @@ def render_race_page(conn, polar, race_meta):
             .replace("__RACE_META__", json.dumps(meta))
             .replace("__COURSE_DATA__", json.dumps(course, separators=(",", ":")))
             .replace("__POLAR_DATA__", json.dumps(polar_data, separators=(",", ":")))
-            .replace("__COACH_HTML__", coach_html))
+            .replace("__COACH_HTML__", coach_html)
+            .replace("__FLEET_COMPARISON_SECTION__", fleet_section_html))
     return html
 
 

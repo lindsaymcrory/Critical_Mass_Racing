@@ -170,6 +170,22 @@
   .coach-box strong { color: var(--paper); }
   .coach-empty { color: var(--dim); font-style: italic; }
 
+  /* -- Fleet Comparison -- */
+  .fleet-summary {
+    margin: 4px 24px 20px; padding: 16px 20px;
+    border: 1px solid var(--hair); border-radius: var(--radius);
+    background: var(--panel); font-size: 13.5px; line-height: 1.6; max-width: 900px;
+  }
+  .fleet-table-wrap { margin: 4px 24px 24px; border: 1px solid var(--hair); border-radius: var(--radius); overflow-x: auto; }
+  table.fleet-table { width: 100%; border-collapse: collapse; font-size: 12.5px; white-space: nowrap; }
+  table.fleet-table th, table.fleet-table td { padding: 9px 14px; text-align: left; border-top: 1px solid var(--hair); }
+  table.fleet-table th { text-transform: uppercase; letter-spacing: 0.06em; font-size: 10.5px; color: var(--dim); background: var(--panel-2); border-top: none; }
+  table.fleet-table tr:first-child td { border-top: none; }
+  table.fleet-table td.mono, table.fleet-table th.mono { font-family: ui-monospace, "SF Mono", "Cascadia Mono", monospace; }
+  table.fleet-table tr.us { background: rgba(245, 185, 66, 0.1); }
+  table.fleet-table tr.us td:first-child { border-left: 2px solid var(--mark); }
+  .fleet-subhead { padding: 20px 24px 8px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim); }
+
   footer {
     padding: 12px 24px; background: var(--panel-2);
     font-size: 10.5px; color: var(--dim-2); display: flex; gap: 18px; flex-wrap: wrap;
@@ -278,6 +294,16 @@
 <li><strong>Raw upwind speed vs. target (medium confidence).</strong> Angle was reasonably close to optimal (4° gap) but boat speed was still only 68.4% of target. <em>Action:</em> since angle isn&#x27;t the main issue here, focus on trim and speed-building in the 8–13 kn range rather than pointing higher.</li>
 <li><strong>The single worst tack at 21:27:11 (low confidence — one data point).</strong> A 14 s tack with a 136° swing lost 54.4%, the worst of the race. <em>Action:</em> worth a look, but treat as an outlier rather than a pattern given the otherwise-solid tacking shown later in the race.</li>
 </ol></div>
+</section>
+
+<section id="fleet-section">
+  <div class="section-head"><span class="section-title">Fleet Comparison</span></div>
+  <div class="fleet-table-wrap"><table class='fleet-table'><thead><tr><th>Pos</th><th>Sail</th><th>Boat</th><th>Type</th><th>Skipper</th><th>HCap</th><th class='mono'>Elapsed</th><th class='mono'>Corrected</th><th class='mono'>Delta</th><th>Finish</th></tr></thead><tbody><tr><td class='mono'>1</td><td class='mono'>—</td><td>Chaos</td><td>—</td><td>Mark Gosine</td><td class='mono'>30</td><td class='mono'>01:03:47</td><td class='mono'>01:19:52</td><td class='mono'>00:00:00</td><td class='mono'>19:18:47</td></tr><tr><td class='mono'>2</td><td class='mono'>613</td><td>Spitfire</td><td>Etchells</td><td>Alyson Petsche</td><td class='mono'>114</td><td class='mono'>01:14:35</td><td class='mono'>01:21:07</td><td class='mono'>-00:01:15</td><td class='mono'>19:29:35</td></tr><tr><td class='mono'>3</td><td class='mono'>32567</td><td>Vagrant</td><td>—</td><td>Grant Gordon</td><td class='mono'>114</td><td class='mono'>01:18:16</td><td class='mono'>01:25:08</td><td class='mono'>-00:05:15</td><td class='mono'>19:33:16</td></tr><tr><td class='mono'>4</td><td class='mono'>—</td><td>Five of Harts</td><td>—</td><td>Gordon Hart</td><td class='mono'>81</td><td class='mono'>01:14:54</td><td class='mono'>01:25:54</td><td class='mono'>-00:06:02</td><td class='mono'>19:29:54</td></tr><tr><td class='mono'>5</td><td class='mono'>—</td><td>Trident</td><td>—</td><td>Richard Gerstenberger</td><td class='mono'>87</td><td class='mono'>01:15:41</td><td class='mono'>01:25:57</td><td class='mono'>-00:06:04</td><td class='mono'>19:30:41</td></tr><tr><td class='mono'>6</td><td class='mono'>56</td><td>Equinox</td><td>C&amp;C 99</td><td>Rod Stright</td><td class='mono'>99</td><td class='mono'>01:17:18</td><td class='mono'>01:26:06</td><td class='mono'>-00:06:13</td><td class='mono'>19:32:18</td></tr><tr><td class='mono'>7</td><td class='mono'>29</td><td>Eclipse</td><td>—</td><td>Tyler Ford</td><td class='mono'>120</td><td class='mono'>01:21:31</td><td class='mono'>01:27:50</td><td class='mono'>-00:07:58</td><td class='mono'>19:36:31</td></tr><tr class="us"><td class='mono'>8</td><td class='mono'>—</td><td>Critical Mass</td><td>—</td><td>Lindsay McRory</td><td class='mono'>123</td><td class='mono'>01:23:52</td><td class='mono'>01:29:57</td><td class='mono'>-00:10:05</td><td class='mono'>19:38:52</td></tr><tr><td class='mono'>9</td><td class='mono'>26</td><td>Cyanara</td><td>C&amp;C 110</td><td>Garrett Landry</td><td class='mono'>102</td><td class='mono'>01:25:13</td><td class='mono'>01:34:28</td><td class='mono'>-00:14:35</td><td class='mono'>19:40:13</td></tr><tr><td class='mono'>10</td><td class='mono'>—</td><td>—</td><td>—</td><td>Ankit Gaur</td><td class='mono'>0</td><td class='mono'>DNC - 12</td><td class='mono'>DNC - 12</td><td class='mono'>DNC - 12</td><td class='mono'>DNC - 12</td></tr><tr><td class='mono'>11</td><td class='mono'>99050</td><td>Agent</td><td>—</td><td>Rob Crutcher</td><td class='mono'>99</td><td class='mono'>DNC - 12</td><td class='mono'>DNC - 12</td><td class='mono'>DNC - 12</td><td class='mono'>DNC - 12</td></tr></tbody></table></div>
+  <div class="fleet-subhead">Mistakes by type</div>
+  <div class="fleet-table-wrap"><table class='fleet-table'><thead><tr><th>Mistake type</th><th>Count</th><th class='mono'>Total lost</th><th class='mono'>Avg / event</th></tr></thead><tbody><tr><td>Tacks</td><td class='mono'>17</td><td class='mono'>57.5s</td><td class='mono'>3.4s</td></tr><tr><td>Gybes</td><td class='mono'>7</td><td class='mono'>25.7s</td><td class='mono'>3.7s</td></tr><tr><td>Roundings</td><td class='mono'>4</td><td class='mono'>20.9s</td><td class='mono'>5.2s</td></tr><tr><td><strong>Total</strong></td><td class='mono'></td><td class='mono'><strong>104.1s</strong></td><td class='mono'></td></tr></tbody></table></div>
+  <div class="fleet-subhead">Progression if mistakes had not been made</div>
+  <div class="fleet-table-wrap"><table class='fleet-table'><thead><tr><th>Scenario</th><th class='mono'>Elapsed</th><th class='mono'>Corrected</th><th>Rank</th><th>Gap</th></tr></thead><tbody><tr><td>Actual result</td><td class='mono'>1:23:52</td><td class='mono'>1:29:57</td><td class='mono'>8 / 9</td><td>127s behind Eclipse</td></tr><tr><td>+ fix tacks</td><td class='mono'>1:22:55</td><td class='mono'>1:29:00</td><td class='mono'>8 / 9</td><td>70s behind Eclipse</td></tr><tr><td>+ fix gybes</td><td class='mono'>1:22:29</td><td class='mono'>1:28:34</td><td class='mono'>8 / 9</td><td>44s behind Eclipse</td></tr><tr><td>+ fix roundings</td><td class='mono'>1:22:08</td><td class='mono'>1:28:13</td><td class='mono'>8 / 9</td><td>23s behind Eclipse</td></tr></tbody></table></div>
+  <div class="fleet-summary"><p>Removing all 104s of detected tack/gybe/rounding losses still leaves Critical Mass 8th of 9 — the gap to Eclipse narrows from 127s to 23s, but no boat was actually within reach today. No fabricated placements here — the numbers just don't stretch that far.</p></div>
 </section>
 
 <footer>
