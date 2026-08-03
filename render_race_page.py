@@ -882,6 +882,9 @@ def _short_time(s):
     return f"{m.group(1)}{m.group(2)}" if m else s
 
 
+_US_CLASS = ' class="us"'
+
+
 def _fleet_comparison_html(comparison):
     """Builds the Fleet Comparison section's inner HTML from
     fleet_comparison.compute()'s result, or '' if the race has no fleet
@@ -895,7 +898,7 @@ def _fleet_comparison_html(comparison):
     for r in comparison["fleet_results"]:
         is_us = r.get("boat_name") == target
         rows.append(
-            f"<tr{' class=\"us\"' if is_us else ''}>"
+            f"<tr{_US_CLASS if is_us else ''}>"
             f"<td class='mono'>{r.get('rank', '')}</td>"
             f"<td class='mono'>{html_mod.escape(r.get('sail_number') or '—')}</td>"
             f"<td>{html_mod.escape(r.get('boat_name') or '—')}</td>"
