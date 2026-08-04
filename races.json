@@ -25,12 +25,13 @@
       "html_path": "races/1.html",
       "tws_range": [
         0.4,
-        24.4
+        22.5
       ],
       "bsp_range": [
         1.6,
         8.4
-      ]
+      ],
+      "trim_end_utc": "2026-07-13 21:48:14"
     },
     {
       "id": 2,
@@ -256,12 +257,13 @@
       "html_path": "races/9.html",
       "tws_range": [
         1.5,
-        15.5
+        13.0
       ],
       "bsp_range": [
         1.5,
-        6.6
-      ]
+        5.0
+      ],
+      "trim_end_utc": "2026-07-27 21:46:47"
     },
     {
       "id": 10,
@@ -284,7 +286,7 @@
       "notes": "Long course with light to moderate conditions.",
       "html_path": "races/10.html",
       "tws_range": [
-        1.1,
+        4.4,
         16.0
       ],
       "bsp_range": [
@@ -292,18 +294,140 @@
         6.9
       ],
       "fleet_results": [
-        {"rank": 1, "sail_number": null, "boat_name": "Chaos", "boat_type": null, "skipper": "Mark Gosine", "handicap": 30, "corrected_time": "0:01:19:52", "delta": "0:00:00:00", "elapsed_time": "0:01:03:47", "finish_time": "19:18:47"},
-        {"rank": 2, "sail_number": "613", "boat_name": "Spitfire", "boat_type": "Etchells", "skipper": "Alyson Petsche", "handicap": 114, "corrected_time": "0:01:21:07", "delta": "-0:00:01:15", "elapsed_time": "0:01:14:35", "finish_time": "19:29:35"},
-        {"rank": 3, "sail_number": "32567", "boat_name": "Vagrant", "boat_type": null, "skipper": "Grant Gordon", "handicap": 114, "corrected_time": "0:01:25:08", "delta": "-0:00:05:15", "elapsed_time": "0:01:18:16", "finish_time": "19:33:16"},
-        {"rank": 4, "sail_number": null, "boat_name": "Five of Harts", "boat_type": null, "skipper": "Gordon Hart", "handicap": 81, "corrected_time": "0:01:25:54", "delta": "-0:00:06:02", "elapsed_time": "0:01:14:54", "finish_time": "19:29:54"},
-        {"rank": 5, "sail_number": null, "boat_name": "Trident", "boat_type": null, "skipper": "Richard Gerstenberger", "handicap": 87, "corrected_time": "0:01:25:57", "delta": "-0:00:06:04", "elapsed_time": "0:01:15:41", "finish_time": "19:30:41"},
-        {"rank": 6, "sail_number": "56", "boat_name": "Equinox", "boat_type": "C&C 99", "skipper": "Rod Stright", "handicap": 99, "corrected_time": "0:01:26:06", "delta": "-0:00:06:13", "elapsed_time": "0:01:17:18", "finish_time": "19:32:18"},
-        {"rank": 7, "sail_number": "29", "boat_name": "Eclipse", "boat_type": null, "skipper": "Tyler Ford", "handicap": 120, "corrected_time": "0:01:27:50", "delta": "-0:00:07:58", "elapsed_time": "0:01:21:31", "finish_time": "19:36:31"},
-        {"rank": 8, "sail_number": null, "boat_name": "Critical Mass", "boat_type": null, "skipper": "Lindsay McRory", "handicap": 123, "corrected_time": "0:01:29:57", "delta": "-0:00:10:05", "elapsed_time": "0:01:23:52", "finish_time": "19:38:52"},
-        {"rank": 9, "sail_number": "26", "boat_name": "Cyanara", "boat_type": "C&C 110", "skipper": "Garrett Landry", "handicap": 102, "corrected_time": "0:01:34:28", "delta": "-0:00:14:35", "elapsed_time": "0:01:25:13", "finish_time": "19:40:13"},
-        {"rank": 10, "sail_number": null, "boat_name": null, "boat_type": null, "skipper": "Ankit Gaur", "handicap": 0, "corrected_time": "DNC - 12", "delta": "DNC - 12", "elapsed_time": "DNC - 12", "finish_time": "DNC - 12"},
-        {"rank": 11, "sail_number": "99050", "boat_name": "Agent", "boat_type": null, "skipper": "Rob Crutcher", "handicap": 99, "corrected_time": "DNC - 12", "delta": "DNC - 12", "elapsed_time": "DNC - 12", "finish_time": "DNC - 12"}
-      ]
+        {
+          "rank": 1,
+          "sail_number": null,
+          "boat_name": "Chaos",
+          "boat_type": null,
+          "skipper": "Mark Gosine",
+          "handicap": 30,
+          "corrected_time": "0:01:19:52",
+          "delta": "0:00:00:00",
+          "elapsed_time": "0:01:03:47",
+          "finish_time": "19:18:47"
+        },
+        {
+          "rank": 2,
+          "sail_number": "613",
+          "boat_name": "Spitfire",
+          "boat_type": "Etchells",
+          "skipper": "Alyson Petsche",
+          "handicap": 114,
+          "corrected_time": "0:01:21:07",
+          "delta": "-0:00:01:15",
+          "elapsed_time": "0:01:14:35",
+          "finish_time": "19:29:35"
+        },
+        {
+          "rank": 3,
+          "sail_number": "32567",
+          "boat_name": "Vagrant",
+          "boat_type": null,
+          "skipper": "Grant Gordon",
+          "handicap": 114,
+          "corrected_time": "0:01:25:08",
+          "delta": "-0:00:05:15",
+          "elapsed_time": "0:01:18:16",
+          "finish_time": "19:33:16"
+        },
+        {
+          "rank": 4,
+          "sail_number": null,
+          "boat_name": "Five of Harts",
+          "boat_type": null,
+          "skipper": "Gordon Hart",
+          "handicap": 81,
+          "corrected_time": "0:01:25:54",
+          "delta": "-0:00:06:02",
+          "elapsed_time": "0:01:14:54",
+          "finish_time": "19:29:54"
+        },
+        {
+          "rank": 5,
+          "sail_number": null,
+          "boat_name": "Trident",
+          "boat_type": null,
+          "skipper": "Richard Gerstenberger",
+          "handicap": 87,
+          "corrected_time": "0:01:25:57",
+          "delta": "-0:00:06:04",
+          "elapsed_time": "0:01:15:41",
+          "finish_time": "19:30:41"
+        },
+        {
+          "rank": 6,
+          "sail_number": "56",
+          "boat_name": "Equinox",
+          "boat_type": "C&C 99",
+          "skipper": "Rod Stright",
+          "handicap": 99,
+          "corrected_time": "0:01:26:06",
+          "delta": "-0:00:06:13",
+          "elapsed_time": "0:01:17:18",
+          "finish_time": "19:32:18"
+        },
+        {
+          "rank": 7,
+          "sail_number": "29",
+          "boat_name": "Eclipse",
+          "boat_type": null,
+          "skipper": "Tyler Ford",
+          "handicap": 120,
+          "corrected_time": "0:01:27:50",
+          "delta": "-0:00:07:58",
+          "elapsed_time": "0:01:21:31",
+          "finish_time": "19:36:31"
+        },
+        {
+          "rank": 8,
+          "sail_number": null,
+          "boat_name": "Critical Mass",
+          "boat_type": null,
+          "skipper": "Lindsay McRory",
+          "handicap": 123,
+          "corrected_time": "0:01:29:57",
+          "delta": "-0:00:10:05",
+          "elapsed_time": "0:01:23:52",
+          "finish_time": "19:38:52"
+        },
+        {
+          "rank": 9,
+          "sail_number": "26",
+          "boat_name": "Cyanara",
+          "boat_type": "C&C 110",
+          "skipper": "Garrett Landry",
+          "handicap": 102,
+          "corrected_time": "0:01:34:28",
+          "delta": "-0:00:14:35",
+          "elapsed_time": "0:01:25:13",
+          "finish_time": "19:40:13"
+        },
+        {
+          "rank": 10,
+          "sail_number": null,
+          "boat_name": null,
+          "boat_type": null,
+          "skipper": "Ankit Gaur",
+          "handicap": 0,
+          "corrected_time": "DNC - 12",
+          "delta": "DNC - 12",
+          "elapsed_time": "DNC - 12",
+          "finish_time": "DNC - 12"
+        },
+        {
+          "rank": 11,
+          "sail_number": "99050",
+          "boat_name": "Agent",
+          "boat_type": null,
+          "skipper": "Rob Crutcher",
+          "handicap": 99,
+          "corrected_time": "DNC - 12",
+          "delta": "DNC - 12",
+          "elapsed_time": "DNC - 12",
+          "finish_time": "DNC - 12"
+        }
+      ],
+      "trim_end_utc": "2026-07-29 22:16:13"
     }
   ]
 }
