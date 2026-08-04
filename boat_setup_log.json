@@ -1,71 +1,119 @@
 {
-  "next_id": 12,
+  "next_id": 13,
   "entries": [
     {
       "id": 1,
       "date": "2026-05-13",
       "label": "Bottom Clean",
-      "values": ["light touch up and sand."]
+      "values": [
+        "light touch up and sand."
+      ]
     },
     {
       "id": 2,
       "date": "2026-05-13",
       "label": "Mast Rake set",
-      "values": ["37' 2.75\""]
+      "values": [
+        "37' 2.75\""
+      ]
     },
     {
       "id": 3,
       "date": "2026-05-13",
       "label": "Mast PreBend set",
-      "values": ["3.5\""]
+      "values": [
+        "3.5\""
+      ]
     },
     {
       "id": 4,
       "date": "2026-05-13",
       "label": "rig tune - (6~10)",
-      "values": ["28", "5", "12"]
+      "values": [
+        "28",
+        "5",
+        "12"
+      ]
     },
     {
       "id": 5,
       "date": "2026-05-15",
       "label": "rig tune - (11~15)",
-      "values": ["30", "15", "15"]
+      "values": [
+        "30",
+        "15",
+        "15"
+      ]
     },
     {
       "id": 6,
       "date": "2026-05-27",
       "label": "rig tune - (16~20)",
-      "values": ["32", "22", "22"]
+      "values": [
+        "32",
+        "22",
+        "22"
+      ]
     },
     {
       "id": 7,
       "date": "2026-06-10",
       "label": "rig tune - (11~15)",
-      "values": ["30", "15", "15"]
+      "values": [
+        "30",
+        "15",
+        "15"
+      ]
     },
     {
       "id": 8,
       "date": "2026-06-13",
       "label": "rig tune - (6~10)",
-      "values": ["28", "5", "12"]
+      "values": [
+        "28",
+        "5",
+        "12"
+      ]
     },
     {
       "id": 9,
       "date": "2026-06-24",
       "label": "rig tune - (11~15)",
-      "values": ["30", "15", "15"]
+      "values": [
+        "30",
+        "15",
+        "15"
+      ]
     },
     {
       "id": 10,
       "date": "2026-07-15",
       "label": "rig tune - (6~10)",
-      "values": ["28", "5", "12"]
+      "values": [
+        "28",
+        "5",
+        "12"
+      ]
     },
     {
       "id": 11,
       "date": "2026-07-22",
       "label": "rig tune - (11~15)",
-      "values": ["30", "15", "15"]
+      "values": [
+        "30",
+        "15",
+        "15"
+      ]
+    },
+    {
+      "id": 12,
+      "date": "2026-08-03",
+      "label": "rig tune - (11~15)",
+      "values": [
+        "30",
+        "15",
+        "15"
+      ]
     }
   ]
 }
