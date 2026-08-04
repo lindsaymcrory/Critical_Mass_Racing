@@ -63,7 +63,15 @@ OSM_USER_AGENT = "CriticalMassRacing/1.0 (personal race-video overlay tool)"
 FRAME_W, FRAME_H = 640, 480
 PANEL_FONT_PATH = "/System/Library/Fonts/Supplemental/Arial.ttf"
 PANEL_FONT_BOLD_PATH = "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
-TRAIL_SECONDS = 60
+
+# Title-safe margins: many players/devices overscan-crop roughly the outer
+# 10% of the frame, which was clipping the top panels and hiding the
+# bottom text entirely. Keep all overlay content inside this box.
+MARGIN_X = int(FRAME_W * 0.10)
+MARGIN_TOP = int(FRAME_H * 0.10)
+MARGIN_BOTTOM = int(FRAME_H * 0.10)
+
+TRACK_STEP_S = 3  # breadcrumb sampling interval (matches export_course_data.py's own decimation)
 
 
 # --------------------------------------------------------------- telemetry
@@ -280,7 +288,7 @@ def draw_bottom_text(draw, text, font):
     bbox = draw.textbbox((0, 0), text, font=font)
     tw = bbox[2] - bbox[0]
     x = (FRAME_W - tw) / 2
-    y = FRAME_H - 34
+    y = FRAME_H - MARGIN_BOTTOM - 26
     pad = 8
     draw.rounded_rectangle([x - pad, y - 4, x + tw + pad, y + 22], radius=6, fill=(10, 26, 32, 150))
     draw.text((x, y), text, font=font, fill=(231, 237, 233, 255))
@@ -315,24 +323,34 @@ def render_overlay_frames(race, series, video_start_utc, video_end_utc, sailing_
     n_seconds = int((video_end_utc - video_start_utc).total_seconds()) + 1
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    # Precompute the full-race breadcrumb track once (from the actual start
+    # of sailing through the end of the video), so each frame just slices
+    # this list instead of re-sampling telemetry for every prior second --
+    # O(n) total instead of O(n^2).
+    track_ts, track_latlon = [], []
+    tt = sailing_start_utc
+    while tt <= video_end_utc:
+        samp = _sample(series, tt)
+        if samp["lat"] is not None:
+            track_ts.append(tt)
+            track_latlon.append((samp["lat"], samp["lon"]))
+        tt += timedelta(seconds=TRACK_STEP_S)
+
+    panel_x, panel_y, panel_w, panel_h = FRAME_W - MARGIN_X - 176, MARGIN_TOP, 176, 110
+    map_x, map_y = MARGIN_X, MARGIN_TOP
+
     for i in range(n_seconds):
         t = video_start_utc + timedelta(seconds=i)
         frame = Image.new("RGBA", (FRAME_W, FRAME_H), (0, 0, 0, 0))
         draw = ImageDraw.Draw(frame)
 
         sample = _sample(series, t)
-        draw_performance_panel(draw, FRAME_W - 190, 14, 176, 110, sample, panel_font, panel_font_bold)
+        draw_performance_panel(draw, panel_x, panel_y, panel_w, panel_h, sample, panel_font, panel_font_bold)
 
-        trail = []
-        for s in range(TRAIL_SECONDS):
-            tt = t - timedelta(seconds=s)
-            if tt < video_start_utc:
-                break
-            samp = _sample(series, tt)
-            if samp["lat"] is not None:
-                trail.append((samp["lat"], samp["lon"]))
-        draw_map_panel(frame, 14, 14, map_w, map_h, basemap_img, project_fn, marks,
-                        list(reversed(trail)), (sample["lat"], sample["lon"]))
+        trail_end = bisect.bisect_right(track_ts, t)
+        trail = track_latlon[:trail_end]
+        draw_map_panel(frame, map_x, map_y, map_w, map_h, basemap_img, project_fn, marks,
+                        trail, (sample["lat"], sample["lon"]))
 
         if t < sailing_start_utc:
             clock_text = f"{label_prefix}  In sequence"
