@@ -1,5 +1,5 @@
 {
-  "next_id": 11,
+  "next_id": 12,
   "races": [
     {
       "id": 1,
@@ -428,6 +428,37 @@
         }
       ],
       "trim_end_utc": "2026-07-29 22:16:13"
+    },
+    {
+      "id": 11,
+      "race_date": "2026-08-03",
+      "local_start_time": "18:15",
+      "series": "WoW",
+      "boat": "Critical Mass",
+      "crew_count": 4,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000009_052.ebl",
+        "000009_053.ebl",
+        "000009_054.ebl",
+        "000009_055.ebl",
+        "000009_056.ebl",
+        "000009_057.ebl",
+        "000009_058.ebl",
+        "000009_059.ebl",
+        "000009_060.ebl"
+      ],
+      "notes": "Jayme driving, challenging conditions and a gentle broach \ud83d\ude42",
+      "html_path": "races/11.html",
+      "tws_range": [
+        0.3,
+        25.7
+      ],
+      "bsp_range": [
+        1.5,
+        9.6
+      ],
+      "trim_end_utc": "2026-08-03 21:48:46"
     }
   ]
 }
