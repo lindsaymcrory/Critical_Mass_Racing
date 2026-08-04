@@ -34,3 +34,6 @@ w2k_dump_summary.*
 # Third-party reference PDFs (Actisense manuals) -- not ours to redistribute
 Docs/
 .env
+
+# Raw and overlaid race video (large, local-only) -- never shipped
+Videos/
