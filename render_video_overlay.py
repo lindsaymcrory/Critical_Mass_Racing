@@ -397,12 +397,23 @@ def process_video(race_id, video_filename, video_offset_seconds):
 
     print(f"# Decoding telemetry for race {race_id} ({race['race_date']} {race['series']})...")
     series = _decode_race_channels(race)
-    t_min = min(series["position"][0])
-    t_max = max(series["position"][0])
-    sailing_start_utc = _detect_sailing_start(series, t_min, t_max)
-    print(f"#   sailing start detected at {sailing_start_utc} (video offset {video_offset_seconds}s)")
 
-    video_start_utc = sailing_start_utc - timedelta(seconds=video_offset_seconds)
+    # The race-clock anchor is the actual gun time: the race's saved
+    # trim_start_utc when present (set from the known start time, e.g.
+    # 18:20 ADT = 21:20 UTC -- the logger clock is true UTC, verified by
+    # GPS cross-correlation against a Vakaros track). Falls back to
+    # first-sustained-underway detection only for races without one, which
+    # can land on the pre-race motor out rather than the gun.
+    if race.get("trim_start_utc"):
+        race_start_utc = datetime.fromisoformat(race["trim_start_utc"])
+        print(f"#   race start (gun) from trim_start_utc: {race_start_utc} (video offset {video_offset_seconds}s)")
+    else:
+        t_min = min(series["position"][0])
+        t_max = max(series["position"][0])
+        race_start_utc = _detect_sailing_start(series, t_min, t_max)
+        print(f"#   race start estimated from first sustained underway: {race_start_utc} (video offset {video_offset_seconds}s)")
+
+    video_start_utc = race_start_utc - timedelta(seconds=video_offset_seconds)
     duration = ffprobe_duration(video_path)
     video_end_utc = video_start_utc + timedelta(seconds=duration)
     print(f"#   video covers {video_start_utc} -> {video_end_utc} ({duration:.0f}s)")
@@ -410,7 +421,7 @@ def process_video(race_id, video_filename, video_offset_seconds):
     with tempfile.TemporaryDirectory(prefix=f"overlay_{race_id}_") as tmp:
         overlay_dir = Path(tmp)
         print(f"# Rendering {int(duration)+1} overlay frames to {overlay_dir}...")
-        render_overlay_frames(race, series, video_start_utc, video_end_utc, sailing_start_utc, overlay_dir)
+        render_overlay_frames(race, series, video_start_utc, video_end_utc, race_start_utc, overlay_dir)
         print(f"# Compositing onto video -> {out_path}...")
         composite(video_path, overlay_dir, out_path)
 

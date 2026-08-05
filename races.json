@@ -4,7 +4,7 @@
     {
       "id": 1,
       "race_date": "2026-07-13",
-      "local_start_time": "18:15",
+      "local_start_time": "18:20",
       "series": "WoW",
       "boat": "Critical Mass",
       "crew_count": 3,
@@ -24,19 +24,20 @@
       "notes": "First WOW, Jayme driving.",
       "html_path": "races/1.html",
       "tws_range": [
-        0.4,
-        22.5
+        7.0,
+        23.9
       ],
       "bsp_range": [
-        1.6,
+        1.7,
         8.4
       ],
-      "trim_end_utc": "2026-07-13 21:48:14"
+      "trim_end_utc": "2026-07-13 22:31:26",
+      "trim_start_utc": "2026-07-13 21:20:00"
     },
     {
       "id": 2,
       "race_date": "2026-07-20",
-      "local_start_time": "18:15",
+      "local_start_time": "18:20",
       "series": "WoW",
       "boat": "Critical Mass",
       "crew_count": 3,
@@ -85,7 +86,7 @@
     {
       "id": 4,
       "race_date": "2026-06-17",
-      "local_start_time": "18:15",
+      "local_start_time": "18:20",
       "series": "Wed Nights",
       "boat": "Critical Mass",
       "crew_count": 4,
@@ -127,7 +128,7 @@
     {
       "id": 5,
       "race_date": "2026-06-24",
-      "local_start_time": "18:15",
+      "local_start_time": "18:20",
       "series": "Wed Nights",
       "boat": "Critical Mass",
       "crew_count": 4,
@@ -156,7 +157,7 @@
     {
       "id": 6,
       "race_date": "2026-07-08",
-      "local_start_time": "18:15",
+      "local_start_time": "18:20",
       "series": "Wed Nights",
       "boat": "Critical Mass",
       "crew_count": 4,
@@ -256,19 +257,20 @@
       "notes": "Last WoW, Jayme driving, shifty night.",
       "html_path": "races/9.html",
       "tws_range": [
-        1.5,
-        13.0
+        4.5,
+        15.5
       ],
       "bsp_range": [
-        1.5,
-        5.0
+        2.2,
+        6.6
       ],
-      "trim_end_utc": "2026-07-27 21:46:47"
+      "trim_end_utc": "2026-07-27 22:47:47",
+      "trim_start_utc": "2026-07-27 21:35:00"
     },
     {
       "id": 10,
       "race_date": "2026-07-29",
-      "local_start_time": "18:15",
+      "local_start_time": "18:20",
       "series": "Wednesday Night",
       "boat": "Critical Mass",
       "crew_count": 3,
@@ -286,11 +288,11 @@
       "notes": "Long course with light to moderate conditions.",
       "html_path": "races/10.html",
       "tws_range": [
-        4.4,
-        16.0
+        5.4,
+        15.8
       ],
       "bsp_range": [
-        1.5,
+        1.6,
         6.9
       ],
       "fleet_results": [
@@ -427,12 +429,13 @@
           "finish_time": "DNC - 12"
         }
       ],
-      "trim_end_utc": "2026-07-29 22:16:13"
+      "trim_end_utc": "2026-07-29 22:43:00",
+      "trim_start_utc": "2026-07-29 21:20:00"
     },
     {
       "id": 11,
       "race_date": "2026-08-03",
-      "local_start_time": "18:15",
+      "local_start_time": "18:20",
       "series": "Monday Night",
       "boat": "Critical Mass",
       "crew_count": 4,
@@ -451,15 +454,15 @@
       "notes": "Jayme driving, challenging conditions and a gentle broach \ud83d\ude42",
       "html_path": "races/11.html",
       "tws_range": [
-        7.0,
+        1.4,
         28.3
       ],
       "bsp_range": [
-        1.9,
+        1.5,
         9.9
       ],
-      "trim_end_utc": "2026-08-03 22:03:07",
-      "trim_start_utc": "2026-08-03 20:50:25"
+      "trim_end_utc": "2026-08-03 22:32:42",
+      "trim_start_utc": "2026-08-03 21:20:00"
     }
   ]
 }

@@ -170,6 +170,22 @@
   .coach-box strong { color: var(--paper); }
   .coach-empty { color: var(--dim); font-style: italic; }
 
+  /* -- Fleet Comparison -- */
+  .fleet-summary {
+    margin: 4px 24px 20px; padding: 16px 20px;
+    border: 1px solid var(--hair); border-radius: var(--radius);
+    background: var(--panel); font-size: 13.5px; line-height: 1.6; max-width: 900px;
+  }
+  .fleet-table-wrap { margin: 4px 24px 24px; border: 1px solid var(--hair); border-radius: var(--radius); overflow-x: auto; }
+  table.fleet-table { width: 100%; border-collapse: collapse; font-size: 12.5px; white-space: nowrap; }
+  table.fleet-table th, table.fleet-table td { padding: 9px 14px; text-align: left; border-top: 1px solid var(--hair); }
+  table.fleet-table th { text-transform: uppercase; letter-spacing: 0.06em; font-size: 10.5px; color: var(--dim); background: var(--panel-2); border-top: none; }
+  table.fleet-table tr:first-child td { border-top: none; }
+  table.fleet-table td.mono, table.fleet-table th.mono { font-family: ui-monospace, "SF Mono", "Cascadia Mono", monospace; }
+  table.fleet-table tr.us { background: rgba(245, 185, 66, 0.1); }
+  table.fleet-table tr.us td:first-child { border-left: 2px solid var(--mark); }
+  .fleet-subhead { padding: 20px 24px 8px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim); }
+
   footer {
     padding: 12px 24px; background: var(--panel-2);
     font-size: 10.5px; color: var(--dim-2); display: flex; gap: 18px; flex-wrap: wrap;
@@ -295,9 +311,10 @@
       return COURSE.maneuvers.filter(m => m.start_utc <= lastTs);
     }
     function fmtLocalTs(ts) {
-      // The logger's own clock records local (ADT) time already, despite
-      // the field being named "utc" -- no timezone conversion needed here.
-      const t = new Date(ts.replace(" ", "T") + "Z");
+      // The logger's clock is true UTC (verified by GPS cross-correlation
+      // against a Vakaros track with explicit timezone offsets -- 2 m median
+      // position agreement at zero clock offset). Display in ADT (UTC-3).
+      const t = new Date(new Date(ts.replace(" ", "T") + "Z").getTime() - 3 * 3600 * 1000);
       return String(t.getUTCHours()).padStart(2, "0") + ":" +
              String(t.getUTCMinutes()).padStart(2, "0") + ":" +
              String(t.getUTCSeconds()).padStart(2, "0");
@@ -386,9 +403,8 @@
         const row = document.createElement("div");
         row.className = "maneuver-row";
         row.tabIndex = 0;
-        // The logger's own clock records local (ADT) time already, despite
-        // the field being named "utc" -- no timezone conversion needed here.
-        const t = new Date(m.start_utc.replace(" ", "T") + "Z");
+        // Logger clock is true UTC (Vakaros-verified); display in ADT (UTC-3).
+        const t = new Date(new Date(m.start_utc.replace(" ", "T") + "Z").getTime() - 3 * 3600 * 1000);
         const hh = String(t.getUTCHours()).padStart(2, "0");
         const mm = String(t.getUTCMinutes()).padStart(2, "0");
         const ss = String(t.getUTCSeconds()).padStart(2, "0");

@@ -59,175 +59,175 @@
       "port": [
         {
           "angle": 20,
-          "avg_stw": 3.49,
+          "avg_stw": 3.48,
           "n": 219
         },
         {
           "angle": 30,
-          "avg_stw": 2.9,
-          "n": 346
+          "avg_stw": 2.93,
+          "n": 323
         },
         {
           "angle": 40,
-          "avg_stw": 2.8,
-          "n": 530
+          "avg_stw": 2.83,
+          "n": 491
         },
         {
           "angle": 50,
-          "avg_stw": 2.96,
-          "n": 499
+          "avg_stw": 2.98,
+          "n": 466
         },
         {
           "angle": 60,
-          "avg_stw": 2.99,
-          "n": 425
+          "avg_stw": 3.02,
+          "n": 409
         },
         {
           "angle": 70,
           "avg_stw": 2.88,
-          "n": 274
+          "n": 261
         },
         {
           "angle": 80,
-          "avg_stw": 2.81,
-          "n": 267
+          "avg_stw": 2.82,
+          "n": 244
         },
         {
           "angle": 90,
           "avg_stw": 2.74,
-          "n": 312
+          "n": 295
         },
         {
           "angle": 100,
-          "avg_stw": 2.68,
-          "n": 280
+          "avg_stw": 2.63,
+          "n": 241
         },
         {
           "angle": 110,
-          "avg_stw": 2.72,
-          "n": 181
+          "avg_stw": 2.6,
+          "n": 146
         },
         {
           "angle": 120,
-          "avg_stw": 2.75,
-          "n": 157
+          "avg_stw": 2.74,
+          "n": 119
         },
         {
           "angle": 130,
           "avg_stw": 2.86,
-          "n": 199
+          "n": 163
         },
         {
           "angle": 140,
-          "avg_stw": 2.58,
-          "n": 327
+          "avg_stw": 2.54,
+          "n": 302
         },
         {
           "angle": 150,
-          "avg_stw": 2.38,
-          "n": 487
+          "avg_stw": 2.37,
+          "n": 483
         },
         {
           "angle": 160,
-          "avg_stw": 2.27,
-          "n": 362
+          "avg_stw": 2.28,
+          "n": 357
         },
         {
           "angle": 170,
-          "avg_stw": 2.24,
-          "n": 201
+          "avg_stw": 2.27,
+          "n": 199
         },
         {
           "angle": 180,
-          "avg_stw": 2.51,
-          "n": 76
+          "avg_stw": 2.53,
+          "n": 75
         }
       ],
       "starboard": [
         {
           "angle": 20,
           "avg_stw": 3.42,
-          "n": 192
+          "n": 191
         },
         {
           "angle": 30,
-          "avg_stw": 3.05,
-          "n": 248
+          "avg_stw": 3.04,
+          "n": 250
         },
         {
           "angle": 40,
           "avg_stw": 2.73,
-          "n": 321
+          "n": 317
         },
         {
           "angle": 50,
           "avg_stw": 3.11,
-          "n": 326
+          "n": 324
         },
         {
           "angle": 60,
-          "avg_stw": 3.16,
-          "n": 226
+          "avg_stw": 3.15,
+          "n": 232
         },
         {
           "angle": 70,
-          "avg_stw": 3.32,
-          "n": 167
+          "avg_stw": 3.35,
+          "n": 168
         },
         {
           "angle": 80,
-          "avg_stw": 3.12,
-          "n": 152
+          "avg_stw": 3.16,
+          "n": 157
         },
         {
           "angle": 90,
-          "avg_stw": 2.75,
-          "n": 166
+          "avg_stw": 2.77,
+          "n": 160
         },
         {
           "angle": 100,
-          "avg_stw": 2.78,
-          "n": 220
+          "avg_stw": 2.8,
+          "n": 213
         },
         {
           "angle": 110,
           "avg_stw": 3.02,
-          "n": 238
+          "n": 234
         },
         {
           "angle": 120,
-          "avg_stw": 3.55,
-          "n": 325
+          "avg_stw": 3.56,
+          "n": 322
         },
         {
           "angle": 130,
-          "avg_stw": 3.22,
-          "n": 281
+          "avg_stw": 3.21,
+          "n": 280
         },
         {
           "angle": 140,
-          "avg_stw": 2.99,
-          "n": 208
+          "avg_stw": 3.0,
+          "n": 206
         },
         {
           "angle": 150,
           "avg_stw": 2.87,
-          "n": 246
+          "n": 244
         },
         {
           "angle": 160,
           "avg_stw": 2.56,
-          "n": 163
+          "n": 160
         },
         {
           "angle": 170,
-          "avg_stw": 2.44,
-          "n": 105
+          "avg_stw": 2.43,
+          "n": 101
         },
         {
           "angle": 180,
-          "avg_stw": 2.48,
-          "n": 48
+          "avg_stw": 2.49,
+          "n": 46
         }
       ]
     },
@@ -235,175 +235,175 @@
       "port": [
         {
           "angle": 20,
-          "avg_stw": 3.44,
-          "n": 440
+          "avg_stw": 3.51,
+          "n": 418
         },
         {
           "angle": 30,
-          "avg_stw": 3.85,
-          "n": 1258
+          "avg_stw": 3.89,
+          "n": 1307
         },
         {
           "angle": 40,
-          "avg_stw": 4.38,
-          "n": 2913
+          "avg_stw": 4.36,
+          "n": 3560
         },
         {
           "angle": 50,
-          "avg_stw": 4.68,
-          "n": 2251
+          "avg_stw": 4.76,
+          "n": 2682
         },
         {
           "angle": 60,
-          "avg_stw": 4.48,
-          "n": 1147
+          "avg_stw": 4.53,
+          "n": 1118
         },
         {
           "angle": 70,
-          "avg_stw": 3.99,
-          "n": 743
+          "avg_stw": 4.02,
+          "n": 563
         },
         {
           "angle": 80,
-          "avg_stw": 3.83,
-          "n": 907
+          "avg_stw": 4.25,
+          "n": 426
         },
         {
           "angle": 90,
-          "avg_stw": 3.83,
-          "n": 1074
+          "avg_stw": 4.09,
+          "n": 474
         },
         {
           "angle": 100,
-          "avg_stw": 3.98,
-          "n": 1100
+          "avg_stw": 4.12,
+          "n": 492
         },
         {
           "angle": 110,
-          "avg_stw": 3.83,
-          "n": 831
+          "avg_stw": 4.09,
+          "n": 505
         },
         {
           "angle": 120,
-          "avg_stw": 3.86,
-          "n": 800
+          "avg_stw": 4.02,
+          "n": 625
         },
         {
           "angle": 130,
-          "avg_stw": 3.87,
-          "n": 900
+          "avg_stw": 4.0,
+          "n": 750
         },
         {
           "angle": 140,
-          "avg_stw": 3.94,
-          "n": 1067
+          "avg_stw": 4.05,
+          "n": 930
         },
         {
           "angle": 150,
-          "avg_stw": 3.89,
-          "n": 1631
+          "avg_stw": 3.91,
+          "n": 1598
         },
         {
           "angle": 160,
-          "avg_stw": 3.96,
-          "n": 1470
+          "avg_stw": 3.91,
+          "n": 1598
         },
         {
           "angle": 170,
-          "avg_stw": 3.81,
-          "n": 971
+          "avg_stw": 3.71,
+          "n": 1472
         },
         {
           "angle": 180,
-          "avg_stw": 3.81,
-          "n": 435
+          "avg_stw": 3.63,
+          "n": 834
         }
       ],
       "starboard": [
         {
           "angle": 20,
-          "avg_stw": 3.07,
-          "n": 229
+          "avg_stw": 3.13,
+          "n": 235
         },
         {
           "angle": 30,
-          "avg_stw": 3.65,
-          "n": 720
+          "avg_stw": 3.7,
+          "n": 821
         },
         {
           "angle": 40,
-          "avg_stw": 4.27,
-          "n": 2687
+          "avg_stw": 4.36,
+          "n": 3171
         },
         {
           "angle": 50,
-          "avg_stw": 4.43,
-          "n": 2554
+          "avg_stw": 4.58,
+          "n": 3067
         },
         {
           "angle": 60,
-          "avg_stw": 4.22,
-          "n": 1328
+          "avg_stw": 4.65,
+          "n": 1168
         },
         {
           "angle": 70,
-          "avg_stw": 4.14,
-          "n": 859
+          "avg_stw": 4.6,
+          "n": 652
         },
         {
           "angle": 80,
-          "avg_stw": 4.19,
-          "n": 653
+          "avg_stw": 4.54,
+          "n": 669
         },
         {
           "angle": 90,
-          "avg_stw": 4.07,
-          "n": 635
+          "avg_stw": 4.45,
+          "n": 651
         },
         {
           "angle": 100,
-          "avg_stw": 4.28,
-          "n": 518
+          "avg_stw": 4.35,
+          "n": 469
         },
         {
           "angle": 110,
-          "avg_stw": 4.05,
-          "n": 471
+          "avg_stw": 4.15,
+          "n": 340
         },
         {
           "angle": 120,
-          "avg_stw": 4.43,
-          "n": 610
+          "avg_stw": 4.52,
+          "n": 557
         },
         {
           "angle": 130,
-          "avg_stw": 4.37,
-          "n": 802
+          "avg_stw": 4.41,
+          "n": 789
         },
         {
           "angle": 140,
-          "avg_stw": 4.26,
-          "n": 1121
+          "avg_stw": 4.28,
+          "n": 1181
         },
         {
           "angle": 150,
-          "avg_stw": 4.44,
-          "n": 1895
+          "avg_stw": 4.43,
+          "n": 2095
         },
         {
           "angle": 160,
-          "avg_stw": 4.18,
-          "n": 1661
+          "avg_stw": 4.17,
+          "n": 1898
         },
         {
           "angle": 170,
-          "avg_stw": 3.88,
-          "n": 719
+          "avg_stw": 3.84,
+          "n": 928
         },
         {
           "angle": 180,
-          "avg_stw": 3.79,
-          "n": 300
+          "avg_stw": 3.64,
+          "n": 646
         }
       ]
     },
@@ -411,175 +411,175 @@
       "port": [
         {
           "angle": 20,
-          "avg_stw": 3.09,
-          "n": 121
+          "avg_stw": 3.36,
+          "n": 77
         },
         {
           "angle": 30,
-          "avg_stw": 4.61,
-          "n": 457
+          "avg_stw": 4.76,
+          "n": 405
         },
         {
           "angle": 40,
-          "avg_stw": 5.43,
-          "n": 1472
+          "avg_stw": 5.49,
+          "n": 1543
         },
         {
           "angle": 50,
-          "avg_stw": 5.65,
-          "n": 1242
+          "avg_stw": 5.73,
+          "n": 1284
         },
         {
           "angle": 60,
-          "avg_stw": 5.53,
-          "n": 738
+          "avg_stw": 5.5,
+          "n": 386
         },
         {
           "angle": 70,
-          "avg_stw": 5.58,
-          "n": 622
+          "avg_stw": 5.41,
+          "n": 210
         },
         {
           "angle": 80,
-          "avg_stw": 5.68,
-          "n": 442
+          "avg_stw": 5.84,
+          "n": 219
         },
         {
           "angle": 90,
-          "avg_stw": 5.65,
-          "n": 387
+          "avg_stw": 5.9,
+          "n": 295
         },
         {
           "angle": 100,
-          "avg_stw": 5.79,
-          "n": 479
+          "avg_stw": 6.07,
+          "n": 374
         },
         {
           "angle": 110,
-          "avg_stw": 5.89,
-          "n": 471
+          "avg_stw": 5.99,
+          "n": 390
         },
         {
           "angle": 120,
-          "avg_stw": 5.99,
-          "n": 583
+          "avg_stw": 6.05,
+          "n": 511
         },
         {
           "angle": 130,
-          "avg_stw": 6.01,
+          "avg_stw": 6.05,
           "n": 619
         },
         {
           "angle": 140,
-          "avg_stw": 6.18,
-          "n": 508
+          "avg_stw": 6.21,
+          "n": 587
         },
         {
           "angle": 150,
-          "avg_stw": 6.2,
-          "n": 390
+          "avg_stw": 6.08,
+          "n": 607
         },
         {
           "angle": 160,
-          "avg_stw": 5.88,
-          "n": 496
+          "avg_stw": 5.77,
+          "n": 777
         },
         {
           "angle": 170,
-          "avg_stw": 5.4,
-          "n": 260
+          "avg_stw": 5.43,
+          "n": 378
         },
         {
           "angle": 180,
-          "avg_stw": 4.94,
-          "n": 77
+          "avg_stw": 5.09,
+          "n": 98
         }
       ],
       "starboard": [
         {
           "angle": 20,
-          "avg_stw": 3.18,
-          "n": 131
+          "avg_stw": 3.21,
+          "n": 126
         },
         {
           "angle": 30,
-          "avg_stw": 4.55,
-          "n": 538
-        },
-        {
-          "angle": 40,
-          "avg_stw": 5.13,
-          "n": 1432
-        },
-        {
-          "angle": 50,
-          "avg_stw": 5.33,
-          "n": 1095
-        },
-        {
-          "angle": 60,
-          "avg_stw": 5.36,
-          "n": 487
-        },
-        {
-          "angle": 70,
-          "avg_stw": 5.11,
-          "n": 341
-        },
-        {
-          "angle": 80,
-          "avg_stw": 5.27,
-          "n": 462
-        },
-        {
-          "angle": 90,
-          "avg_stw": 5.58,
-          "n": 658
-        },
-        {
-          "angle": 100,
-          "avg_stw": 5.75,
+          "avg_stw": 4.67,
           "n": 550
         },
         {
+          "angle": 40,
+          "avg_stw": 5.21,
+          "n": 1671
+        },
+        {
+          "angle": 50,
+          "avg_stw": 5.43,
+          "n": 1256
+        },
+        {
+          "angle": 60,
+          "avg_stw": 5.52,
+          "n": 480
+        },
+        {
+          "angle": 70,
+          "avg_stw": 5.54,
+          "n": 423
+        },
+        {
+          "angle": 80,
+          "avg_stw": 5.42,
+          "n": 435
+        },
+        {
+          "angle": 90,
+          "avg_stw": 5.55,
+          "n": 530
+        },
+        {
+          "angle": 100,
+          "avg_stw": 5.57,
+          "n": 350
+        },
+        {
           "angle": 110,
-          "avg_stw": 5.99,
-          "n": 533
+          "avg_stw": 5.7,
+          "n": 281
         },
         {
           "angle": 120,
-          "avg_stw": 6.04,
-          "n": 337
+          "avg_stw": 5.54,
+          "n": 167
         },
         {
           "angle": 130,
-          "avg_stw": 5.62,
-          "n": 293
+          "avg_stw": 5.27,
+          "n": 186
         },
         {
           "angle": 140,
-          "avg_stw": 5.74,
-          "n": 430
+          "avg_stw": 5.87,
+          "n": 367
         },
         {
           "angle": 150,
-          "avg_stw": 5.78,
-          "n": 522
+          "avg_stw": 5.82,
+          "n": 710
         },
         {
           "angle": 160,
-          "avg_stw": 5.54,
-          "n": 492
+          "avg_stw": 5.56,
+          "n": 810
         },
         {
           "angle": 170,
-          "avg_stw": 5.48,
-          "n": 266
+          "avg_stw": 5.37,
+          "n": 414
         },
         {
           "angle": 180,
-          "avg_stw": 4.76,
-          "n": 93
+          "avg_stw": 4.8,
+          "n": 115
         }
       ]
     },
@@ -587,22 +587,22 @@
       "port": [
         {
           "angle": 20,
-          "avg_stw": 3.47,
+          "avg_stw": 3.23,
           "n": 3
         },
         {
           "angle": 30,
-          "avg_stw": 4.4,
+          "avg_stw": 4.46,
           "n": 24
         },
         {
           "angle": 40,
-          "avg_stw": 5.18,
-          "n": 36
+          "avg_stw": 5.17,
+          "n": 35
         },
         {
           "angle": 50,
-          "avg_stw": 5.71,
+          "avg_stw": 5.67,
           "n": 22
         },
         {
@@ -612,53 +612,53 @@
         },
         {
           "angle": 70,
-          "avg_stw": 5.73,
-          "n": 8
+          "avg_stw": 5.98,
+          "n": 4
         },
         {
           "angle": 80,
-          "avg_stw": 5.35,
-          "n": 5
+          "avg_stw": 5.01,
+          "n": 3
         },
         {
           "angle": 90,
-          "avg_stw": 6.62,
-          "n": 2
+          "avg_stw": 6.4,
+          "n": 3
         },
         {
           "angle": 100,
-          "avg_stw": 6.58,
-          "n": 15
+          "avg_stw": 6.71,
+          "n": 11
         },
         {
           "angle": 110,
-          "avg_stw": 6.75,
-          "n": 18
+          "avg_stw": 6.88,
+          "n": 20
         },
         {
           "angle": 120,
-          "avg_stw": 7.01,
-          "n": 56
+          "avg_stw": 7.03,
+          "n": 58
         },
         {
           "angle": 130,
           "avg_stw": 7.04,
-          "n": 61
+          "n": 63
         },
         {
           "angle": 140,
-          "avg_stw": 6.88,
-          "n": 65
+          "avg_stw": 6.86,
+          "n": 85
         },
         {
           "angle": 150,
-          "avg_stw": 7.17,
-          "n": 96
+          "avg_stw": 7.11,
+          "n": 136
         },
         {
           "angle": 160,
-          "avg_stw": 7.52,
-          "n": 55
+          "avg_stw": 7.33,
+          "n": 79
         },
         {
           "angle": 170,
@@ -667,95 +667,95 @@
         },
         {
           "angle": 180,
-          "avg_stw": 6.13,
-          "n": 2
+          "avg_stw": 6.15,
+          "n": 6
         }
       ],
       "starboard": [
         {
           "angle": 20,
-          "avg_stw": 4.47,
-          "n": 1
+          "avg_stw": 4.5,
+          "n": 3
         },
         {
           "angle": 30,
-          "avg_stw": 5.01,
-          "n": 2
+          "avg_stw": 5.37,
+          "n": 7
         },
         {
           "angle": 40,
-          "avg_stw": 4.8,
-          "n": 15
+          "avg_stw": 5.19,
+          "n": 30
         },
         {
           "angle": 50,
-          "avg_stw": 5.46,
-          "n": 28
-        },
-        {
-          "angle": 60,
-          "avg_stw": 5.3,
-          "n": 11
-        },
-        {
-          "angle": 70,
-          "avg_stw": 5.75,
-          "n": 8
-        },
-        {
-          "angle": 80,
-          "avg_stw": 6.04,
-          "n": 20
-        },
-        {
-          "angle": 90,
-          "avg_stw": 6.12,
-          "n": 17
-        },
-        {
-          "angle": 100,
-          "avg_stw": 5.74,
-          "n": 6
-        },
-        {
-          "angle": 110,
-          "avg_stw": 6.84,
+          "avg_stw": 5.54,
           "n": 29
         },
         {
-          "angle": 120,
-          "avg_stw": 7.05,
-          "n": 27
+          "angle": 60,
+          "avg_stw": 5.45,
+          "n": 13
         },
         {
-          "angle": 130,
-          "avg_stw": 6.42,
-          "n": 23
+          "angle": 70,
+          "avg_stw": 5.67,
+          "n": 10
         },
         {
-          "angle": 140,
-          "avg_stw": 6.36,
-          "n": 12
+          "angle": 80,
+          "avg_stw": 6.18,
+          "n": 16
         },
         {
-          "angle": 150,
-          "avg_stw": 7.48,
+          "angle": 90,
+          "avg_stw": 6.23,
           "n": 14
         },
         {
+          "angle": 100,
+          "avg_stw": 6.63,
+          "n": 1
+        },
+        {
+          "angle": 110,
+          "avg_stw": 6.67,
+          "n": 8
+        },
+        {
+          "angle": 120,
+          "avg_stw": 6.49,
+          "n": 9
+        },
+        {
+          "angle": 130,
+          "avg_stw": 6.36,
+          "n": 10
+        },
+        {
+          "angle": 140,
+          "avg_stw": 5.63,
+          "n": 4
+        },
+        {
+          "angle": 150,
+          "avg_stw": 7.63,
+          "n": 13
+        },
+        {
           "angle": 160,
-          "avg_stw": 7.53,
-          "n": 41
+          "avg_stw": 7.46,
+          "n": 45
         },
         {
           "angle": 170,
-          "avg_stw": 7.23,
-          "n": 12
+          "avg_stw": 7.14,
+          "n": 14
         },
         {
           "angle": 180,
-          "avg_stw": 6.53,
-          "n": 4
+          "avg_stw": 6.14,
+          "n": 12
         }
       ]
     }
@@ -793,12 +793,6 @@
         "n": 319
       },
       {
-        "race_id": 1,
-        "race_date": "2026-07-13",
-        "avg_stw": 3.14,
-        "n": 27
-      },
-      {
         "race_id": 2,
         "race_date": "2026-07-20",
         "avg_stw": 2.35,
@@ -807,14 +801,20 @@
       {
         "race_id": 9,
         "race_date": "2026-07-27",
-        "avg_stw": 3.15,
-        "n": 443
+        "avg_stw": 4.07,
+        "n": 63
       },
       {
         "race_id": 10,
         "race_date": "2026-07-29",
-        "avg_stw": 3.58,
-        "n": 39
+        "avg_stw": 4.13,
+        "n": 12
+      },
+      {
+        "race_id": 11,
+        "race_date": "2026-08-03",
+        "avg_stw": 1.84,
+        "n": 7
       }
     ],
     "8-12": [
@@ -851,8 +851,8 @@
       {
         "race_id": 1,
         "race_date": "2026-07-13",
-        "avg_stw": 4.56,
-        "n": 71
+        "avg_stw": 4.53,
+        "n": 5
       },
       {
         "race_id": 2,
@@ -863,20 +863,20 @@
       {
         "race_id": 9,
         "race_date": "2026-07-27",
-        "avg_stw": 3.39,
-        "n": 609
+        "avg_stw": 5.54,
+        "n": 190
       },
       {
         "race_id": 10,
         "race_date": "2026-07-29",
-        "avg_stw": 4.69,
-        "n": 603
+        "avg_stw": 5.27,
+        "n": 256
       },
       {
         "race_id": 11,
         "race_date": "2026-08-03",
-        "avg_stw": 5.24,
-        "n": 13
+        "avg_stw": 5.99,
+        "n": 6
       }
     ],
     "12-20": [
@@ -895,8 +895,8 @@
       {
         "race_id": 1,
         "race_date": "2026-07-13",
-        "avg_stw": 5.64,
-        "n": 293
+        "avg_stw": 6.13,
+        "n": 121
       },
       {
         "race_id": 2,
@@ -905,16 +905,22 @@
         "n": 578
       },
       {
+        "race_id": 9,
+        "race_date": "2026-07-27",
+        "avg_stw": 5.86,
+        "n": 8
+      },
+      {
         "race_id": 10,
         "race_date": "2026-07-29",
-        "avg_stw": 5.35,
-        "n": 37
+        "avg_stw": 5.71,
+        "n": 17
       },
       {
         "race_id": 11,
         "race_date": "2026-08-03",
-        "avg_stw": 5.5,
-        "n": 347
+        "avg_stw": 5.65,
+        "n": 69
       }
     ],
     "20+": [
@@ -927,8 +933,8 @@
       {
         "race_id": 11,
         "race_date": "2026-08-03",
-        "avg_stw": 5.66,
-        "n": 11
+        "avg_stw": 5.41,
+        "n": 4
       }
     ]
   }

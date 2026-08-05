@@ -331,9 +331,10 @@ __FLEET_COMPARISON_SECTION__
       return COURSE.maneuvers.filter(m => m.start_utc <= lastTs);
     }
     function fmtLocalTs(ts) {
-      // The logger's own clock records local (ADT) time already, despite
-      // the field being named "utc" -- no timezone conversion needed here.
-      const t = new Date(ts.replace(" ", "T") + "Z");
+      // The logger's clock is true UTC (verified by GPS cross-correlation
+      // against a Vakaros track with explicit timezone offsets -- 2 m median
+      // position agreement at zero clock offset). Display in ADT (UTC-3).
+      const t = new Date(new Date(ts.replace(" ", "T") + "Z").getTime() - 3 * 3600 * 1000);
       return String(t.getUTCHours()).padStart(2, "0") + ":" +
              String(t.getUTCMinutes()).padStart(2, "0") + ":" +
              String(t.getUTCSeconds()).padStart(2, "0");
@@ -422,9 +423,8 @@ __FLEET_COMPARISON_SECTION__
         const row = document.createElement("div");
         row.className = "maneuver-row";
         row.tabIndex = 0;
-        // The logger's own clock records local (ADT) time already, despite
-        // the field being named "utc" -- no timezone conversion needed here.
-        const t = new Date(m.start_utc.replace(" ", "T") + "Z");
+        // Logger clock is true UTC (Vakaros-verified); display in ADT (UTC-3).
+        const t = new Date(new Date(m.start_utc.replace(" ", "T") + "Z").getTime() - 3 * 3600 * 1000);
         const hh = String(t.getUTCHours()).padStart(2, "0");
         const mm = String(t.getUTCMinutes()).padStart(2, "0");
         const ss = String(t.getUTCSeconds()).padStart(2, "0");

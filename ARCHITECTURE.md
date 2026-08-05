@@ -215,8 +215,13 @@ ebl_data/, ebl_manifest.json   Canonical raw-log store (local only, gitignored)
   report text is written in a Claude Code session and saved to disk,
   keeping the app free of API-key requirements and keeping report quality
   reviewable before it's published.
-- **The EBL logger's clock reads local time, not UTC**, despite internal
-  field names inherited from the decoder saying "utc". This was discovered
-  when a new race's file timestamp matched a stated local start time
-  almost to the minute with no offset applied. Display code does **not**
-  apply a timezone conversion for this reason.
+- **The EBL logger's clock is true UTC** — verified by cross-correlating
+  its GPS track against a Vakaros track (whose exported timestamps carry
+  explicit timezone offsets) for the 2026-08-03 race: at zero clock offset
+  the two devices agree to a 2 m median position error across 400+ samples,
+  while every ±1h candidate is off by a kilometer or more. An earlier
+  session concluded the clock was local ADT, based on a race whose
+  recording happened to start almost exactly 3 hours before its stated
+  local start time — a coincidence the Vakaros ground truth disproved.
+  Display code therefore converts UTC → ADT (−3h); race windows in
+  races.json (`trim_start_utc`/`trim_end_utc`) are stored in UTC.
