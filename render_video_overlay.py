@@ -68,7 +68,7 @@ PANEL_FONT_BOLD_PATH = "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
 # 10% of the frame, which was clipping the top panels and hiding the
 # bottom text entirely. Keep all overlay content inside this box.
 MARGIN_X = int(FRAME_W * 0.10)
-MARGIN_TOP = int(FRAME_H * 0.10)
+MARGIN_TOP = int(FRAME_H * 0.15)  # 10% safe margin + an extra 5% requested
 MARGIN_BOTTOM = int(FRAME_H * 0.10)
 
 TRACK_STEP_S = 3  # breadcrumb sampling interval (matches export_course_data.py's own decimation)
