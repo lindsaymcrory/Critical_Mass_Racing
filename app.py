@@ -17,6 +17,7 @@ import polar_analysis
 import render_boat_check
 import render_homepage
 import render_race_page
+import render_videos
 from ebl_store import list_files_with_ranges
 from race_registry import add_race, load_registry, save_registry
 
@@ -154,6 +155,12 @@ def how_it_fits_image():
 @app.route("/boat-check")
 def boat_check():
     return render_boat_check.render_page()
+
+
+# ------------------------------------------------------------------ Videos
+@app.route("/videos")
+def videos():
+    return render_videos.render_page()
 
 
 # ---------------------------------------------------------------- Save trim

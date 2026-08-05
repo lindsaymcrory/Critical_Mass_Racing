@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Generates the static homepage (index.html): a narrow left nav column
-(Coach Says / Boat Check / About) and a main content area listing every
+(Coach Says / Boat Check / Videos / About) and a main content area listing every
 processed race, grouped by year (newest year first), each link showing its
 date + series and pointing at races/<id>.html. Update EBL / Update HTML were
 removed from the nav: race data is now added and rebuilt via Claude Code
@@ -299,6 +299,7 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
     <div class="nav-brand">Critical Mass<span class="sub">Race Analysis</span></div>
     <button type="button" class="nav-btn about-btn" id="coachSaysBtn">Coach Says..<span class="hint">Season summary &amp; priorities</span></button>
     <a class="nav-btn about-btn" href="/boat-check">Boat Check<span class="hint">Speed, Rig &amp; Bottom</span></a>
+    <a class="nav-btn about-btn" href="/videos">Videos<span class="hint">Race Footage</span></a>
     <button type="button" class="nav-btn about-btn" id="aboutBtn">About<span class="hint">Project, boat &amp; instruments</span></button>
   </nav>
   <main>
