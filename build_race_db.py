@@ -68,6 +68,7 @@ def load_sessions():
             "files": r["files"],
             "notes": r.get("notes", ""),
             "trim_end_utc": r.get("trim_end_utc"),
+            "trim_start_utc": r.get("trim_start_utc"),
         }
         for r in registry["races"]
     ]
@@ -165,12 +166,13 @@ def iso(dt: datetime) -> str:
     return dt.isoformat(sep=" ", timespec="milliseconds")
 
 
-def decode_session_messages(schema, files, trim_end=None):
+def decode_session_messages(schema, files, trim_end=None, trim_start=None):
     """Yields (utc_datetime, header, fields_dict) for every decodable message
     across all files in a session, in file order (files must already be
     chronologically ordered). Messages after trim_end (a datetime, from the
     race's saved trim -- excludes the post-race trip to the dock) are
-    dropped."""
+    dropped, as are messages before trim_start (excludes time at the dock/
+    mooring, or transiting to the start area, before the race itself)."""
     assembler = FastPacketAssembler(schema.fast_packet_pgns())
     for fname in files:
         path = EBL_DIR / fname
@@ -185,6 +187,8 @@ def decode_session_messages(schema, files, trim_end=None):
             if utc is None or utc.year < 2000:
                 continue
             if trim_end is not None and utc > trim_end:
+                continue
+            if trim_start is not None and utc < trim_start:
                 continue
             pgn_def = schema.find_pgn(full_header.pgn, full_data)
             if pgn_def is None:
@@ -202,8 +206,17 @@ def build_session(conn, schema, session_cfg):
     trim_end = None
     if session_cfg.get("trim_end_utc"):
         trim_end = datetime.fromisoformat(session_cfg["trim_end_utc"])
-    print(f"# Session {sid} ({session_cfg['race_date']}): decoding {len(session_cfg['files'])} files"
-          f"{' (trimmed at ' + session_cfg['trim_end_utc'] + ')' if trim_end else ''}...")
+    trim_start = None
+    if session_cfg.get("trim_start_utc"):
+        trim_start = datetime.fromisoformat(session_cfg["trim_start_utc"])
+    trim_note = ""
+    if trim_start and trim_end:
+        trim_note = f" (trimmed to {session_cfg['trim_start_utc']} -> {session_cfg['trim_end_utc']})"
+    elif trim_end:
+        trim_note = f" (trimmed at {session_cfg['trim_end_utc']})"
+    elif trim_start:
+        trim_note = f" (trimmed from {session_cfg['trim_start_utc']})"
+    print(f"# Session {sid} ({session_cfg['race_date']}): decoding {len(session_cfg['files'])} files{trim_note}...")
 
     rows = {
         "position": [], "gnss": [], "heading": [], "rate_of_turn": [], "cog_sog": [],
@@ -214,7 +227,7 @@ def build_session(conn, schema, session_cfg):
     utc_max = None
     n = 0
 
-    for utc, header, fv in decode_session_messages(schema, session_cfg["files"], trim_end):
+    for utc, header, fv in decode_session_messages(schema, session_cfg["files"], trim_end, trim_start):
         n += 1
         if utc_min is None or utc < utc_min:
             utc_min = utc

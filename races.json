@@ -451,14 +451,15 @@
       "notes": "Jayme driving, challenging conditions and a gentle broach \ud83d\ude42",
       "html_path": "races/11.html",
       "tws_range": [
-        0.3,
-        25.7
+        7.0,
+        28.3
       ],
       "bsp_range": [
-        1.5,
-        9.6
+        1.9,
+        9.9
       ],
-      "trim_end_utc": "2026-08-03 21:48:46"
+      "trim_end_utc": "2026-08-03 22:03:07",
+      "trim_start_utc": "2026-08-03 20:50:25"
     }
   ]
 }
