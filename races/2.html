@@ -154,22 +154,6 @@
   .curve-key .sw { width: 18px; height: 2px; flex: none; }
   .curve-key .details { color: var(--dim); font-size: 10.5px; }
 
-  /* -- J/80 Race Coach -- */
-  .coach-box {
-    margin: 14px 24px 24px; padding: 20px 24px;
-    border: 1px solid var(--hair); border-radius: var(--radius);
-    background: var(--panel); font-size: 13.5px; line-height: 1.65;
-    max-width: 900px;
-  }
-  .coach-box h3 { font-size: 15px; margin: 20px 0 8px; color: var(--mark); }
-  .coach-box h3:first-child { margin-top: 0; }
-  .coach-box h4 { font-size: 13px; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dim); }
-  .coach-box ul, .coach-box ol { margin: 6px 0 12px; padding-left: 22px; }
-  .coach-box li { margin: 3px 0; }
-  .coach-box p { margin: 8px 0; }
-  .coach-box strong { color: var(--paper); }
-  .coach-empty { color: var(--dim); font-style: italic; }
-
   /* -- Fleet Comparison -- */
   .fleet-summary {
     margin: 4px 24px 20px; padding: 16px 20px;
@@ -247,54 +231,6 @@
   </div>
 </section>
 
-<section id="coach-section">
-  <div class="section-head">
-    <span class="section-title">J/80 Race Coach</span>
-  </div>
-  <div class="coach-box"><p><em>Data note: this race had a ~90-minute logger dropout (dead battery, ~19:00–20:29 UTC). Everything below reflects only the data from ~20:43 UTC onward — if the boat&#x27;s early upwind legs or first maneuvers happened before the dropout, they&#x27;re not captured here.</em></p>
-<h3>True wind conditions</h3>
-<ul>
-<li>Across the logged portion, TWS ranged from <strong>2.9 to 22.7 kn</strong> (avg <strong>13.1 kn</strong>; middle 90% was 7.2–18.4 kn).</li>
-<li>Direction was the steadiest of the season so far: circular std of only <strong>11°</strong>, drifting slowly from ~336–351° early to 309–331° through the middle of the race, settling around 316–321° late — essentially a single, gentle left-hand trend, not an oscillating shift.</li>
-<li>Wind built through the first hour of logged data (8.6 kn at 20:43 up to a peak of 18.0 kn at 21:10), held in the mid-teens through most of the race, then eased steadily in the final 30–40 minutes down to 3.7 kn by the finish.</li>
-</ul>
-<h3>Tacks and gybes</h3>
-<ul>
-<li><strong>15 tacks</strong>, avg duration <strong>7.8 s</strong> (faster than the 9.3 s seen in the comparable-wind race on 2026-07-13), avg speed loss <strong>40.6%</strong>, avg recovery <strong>7.2 s</strong>.</li>
-<li>The tightest, quickest tack of the race (21:25:30 — 5 s, 74° total heading swing) had by far the lowest loss at <strong>18.9%</strong>. The four widest-swing tacks (109–133° swings, at 21:05:58, 21:15:50, 21:18:45, 21:21:08) all lost <strong>50–58%</strong> of boat speed. <strong>Observation:</strong> tack quality tracked heading-swing width closely and consistently in this race — tight, quick tacks were clearly cheaper than wide, slow ones.</li>
-<li>Despite faster average tack duration than the 2026-07-13 race, average recovery time was slower (7.2 s vs. 4.5 s) — the turn itself was quicker, but getting back to full speed afterward took longer. <strong>Likely explanation:</strong> rushing the turn without a matching acceleration phase out of the tack.</li>
-<li><strong>2 gybes</strong>: one clean (21:11:33, 7 s, 15.0% loss) and one in very light air near the finish (22:44:51, boat speed under 2.5 kn beforehand) that isn&#x27;t a fair comparison point.</li>
-</ul>
-<h3>Upwind performance</h3>
-<ul>
-<li>Beat boat speed averaged <strong>75.3% of polar target</strong> (3,256 samples, avg TWS 13.8 kn), with average TWA of <strong>43.2°</strong> — much closer to the polar-optimal beat angle (<strong>38.3°</strong>) than the 2026-07-13 race&#x27;s 51.1°.</li>
-<li>Actual VMG averaged <strong>3.39 kn</strong> vs. a polar target of <strong>4.59 kn</strong> — <strong>73.9% of target VMG</strong>, tracking closely with the 75.3% boat-speed figure.</li>
-<li><strong>Likely explanation:</strong> unlike the 2026-07-13 race (where angle was the bigger drag on VMG), here the VMG shortfall is attributable fairly evenly to boat speed — the boat was pointing close to the right angle but simply not moving fast enough for it.</li>
-</ul>
-<h3>Power and boat handling</h3>
-<ul>
-<li>Average heel while beating was <strong>20.3°</strong> — essentially identical to the 2026-07-13 race (20.1°) at a similar wind strength, suggesting this is a repeatable pattern for the boat in the low-to-mid teens rather than a one-off.</li>
-<li>Rate of turn upwind averaged <strong>1.69°/s</strong>, noticeably lower than the 2.22°/s on 2026-07-13 despite similar wind — less active steering/correction this race. The data can&#x27;t say whether that&#x27;s calmer conditions, a steadier helm, or something else.</li>
-<li><strong>Data insufficient:</strong> as with every race in this dataset, there&#x27;s no traveler/vang/cunningham or rudder data logged, so power state (over/under/appropriately powered) can&#x27;t be directly confirmed — the high, consistent heel figure is suggestive but not conclusive on its own.</li>
-</ul>
-<h3>Boat trim</h3>
-<ul>
-<li>Heel dropped sharply off the wind (20.3° beat → 9.1° reach → 3.1° run), the expected pattern; no finer trim breakdown is available to say more within the beat leg itself.</li>
-<li><strong>Data insufficient:</strong> no per-maneuver or per-leg trim comparison is available from this summary to isolate trim&#x27;s specific contribution to the speed shortfall.</li>
-</ul>
-<h3>Comparison with other races</h3>
-<ul>
-<li>Only <strong>one</strong> comparable race by wind speed: 2026-07-13 (avg beat TWS 13.5 kn vs. this race&#x27;s 13.8 kn). Every other logged race averaged notably lighter air (6–10 kn) and is excluded from this comparison.</li>
-<li>This race sailed a <strong>tighter</strong> upwind angle (43.2° vs. 51.1°) but a <strong>lower</strong> % of target boat speed (75.3% vs. 82.7%) than 2026-07-13 — the same trade-off as noted from the other race&#x27;s perspective, worth a crew discussion on footing vs. pointing in this wind range.</li>
-<li>Tacks were quicker in duration here (7.8 s vs. 9.3 s) and lost slightly less speed on average (40.6% vs. 42.9%), but took noticeably longer to recover full speed afterward (7.2 s vs. 4.5 s) — only 2 comparable-wind races are available, so treat this as a pattern to watch rather than a firm conclusion.</li>
-</ul>
-<h3>Coaching priorities</h3>
-<ol>
-<li><strong>Tack recovery time (high confidence).</strong> Tacks were quick to execute (7.8 s avg) but slow to get back to speed (7.2 s avg recovery, some as long as 19 s). <em>Action:</em> focus the next tacking drill specifically on the acceleration phase immediately after the boat comes out of the turn, not just the turn itself.</li>
-<li><strong>Tack angle consistency (high confidence).</strong> The tightest tack (74° swing) lost only 19%; the widest ones (109–133°) lost 50–58%. <em>Action:</em> aim to keep every tack&#x27;s total heading swing under ~90° — the 74° tack is this race&#x27;s own benchmark to repeat.</li>
-<li><strong>Upwind boat speed vs. target (medium confidence).</strong> Angle was close to optimal (43.2° vs. 38.3° target) but boat speed was still only 75.3% of target — the shortfall here looks more like raw speed than angle. <em>Action:</em> check crew weight placement and sail trim in the 13–14 kn range specifically, since angle wasn&#x27;t the limiting factor this time.</li>
-</ol></div>
-</section>
 
 <footer>
   <span>Course: GPS position, 1 Hz, decimated 1:3</span>

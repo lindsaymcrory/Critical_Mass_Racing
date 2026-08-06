@@ -154,22 +154,6 @@
   .curve-key .sw { width: 18px; height: 2px; flex: none; }
   .curve-key .details { color: var(--dim); font-size: 10.5px; }
 
-  /* -- J/80 Race Coach -- */
-  .coach-box {
-    margin: 14px 24px 24px; padding: 20px 24px;
-    border: 1px solid var(--hair); border-radius: var(--radius);
-    background: var(--panel); font-size: 13.5px; line-height: 1.65;
-    max-width: 900px;
-  }
-  .coach-box h3 { font-size: 15px; margin: 20px 0 8px; color: var(--mark); }
-  .coach-box h3:first-child { margin-top: 0; }
-  .coach-box h4 { font-size: 13px; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dim); }
-  .coach-box ul, .coach-box ol { margin: 6px 0 12px; padding-left: 22px; }
-  .coach-box li { margin: 3px 0; }
-  .coach-box p { margin: 8px 0; }
-  .coach-box strong { color: var(--paper); }
-  .coach-empty { color: var(--dim); font-style: italic; }
-
   /* -- Fleet Comparison -- */
   .fleet-summary {
     margin: 4px 24px 20px; padding: 16px 20px;
@@ -247,52 +231,6 @@
   </div>
 </section>
 
-<section id="coach-section">
-  <div class="section-head">
-    <span class="section-title">J/80 Race Coach</span>
-  </div>
-  <div class="coach-box"><h3>True wind conditions</h3>
-<ul>
-<li>TWS ranged from <strong>0.6 to 14.0 kn</strong> (avg <strong>6.1 kn</strong>; middle 90% was 3.1–9.4 kn) — the lightest average of any race reviewed.</li>
-<li>Direction drifted within a ~35° band: starting around 55–57°, backing to 22–23° through the middle of the race (21:13–21:23), then returning to 29–35° for the remainder — a moderate oscillation rather than a one-way trend (circular std 16°).</li>
-<li>Wind built to a brief peak of 9.0 kn (21:30), then eased steadily and died out toward the finish, dropping to 3.2–3.5 kn in the final 15 minutes.</li>
-</ul>
-<h3>Tacks and gybes</h3>
-<ul>
-<li><strong>4 tacks</strong> — the smallest tack count of any race reviewed — avg duration <strong>11.5 s</strong>, avg speed loss <strong>31.8%</strong>, avg recovery <strong>13.5 s</strong> (the slowest average recovery of any race in the dataset).</li>
-<li>Best tack: <strong>21:01:14</strong> — tighter 86° swing, 21.8% loss. Worst: <strong>21:45:44</strong>, in dying breeze near the finish — a 114° swing losing <strong>45.2%</strong>, the worst single tack of this race.</li>
-<li><strong>3 gybes</strong>, avg duration <strong>11.3 s</strong>, avg speed loss <strong>18.2%</strong> — fairly consistent, no standout issues.</li>
-</ul>
-<h3>Upwind performance</h3>
-<ul>
-<li>Beat boat speed averaged <strong>58.8% of polar target</strong> (2,205 samples, avg TWS 6.5 kn) — the <strong>lowest relative boat speed of any race reviewed this season</strong>.</li>
-<li>Average TWA was <strong>43.6°</strong>, very close to the polar-optimal <strong>42.5°</strong> at this wind speed — only 1.1° off, one of the tightest angle matches in the dataset.</li>
-<li>Actual VMG averaged <strong>2.31 kn</strong> vs. a polar target of <strong>3.41 kn</strong> — <strong>67.7% of target VMG</strong>, notably better than the 58.8% boat-speed figure, again consistent with the near-perfect angle.</li>
-<li><strong>Likely explanation:</strong> with angle essentially matching target, this race is the clearest example yet that raw boat speed — not pointing or tacking technique — was the dominant limiter. Very light, dying wind for parts of the race likely compounded the shortfall.</li>
-</ul>
-<h3>Power and boat handling</h3>
-<ul>
-<li>Average heel while beating was <strong>9.7°</strong>, consistent with the very light 6.5 kn average wind.</li>
-<li>Rate of turn upwind averaged <strong>1.10°/s</strong>, unremarkable.</li>
-<li><strong>Data insufficient:</strong> no traveler/vang/rudder data available to assess power management directly; in this light a well-trimmed boat and an undertrimmed one can look similar on heel/rate-of-turn alone.</li>
-</ul>
-<h3>Boat trim</h3>
-<ul>
-<li>Reach performance was also the weakest of the season here (46.0% of target, 691 samples), alongside the weak beat number — consistent with an overall slow night rather than an isolated upwind issue.</li>
-</ul>
-<h3>Comparison with other races</h3>
-<ul>
-<li>Four other races were sailed in broadly similar (light-to-moderate) wind: Race IDs 4 (8.2 kn beat avg), 5 (9.2 kn), 6 (7.5 kn), and 7 (7.0 kn).</li>
-<li>This race had the <strong>lowest relative boat speed of the whole season</strong> (58.8%), despite one of the tightest angle matches to target (1.1° off) — reinforcing, more strongly than any other race, that raw speed rather than angle or tacking was the limiting factor.</li>
-<li>Tack execution (31.8% avg loss) was mid-pack — better than Races 4 (36.9%) and 5 (35.6%), worse than Races 6 (34.0%) and 7 (23.5%) — but on only 4 tacks, a small sample.</li>
-</ul>
-<h3>Coaching priorities</h3>
-<ol>
-<li><strong>Raw boat speed in very light air (high confidence).</strong> This was the season&#x27;s slowest night relative to target (58.8%) despite a near-perfect upwind angle. <em>Action:</em> in sub-7 kn conditions, prioritize light-air speed technique (crew weight forward/leeward, minimal helm, sail shape for light air) over angle or tacking drills — angle clearly isn&#x27;t the issue here.</li>
-<li><strong>Tack recovery in light/dying air (medium confidence).</strong> Average recovery took 13.5 s, the slowest of any race, and the worst single tack (45.2% loss) happened in the dying breeze near the finish. <em>Action:</em> in fading wind, prioritize keeping the boat moving through the tack over pointing high immediately afterward.</li>
-<li><strong>Small sample size caveat (context, not an action item).</strong> Only 4 tacks and 3 gybes were logged this race — enough to spot patterns but not to draw firm conclusions about technique on their own.</li>
-</ol></div>
-</section>
 
 <footer>
   <span>Course: GPS position, 1 Hz, decimated 1:3</span>

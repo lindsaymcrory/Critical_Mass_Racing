@@ -154,22 +154,6 @@
   .curve-key .sw { width: 18px; height: 2px; flex: none; }
   .curve-key .details { color: var(--dim); font-size: 10.5px; }
 
-  /* -- J/80 Race Coach -- */
-  .coach-box {
-    margin: 14px 24px 24px; padding: 20px 24px;
-    border: 1px solid var(--hair); border-radius: var(--radius);
-    background: var(--panel); font-size: 13.5px; line-height: 1.65;
-    max-width: 900px;
-  }
-  .coach-box h3 { font-size: 15px; margin: 20px 0 8px; color: var(--mark); }
-  .coach-box h3:first-child { margin-top: 0; }
-  .coach-box h4 { font-size: 13px; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dim); }
-  .coach-box ul, .coach-box ol { margin: 6px 0 12px; padding-left: 22px; }
-  .coach-box li { margin: 3px 0; }
-  .coach-box p { margin: 8px 0; }
-  .coach-box strong { color: var(--paper); }
-  .coach-empty { color: var(--dim); font-style: italic; }
-
   /* -- Fleet Comparison -- */
   .fleet-summary {
     margin: 4px 24px 20px; padding: 16px 20px;
@@ -247,53 +231,6 @@
   </div>
 </section>
 
-<section id="coach-section">
-  <div class="section-head">
-    <span class="section-title">J/80 Race Coach</span>
-  </div>
-  <div class="coach-box"><h3>True wind conditions</h3>
-<ul>
-<li>TWS ranged from <strong>0.9 to 12.5 kn</strong> (avg <strong>7.3 kn</strong>; middle 90% was 4.5–9.8 kn).</li>
-<li>Direction veered from ~105–108° at the start to a steadier 136–163° through most of the race (circular std 20°, mean 149°) — a real early shift of roughly 30–50°, settling down after the first 30–40 minutes.</li>
-<li>Wind dipped light early (5.1–5.6 kn, 20:03–20:30), built to a mid-race peak of 9.3 kn (21:13), then died away completely in the final 15 minutes (down to 1.8 kn at the finish) — a classic dying evening breeze.</li>
-</ul>
-<h3>Tacks and gybes</h3>
-<ul>
-<li><strong>8 tacks</strong>, avg duration <strong>8.4 s</strong>, avg speed loss <strong>34.0%</strong>, avg recovery <strong>11.4 s</strong> (the slowest average recovery of any race reviewed).</li>
-<li>Best tack: <strong>21:50:15</strong> — 6 s, tight 73° swing, only <strong>25.3%</strong> loss — though recovery afterward still took 18 s, showing loss% and recovery speed don&#x27;t always move together.</li>
-<li>Two tacks (20:15:13 and 20:15:23) happened only 10 seconds apart — likely a double/aborted tack rather than two independent maneuvers; the first shows an unusually short 2 s duration with almost no speed loss, which looks like a data artifact of that sequence rather than a real clean tack.</li>
-<li><strong>8 gybes</strong>, avg duration <strong>10.2 s</strong>, avg speed loss <strong>23.2%</strong> — notably <em>better</em> on average than this race&#x27;s own tacks (34.0%). <strong>Observation:</strong> gybe execution outperformed tack execution this race, worth understanding why since usually the reverse is assumed.</li>
-</ul>
-<h3>Upwind performance</h3>
-<ul>
-<li>Beat boat speed averaged <strong>67.5% of polar target</strong> (3,724 samples, avg TWS 7.5 kn).</li>
-<li>Average TWA was <strong>42.8°</strong>, almost exactly matching the polar-optimal <strong>41.8°</strong> at this wind speed — the closest angle match of any race reviewed so far.</li>
-<li>Actual VMG averaged <strong>2.69 kn</strong> vs. a polar target of <strong>3.75 kn</strong> — <strong>71.7% of target VMG</strong>, slightly better than the 67.5% boat-speed figure (consistent with the angle being essentially spot-on).</li>
-<li><strong>Likely explanation:</strong> with angle this close to optimal, the shortfall from target is almost entirely a raw boat-speed issue, not a pointing issue.</li>
-</ul>
-<h3>Power and boat handling</h3>
-<ul>
-<li>Average heel while beating was <strong>11.4°</strong>, scaling sensibly with the lighter 7.5 kn average wind (between the 8.1° seen at 8.2 kn and 13.6° seen at 9.2 kn in other races).</li>
-<li>Rate of turn upwind averaged <strong>1.01°/s</strong> — the calmest steering of any race reviewed, consistent with the generally light, settled conditions.</li>
-<li><strong>Data insufficient:</strong> no traveler/vang/rudder data available to assess power management directly.</li>
-</ul>
-<h3>Boat trim</h3>
-<ul>
-<li>Heel scaled down by point of sail as expected; downwind (run) performance was notably lower this race (57.4% of target) than any other race reviewed, though the dataset doesn&#x27;t include a dedicated downwind-performance section here to explore why — worth a look given how much of the race (3,718 samples) was spent running.</li>
-</ul>
-<h3>Comparison with other races</h3>
-<ul>
-<li>Four other races were sailed in broadly similar (light-to-moderate) wind: Race IDs 4 (8.2 kn beat avg), 5 (9.2 kn), 7 (7.0 kn), and 8 (6.5 kn).</li>
-<li>This race&#x27;s upwind angle (42.8° vs. 41.8° target) was the <strong>closest match to polar-optimal</strong> of any race reviewed to date — tighter than Race 4 (37.4° vs. 41.1°, slightly under target) and much tighter than Race 5 (47.4° vs. 40.1°, well over target).</li>
-<li>Tack execution (34.0% avg loss) was mid-pack for the group — better than Races 4 (36.9%) and 5 (35.6%), but well behind Races 7 (23.5%) and 8 (31.8%).</li>
-</ul>
-<h3>Coaching priorities</h3>
-<ol>
-<li><strong>Downwind (run) performance (medium confidence).</strong> Run boat speed was only 57.4% of target — the worst of any race reviewed — over a large chunk of this race (3,718 samples). <em>Action:</em> review downwind trim and technique specifically for this night, since it stands out from every other comparable race.</li>
-<li><strong>Tack vs. gybe execution gap (medium confidence).</strong> Gybes averaged 23.2% speed loss, tacks 34.0% — an unusual reversal from what&#x27;s typically expected. <em>Action:</em> worth discussing with the crew what was different about tack execution that night.</li>
-<li><strong>Tack recovery time (low confidence).</strong> Average recovery was 11.4 s, the slowest of any race reviewed, even on tacks with modest speed loss (e.g. the 25.3%-loss tack at 21:50 still took 18 s to recover). <em>Action:</em> drill the acceleration phase specifically, as with other races showing this pattern.</li>
-</ol></div>
-</section>
 
 <footer>
   <span>Course: GPS position, 1 Hz, decimated 1:3</span>

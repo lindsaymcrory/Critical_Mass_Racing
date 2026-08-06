@@ -154,22 +154,6 @@
   .curve-key .sw { width: 18px; height: 2px; flex: none; }
   .curve-key .details { color: var(--dim); font-size: 10.5px; }
 
-  /* -- J/80 Race Coach -- */
-  .coach-box {
-    margin: 14px 24px 24px; padding: 20px 24px;
-    border: 1px solid var(--hair); border-radius: var(--radius);
-    background: var(--panel); font-size: 13.5px; line-height: 1.65;
-    max-width: 900px;
-  }
-  .coach-box h3 { font-size: 15px; margin: 20px 0 8px; color: var(--mark); }
-  .coach-box h3:first-child { margin-top: 0; }
-  .coach-box h4 { font-size: 13px; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dim); }
-  .coach-box ul, .coach-box ol { margin: 6px 0 12px; padding-left: 22px; }
-  .coach-box li { margin: 3px 0; }
-  .coach-box p { margin: 8px 0; }
-  .coach-box strong { color: var(--paper); }
-  .coach-empty { color: var(--dim); font-style: italic; }
-
   /* -- Fleet Comparison -- */
   .fleet-summary {
     margin: 4px 24px 20px; padding: 16px 20px;
@@ -247,53 +231,6 @@
   </div>
 </section>
 
-<section id="coach-section">
-  <div class="section-head">
-    <span class="section-title">J/80 Race Coach</span>
-  </div>
-  <div class="coach-box"><p><em>Data note: this is the longest logged session (14:07–23:09 UTC), but there&#x27;s a ~2-hour gap in the middle (18:30–20:43 UTC) with no valid wind/speed data — likely a break between starts or a period below the underway-speed threshold. The first ~90 minutes of wind data (before ~16:00 UTC, TWS under 3 kn) is also light enough that the direction reading is noisy and less reliable.</em></p>
-<h3>True wind conditions</h3>
-<ul>
-<li>Across the logged portions, TWS ranged from <strong>0.0 to 24.0 kn</strong> (avg <strong>10.0 kn</strong>; middle 90% was 2.0–17.6 kn) — the widest range of any race reviewed.</li>
-<li>Direction moved a lot over the session: circular std of <strong>45°</strong>, the highest of any race so far. Early on (light air, ~130–150°) it swung through to 200–250° by mid-to-late race — a genuine large shift, though the earliest readings (under 3 kn TWS) are less trustworthy.</li>
-<li>Wind built steadily through the first two hours to a peak around 19–20 kn (18:00–18:20 UTC), then after the data gap settled into a more moderate 6–13 kn for the rest of the race, easing to near-calm (3–5 kn) by the finish.</li>
-</ul>
-<h3>Tacks and gybes</h3>
-<ul>
-<li><strong>19 tacks</strong>, avg duration <strong>10.7 s</strong>, avg speed loss <strong>36.9%</strong> (the best average loss of any race reviewed), avg recovery <strong>7.9 s</strong>.</li>
-<li>Unlike the higher-wind races, tack quality didn&#x27;t track heading-swing width cleanly here — some wide-swing tacks (e.g. 21:20:51, 115° swing) lost only <strong>13.9%</strong>, while a moderate-swing tack (22:11:16, 79° swing) lost <strong>71.5%</strong>, the single worst tack of the race, with boat speed dropping from 4.9 kn to 1.4 kn. <strong>Likely explanation:</strong> that one looks like a stalled/caught-in-irons tack rather than an angle problem — worth reviewing specifically rather than generalizing from it.</li>
-<li><strong>8 gybes</strong>, avg duration <strong>10.4 s</strong>, avg speed loss <strong>23.7%</strong>. The first gybe of the race (17:11:46, in 15–16 kn breeze) was notably slow at <strong>20 s</strong> and lost <strong>48.9%</strong> — the slowest, costliest gybe logged all season.</li>
-</ul>
-<h3>Upwind performance</h3>
-<ul>
-<li>Beat boat speed averaged <strong>70.4% of polar target</strong> (8,843 samples — by far the largest sample size of any race — avg TWS 8.2 kn).</li>
-<li>Average TWA was <strong>37.4°</strong>, essentially matching (very slightly tighter than) the polar-optimal angle of <strong>41.1°</strong> at this wind speed.</li>
-<li>Actual VMG averaged <strong>3.05 kn</strong> vs. a polar target of <strong>3.99 kn</strong> — <strong>76.4% of target VMG</strong>, slightly <em>better</em> than the 70.4% boat-speed figure.</li>
-<li><strong>Likely explanation:</strong> with angle essentially on target, the VMG shortfall here is squarely a raw boat-speed issue, not a pointing/angle issue.</li>
-</ul>
-<h3>Power and boat handling</h3>
-<ul>
-<li>Average heel while beating was <strong>8.1°</strong> — much lower than the higher-wind races (20°+), consistent with the lighter average wind (8.2 kn vs. 13–14 kn) rather than any change in technique.</li>
-<li>Rate of turn upwind averaged <strong>1.22°/s</strong>, the lowest (calmest) of any race reviewed, in keeping with generally lighter, steadier conditions for most of the session.</li>
-<li><strong>Data insufficient:</strong> no traveler/vang/rudder data is available to say whether power was managed well in the higher-wind opening hour (up to 19.9 kn) before the gap.</li>
-</ul>
-<h3>Boat trim</h3>
-<ul>
-<li>Heel and pitch scale down predictably with point of sail and wind strength, as in other races; no finer within-leg trim breakdown is available in this summary.</li>
-</ul>
-<h3>Comparison with other races</h3>
-<ul>
-<li>Five other races were sailed in broadly similar (light-to-moderate) wind: Race IDs 5 (9.2 kn beat avg), 6 (7.5 kn), 7 (7.0 kn), and 8 (6.5 kn) all fall within a few knots of this race&#x27;s 8.2 kn beat average.</li>
-<li>Within that group, this race had the <strong>tightest</strong> upwind angle (37.4°, essentially on the polar target) but was <strong>not the fastest</strong> relative to target — Race 5 (78.4%) and this race&#x27;s own 70.4% both beat Race 6 (67.5%) and Race 7 (66.8%), while Race 8 (58.8%, the lightest air of the group) was slowest.</li>
-<li><strong>Race 7&#x27;s tacks lost much less speed on average (23.5%) than this race&#x27;s tacks (36.9%)</strong> despite similar wind strength. Race 7 only logged 5 tacks vs. this race&#x27;s 19, so treat this as a pattern to test rather than a firm conclusion — but it&#x27;s worth a look at what was different about technique or conditions that night.</li>
-</ul>
-<h3>Coaching priorities</h3>
-<ol>
-<li><strong>Upwind boat speed vs. target (high confidence).</strong> Angle was essentially on target (37.4° vs. 41.1° optimal) but boat speed was only 70.4% of target and VMG 76.4% — the gap here is speed, not angle. <em>Action:</em> in this wind range (7–9 kn), focus on speed-building fundamentals — trim and crew weight — rather than pointing higher.</li>
-<li><strong>The 71.5%-loss tack at 22:11:16 (medium confidence).</strong> This single tack lost far more speed than any other logged this season, on a fairly ordinary 79° heading swing. <em>Action:</em> review this specific moment with the crew — it reads like a stalled/missed-timing tack rather than a technique pattern.</li>
-<li><strong>Tack execution vs. Race 7 (low confidence — small comparison sample).</strong> Race 7, in similar wind, averaged 23.5% loss per tack vs. this race&#x27;s 36.9%. <em>Action:</em> worth a debrief comparing what felt different between the two nights, but don&#x27;t over-index on 5 tacks vs. 19.</li>
-</ol></div>
-</section>
 
 <footer>
   <span>Course: GPS position, 1 Hz, decimated 1:3</span>

@@ -200,7 +200,10 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
   .race-notes { font-size: 12px; font-style: italic; color: var(--dim); line-height: 1.4; }
   .race-conditions { font-size: 11.5px; line-height: 1.5; color: var(--dim); white-space: nowrap; }
   .race-conditions .mono { color: var(--paper); }
-  .race-go { font-size: 15px; color: var(--mark); font-weight: 700; }
+  .race-go { text-align: right; }
+  .race-go-active { font-size: 15px; color: var(--mark); font-weight: 700; }
+  .race-go-source { font-size: 9.5px; color: var(--dim); font-weight: 400; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+  .race-go-future { font-size: 11px; color: var(--dim-2); font-weight: 400; margin-top: 6px; opacity: 0.6; }
 
   .empty { padding: 40px 18px; text-align: center; color: var(--dim); font-size: 13px; }
 
@@ -321,7 +324,12 @@ def _year_box(year, races):
         f'<div class="race-series">{r["series"]}</div></div>'
         f'<div class="race-notes">{html.escape(r.get("notes") or "")}</div>'
         f'{_conditions_cell(r)}'
-        f'<div class="race-go">Results &rarr;</div></a>'
+        f'<div class="race-go">'
+        f'<div class="race-go-active">N2K Analysis &rarr;</div>'
+        f'<div class="race-go-source">Data Sourced from NMEA 2000 Bus</div>'
+        f'<div class="race-go-future">Vakaros Analysis</div>'
+        f'<div class="race-go-future">Pro Start Analysis</div>'
+        f'</div></a>'
         for r in races
     )
     return f'<div class="year-box"><div class="year-head">{year} Racing Season</div>{rows}</div>'
