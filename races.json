@@ -1,5 +1,5 @@
 {
-  "next_id": 12,
+  "next_id": 13,
   "races": [
     {
       "id": 1,
@@ -463,6 +463,40 @@
       ],
       "trim_end_utc": "2026-08-03 22:32:42",
       "trim_start_utc": "2026-08-03 21:20:00"
+    },
+    {
+      "id": 12,
+      "race_date": "2026-08-05",
+      "local_start_time": "18:20",
+      "series": "Wednesday Night",
+      "boat": "Critical Mass",
+      "crew_count": 3,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000009_062.ebl",
+        "000009_063.ebl",
+        "000009_064.ebl",
+        "000009_065.ebl",
+        "000009_066.ebl",
+        "000009_067.ebl",
+        "000009_068.ebl",
+        "000009_069.ebl",
+        "000009_070.ebl",
+        "000009_071.ebl",
+        "000009_072.ebl"
+      ],
+      "notes": "Light and shifty but relaxed",
+      "html_path": "races/12.html",
+      "trim_start_utc": "2026-08-05 21:20:00",
+      "trim_end_utc": "2026-08-05 23:15:37",
+      "tws_range": [
+        0.7,
+        16.3
+      ],
+      "bsp_range": [
+        1.5,
+        6.7
+      ]
     }
   ]
 }
