@@ -57,7 +57,7 @@ def _coach_says_html(races):
 
 ABOUT_HTML = f"""
 <h2>About Critical Mass Racing</h2>
-<p>Critical Mass Racing is an open-source, AI-assisted race-analysis platform developed for our J/80 sailing program. It is a personal productivity tool rather than a finished, turnkey application for end users. I have made it open source in the hope that other developers and data scientists will find it useful for their own projects.</p>
+<p>Critical Mass Racing is an open-source sailing performance laboratory that turns instrument data into practical insight. It combines post-race analysis, AI-assisted coaching, reference material, and experimental tools to help sailors better understand how their boats perform.</p>
 <ul class="about-meta">
   <li><strong>Author</strong> &mdash; Lindsay McRory</li>
   <li><strong>Contact</strong> &mdash; <a href="mailto:Lindsay.McRory@gmail.com">Lindsay.McRory@gmail.com</a></li>
@@ -82,74 +82,6 @@ ABOUT_HTML = f"""
   <li><strong>Additional race data</strong> &mdash; Velocitek ProStart and Vakaros instruments</li>
 </ul>
 <p>The system records available instrument data throughout each race, creating a second-by-second account of the boat&rsquo;s speed, heading, wind conditions, position, heel, and other measurements.</p>
-
-<h3>What the analysis does</h3>
-<p>Post-race analysis turns a gut feeling about &ldquo;how we sailed&rdquo; into evidence. Each race is divided into three main areas: maneuvers, boat performance, and strategy.</p>
-
-<h4>Maneuvers</h4>
-<p>Every tack and gybe is measured for speed loss, duration, consistency, and recovery time.</p>
-<p>Instead of remembering that &ldquo;one tack felt slow,&rdquo; we can see that it lost 45% of the boat&rsquo;s speed and took 18 seconds to recover, while the best tack that evening lost only 9% and recovered in six seconds.</p>
-<p>Patterns emerge quickly:</p>
-<ul>
-  <li>Which maneuvers cost the most time</li>
-  <li>Whether entry and exit angles are consistent</li>
-  <li>How quickly the boat accelerates after each maneuver</li>
-  <li>Whether performance changes as the race progresses</li>
-  <li>Which techniques appear in our best maneuvers</li>
-  <li>Which specific skills are worth practising</li>
-</ul>
-<p>Mark roundings can also be reviewed to understand approach angles, speed through the rounding, distance from the mark, and acceleration onto the next leg.</p>
-
-<h4>Boat performance and polars</h4>
-<p>Actual boat speed, sailing angle, and velocity made good are compared with the J/80&rsquo;s predicted performance for the wind conditions.</p>
-<p>This helps answer questions such as:</p>
-<ul>
-  <li>Were we sailing close to the boat&rsquo;s target speed?</li>
-  <li>Were we pointing too high and sacrificing speed?</li>
-  <li>Were we sailing too low and giving away height?</li>
-  <li>Was the performance gap caused by speed, angle, or both?</li>
-  <li>Did excessive heel, steering activity, or inconsistent trim contribute?</li>
-  <li>Were we overpowered or underpowered for the conditions?</li>
-</ul>
-<p>The comparison helps separate equipment, trim, steering, and execution issues from changes caused by wind strength or direction.</p>
-<p>Polar predictions are a reference, not an unquestionable standard. Their usefulness depends on the quality of the polar data, instrument calibration, sea state, crew weight, current, and local conditions.</p>
-
-<h4>Strategy</h4>
-<p>The boat&rsquo;s actual track is plotted against the recorded course marks, showing the course we sailed rather than the course we remember sailing.</p>
-<p>The analysis can examine:</p>
-<ul>
-  <li>Which side of each leg we selected</li>
-  <li>Whether that side gained or lost distance</li>
-  <li>How wind shifts affected each tack or gybe</li>
-  <li>Distance sailed compared with the most direct course</li>
-  <li>Layline positioning and overstanding</li>
-  <li>Approaches to and exits from mark roundings</li>
-  <li>Where gains and losses occurred during each leg</li>
-</ul>
-<p>Instrument data cannot always explain why a tactical decision was made. Other boats, bad air, traffic, waves, and visual observations may not appear in the data. The analysis therefore identifies outcomes and likely explanations without pretending to know everything that happened on the water.</p>
-
-<h3>Comparing races</h3>
-<p>The value of the system increases as more races are recorded.</p>
-<p>Individual maneuvers and sailing segments can be compared with previous races in similar wind conditions. This gives us a team-specific baseline based on how Critical Mass has actually performed &mdash; not only on a theoretical target.</p>
-<p>Cross-race analysis can show:</p>
-<ul>
-  <li>Whether our tacks and gybes are becoming faster and more consistent</li>
-  <li>Which wind ranges create the largest performance gaps</li>
-  <li>Whether we are improving against our polar targets</li>
-  <li>Which recurring trim or handling patterns are associated with better speed</li>
-  <li>Whether certain tactical choices repeatedly produce gains or losses</li>
-  <li>Which areas offer the greatest opportunity for improvement</li>
-</ul>
-<p>Over time, every tack, gybe, rounding, and leg becomes part of the team&rsquo;s performance history.</p>
-
-<h3>AI-assisted coaching</h3>
-<p>The system uses specialized AI agents for two types of analysis:</p>
-<ul>
-  <li><strong>Race analysis</strong> &mdash; reviews one race and produces a concise post-race coaching report.</li>
-  <li><strong>Comparative analysis</strong> &mdash; compares the race with previous races and maneuvers sailed in similar conditions.</li>
-</ul>
-<p>The AI is instructed to support conclusions with data, distinguish observations from likely explanations, and clearly identify when the available information is insufficient.</p>
-<p>Its recommendations are starting points for crew discussion, not absolute conclusions. Sensor errors, calibration problems, incomplete course information, current, sea state, traffic, and tactical context can all affect the results.</p>
 
 <h3>The goal</h3>
 <p>The goal is to establish a useful baseline for what went well and where we can improve at three levels:</p>
@@ -321,7 +253,7 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
     <div class="content">
       __FLASH__
       <div class="banner"><img src="CM_Logo.png" alt="Critical Mass Racing"></div>
-      <div class="tagline">We may not always place well, but we always know why.</div>
+      <div class="tagline">An open-source sailing performance laboratory&mdash;because &ldquo;we felt fast&rdquo; isn&rsquo;t data.</div>
       <div class="page-title">Race Results</div>
       <div class="page-sub">__RACE_COUNT__ processed race__PLURAL__ &nbsp;&middot;&nbsp; __VIEW_COUNT__ Views</div>
       __YEARS__
