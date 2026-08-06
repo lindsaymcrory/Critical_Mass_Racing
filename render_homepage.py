@@ -202,7 +202,6 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
   .race-conditions .mono { color: var(--paper); }
   .race-go { text-align: right; }
   .race-go-active { font-size: 15px; color: var(--mark); font-weight: 700; }
-  .race-go-source { font-size: 9.5px; color: var(--dim); font-weight: 400; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
   .race-go-future { font-size: 11px; color: var(--dim-2); font-weight: 400; margin-top: 6px; opacity: 0.6; }
 
   .empty { padding: 40px 18px; text-align: center; color: var(--dim); font-size: 13px; }
@@ -326,7 +325,6 @@ def _year_box(year, races):
         f'{_conditions_cell(r)}'
         f'<div class="race-go">'
         f'<div class="race-go-active">N2K Analysis &rarr;</div>'
-        f'<div class="race-go-source">Data Sourced from NMEA 2000 Bus</div>'
         f'<div class="race-go-future">Vakaros Analysis</div>'
         f'<div class="race-go-future">Pro Start Analysis</div>'
         f'</div></a>'
