@@ -21,6 +21,7 @@ page (render_race_page.py), reusing only its visual style. No polar or fleet
 comparison section here (Vakaros logs no wind data, so no polar target
 comparison is possible), and no trim slider (the track is already trimmed to
 the race's established gun-to-finish window from races.json)."""
+import html as html_mod
 import json
 from pathlib import Path
 
@@ -142,6 +143,11 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Vakaros Analysis</title>
   .m-detail { color: var(--dim); font-size: 11px; }
   .m-dur { color: var(--dim); }
 
+  .start-note {
+    margin: 4px 24px 20px; padding: 10px 16px;
+    border: 1px solid var(--hair); border-radius: var(--radius);
+    background: var(--panel); font-size: 13px; font-weight: 600; color: var(--mark);
+  }
   footer {
     padding: 12px 24px; background: var(--panel-2);
     font-size: 10.5px; color: var(--dim-2); display: flex; gap: 18px; flex-wrap: wrap;
@@ -179,6 +185,8 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Vakaros Analysis</title>
     <div class="log" id="log"></div>
   </div>
 </section>
+
+<div class="start-note">__START_NOTE__</div>
 
 <footer>
   <span>Course: GPS position from Vakaros track export, resampled to 1 Hz, decimated 1:3</span>
@@ -502,6 +510,7 @@ def render_vakaros_page(race_meta):
             .replace("__TITLE__", title)
             .replace("__SERIES__", race_meta["series"])
             .replace("__BOAT__", race_meta.get("boat", "Critical Mass"))
+            .replace("__START_NOTE__", html_mod.escape(course["start_note"]))
             .replace("__COURSE_DATA__", json.dumps(course, separators=(",", ":"))))
     return html
 

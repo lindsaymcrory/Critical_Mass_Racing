@@ -60,6 +60,9 @@ RACE_TIMER_EVENTS = {0: "RESET", 1: "START", 2: "SYNC", 3: "RACE_START", 4: "RAC
 
 _POS_STRUCT = struct.Struct("<Qiifffffff")  # ts, lat_e7, lon_e7, sog, cog, alt, qw, qx, qy, qz
 _TIMER_STRUCT = struct.Struct("<QBi")       # ts, event_type, timer_s
+_LINE_STRUCT = struct.Struct("<QBff")       # ts, end_type (0=pin, 1=boat), lat, lon
+
+LINE_END_NAMES = {0: "pin", 1: "boat"}
 
 
 def _quat_to_euler_deg(w, x, y, z):
@@ -125,9 +128,27 @@ def read_race_timer_events(path):
     return events
 
 
+def read_line_positions(path):
+    """Returns {"pin": (lat, lon), "boat": (lat, lon)} from 0x05 rows -- only
+    present if the sailor actually set both ends of the start line on the
+    device before the sequence. Later rows win (a line reset before the
+    start supersedes an earlier one); a key is simply absent if that end
+    was never set."""
+    positions = {}
+    for key, payload in iter_rows(path):
+        if key != 0x05:
+            continue
+        ts_ms, end_type, lat, lon = _LINE_STRUCT.unpack(payload)
+        name = LINE_END_NAMES.get(end_type)
+        if name:
+            positions[name] = (lat, lon)
+    return positions
+
+
 if __name__ == "__main__":
     import sys
     track = read_track(sys.argv[1])
     print(f"# {len(track)} position rows, {track[0]['utc']} -> {track[-1]['utc']}")
     for e in read_race_timer_events(sys.argv[1]):
         print(f"#   timer event: {e['utc']} {e['event']} ({e['timer_s']}s)")
+    print(f"#   line positions: {read_line_positions(sys.argv[1])}")

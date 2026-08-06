@@ -243,6 +243,61 @@ def detect_roundings(track, marks_xy):
     return roundings
 
 
+NO_START_INFO = "Line not pinged, no start info available."
+
+
+def _nearest_by_time(track, target_utc):
+    """Index of the track sample whose 't' is closest to target_utc (a plain
+    linear scan -- track has occasional gaps from resample_1hz's tolerance,
+    so a fixed index offset can't be assumed to equal a fixed time offset)."""
+    return min(range(len(track)), key=lambda i: abs((track[i]["t"] - target_utc).total_seconds()))
+
+
+def compute_start_note(track_path, track, trim_start_utc, lat0, lon0):
+    """Returns a one-line note on where the boat was, relative to the start
+    line, at the moment of the gun -- e.g. "Start: 1 meter behind with 1.2
+    knots of boat speed." Requires both ends of the line to have been set on
+    the Vakaros device before the sequence (0x05 Line Position rows); the
+    CSV export never carries this, and neither does a .vkx file where the
+    sailor didn't ping the line, so NO_START_INFO covers both cases."""
+    if track_path.suffix.lower() != ".vkx":
+        return NO_START_INFO
+    line = vkx_parser.read_line_positions(track_path)
+    if "pin" not in line or "boat" not in line:
+        return NO_START_INFO
+
+    start_idx = _nearest_by_time(track, trim_start_utc)
+    if abs((track[start_idx]["t"] - trim_start_utc).total_seconds()) > 3:
+        return NO_START_INFO
+    start_row = track[start_idx]
+
+    pin_x, pin_y = project(*line["pin"], lat0, lon0)
+    boat_x, boat_y = project(*line["boat"], lat0, lon0)
+    line_len = math.hypot(boat_x - pin_x, boat_y - pin_y)
+    if line_len == 0:
+        return NO_START_INFO
+    # perpendicular unit vector to the pin-boat line (direction picked below)
+    nx, ny = -(boat_y - pin_y) / line_len, (boat_x - pin_x) / line_len
+    mid_x, mid_y = (pin_x + boat_x) / 2, (pin_y + boat_y) / 2
+
+    # "ahead"/"behind" needs to know which side of the line is the course --
+    # inferred from the boat's own displacement in the 30s after the gun,
+    # since it's clearly sailing into the course by then.
+    end_idx = _nearest_by_time(track, trim_start_utc + timedelta(seconds=30))
+    course_dx = track[end_idx]["x"] - start_row["x"]
+    course_dy = track[end_idx]["y"] - start_row["y"]
+    if course_dx == 0 and course_dy == 0:
+        return NO_START_INFO
+    if course_dx * nx + course_dy * ny < 0:
+        nx, ny = -nx, -ny  # flip so positive = toward the course (ahead)
+
+    signed_dist = (start_row["x"] - mid_x) * nx + (start_row["y"] - mid_y) * ny
+    side = "ahead" if signed_dist > 0 else "behind"
+    dist_m = round(abs(signed_dist))
+    unit = "meter" if dist_m == 1 else "meters"
+    return f"Start: {dist_m} {unit} {side} with {start_row['sog']:.1f} knots of boat speed."
+
+
 def build_race(race_id, track_path, trim_start_utc, trim_end_utc):
     """Returns the course-data dict for one race's Vakaros track (same
     consumer shape as export_course_data.export_for_race), or None if the
@@ -266,6 +321,7 @@ def build_race(race_id, track_path, trim_start_utc, trim_end_utc):
     maneuvers = detect_maneuvers(track)
     roundings = detect_roundings(track, marks_xy)
     all_events = sorted(maneuvers + roundings, key=lambda e: e["start_utc"])
+    start_note = compute_start_note(track_path, track, trim_start_utc, lat0, lon0)
 
     out_track = []
     for i, r in enumerate(track):
@@ -304,6 +360,7 @@ def build_race(race_id, track_path, trim_start_utc, trim_end_utc):
         "maneuvers": out_maneuvers,
         "utc_start": trim_start_utc.isoformat(sep=" ", timespec="seconds"),
         "utc_end": trim_end_utc.isoformat(sep=" ", timespec="seconds"),
+        "start_note": start_note,
     }
 
 
