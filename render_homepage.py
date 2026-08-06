@@ -23,6 +23,7 @@ sessions instead of the web UI."""
 import html
 from pathlib import Path
 
+import vakaros_registry
 from race_registry import load_registry
 from render_race_page import _coach_markdown_to_html
 
@@ -201,7 +202,12 @@ PAGE_TEMPLATE = """<title>Critical Mass Racing</title>
   .race-conditions { font-size: 11.5px; line-height: 1.5; color: var(--dim); white-space: nowrap; }
   .race-conditions .mono { color: var(--paper); }
   .race-go { text-align: right; }
-  .race-go-active { font-size: 15px; color: var(--mark); font-weight: 700; }
+  .race-go-active {
+    font-size: 15px; color: var(--mark); font-weight: 700;
+    display: block; text-decoration: none; margin-top: 6px;
+  }
+  .race-go-active:first-child { margin-top: 0; }
+  .race-go-active:hover { text-decoration: underline; }
   .race-go-future { font-size: 11px; color: var(--dim-2); font-weight: 400; margin-top: 6px; opacity: 0.6; }
 
   .empty { padding: 40px 18px; text-align: center; color: var(--dim); font-size: 13px; }
@@ -316,18 +322,31 @@ def _conditions_cell(r):
     return f'<div class="race-conditions">{"<br>".join(lines)}</div>'
 
 
-def _year_box(year, races):
+def _analysis_links(r, vakaros_by_id):
+    vakaros_entry = vakaros_by_id.get(r["id"])
+    vakaros_link = (
+        f'<a class="race-go-active" href="/vakaros/{r["id"]}.html">Vakaros Analysis</a>'
+        if vakaros_entry else
+        '<div class="race-go-future">Vakaros Analysis</div>'
+    )
+    return (
+        f'<div class="race-go">'
+        f'<a class="race-go-active" href="{r["html_path"]}">N2K Analysis &rarr;</a>'
+        f'{vakaros_link}'
+        f'<div class="race-go-future">Pro Start Analysis</div>'
+        f'</div>'
+    )
+
+
+def _year_box(year, races, vakaros_by_id):
     rows = "".join(
-        f'<a class="race-row" href="{r["html_path"]}">'
+        f'<div class="race-row">'
         f'<div><div class="race-date mono">{r["race_date"]}</div>'
         f'<div class="race-series">{r["series"]}</div></div>'
         f'<div class="race-notes">{html.escape(r.get("notes") or "")}</div>'
         f'{_conditions_cell(r)}'
-        f'<div class="race-go">'
-        f'<div class="race-go-active">N2K Analysis &rarr;</div>'
-        f'<div class="race-go-future">Vakaros Analysis</div>'
-        f'<div class="race-go-future">Pro Start Analysis</div>'
-        f'</div></a>'
+        f'{_analysis_links(r, vakaros_by_id)}'
+        f'</div>'
         for r in races
     )
     return f'<div class="year-box"><div class="year-head">{year} Racing Season</div>{rows}</div>'
@@ -336,6 +355,7 @@ def _year_box(year, races):
 def render_homepage(flash_message=None, flash_kind="success", view_count=0):
     registry = load_registry()
     races = sorted(registry["races"], key=lambda r: r["race_date"], reverse=True)
+    vakaros_by_id = vakaros_registry.by_race_id()
 
     by_year = {}
     for r in races:
@@ -343,7 +363,7 @@ def render_homepage(flash_message=None, flash_kind="success", view_count=0):
         by_year.setdefault(year, []).append(r)
 
     years_html = "".join(
-        _year_box(year, by_year[year]) for year in sorted(by_year, reverse=True)
+        _year_box(year, by_year[year], vakaros_by_id) for year in sorted(by_year, reverse=True)
     ) if by_year else '<div class="empty">No races processed yet.</div>'
 
     flash_html = ""

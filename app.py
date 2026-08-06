@@ -38,6 +38,7 @@ from race_registry import add_race, load_registry, save_registry
 
 ROOT = Path(__file__).parent
 RACES_DIR = ROOT / "races"
+VAKAROS_DIR = ROOT / "vakaros"
 
 app = Flask(__name__)
 app.secret_key = "critical-mass-local-dev"  # local personal tool, no auth/session sensitivity
@@ -149,6 +150,13 @@ def race_page(filename):
     if not filename.endswith(".html"):
         abort(404)
     return send_from_directory(RACES_DIR, filename)
+
+
+@app.route("/vakaros/<path:filename>")
+def vakaros_page(filename):
+    if not filename.endswith(".html"):
+        abort(404)
+    return send_from_directory(VAKAROS_DIR, filename)
 
 
 @app.route("/CM_Logo.png")
