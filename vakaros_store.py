@@ -14,15 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Ingests Vakaros GPS-track CSV exports from Vakaros_staging/ into the
-permanent vakaros_data/ store, matching each file to a race in races.json by
-the date encoded in its filename (e.g. "Critical Mass 8-3-2026.csv" ->
-2026-08-03, month-day-year per the Vakaros export naming convention) --
-mirrors ebl_store.py's role for .ebl files, but keyed by filename date
-instead of content hash since each Vakaros export is one whole-race file,
-not a set of raw frames to dedup. A file whose date matches no known race is
-left alone and reported, not guessed at (see the 2026-08-05 Vakaros file
-that turned out to be an unrelated recording)."""
+"""Ingests Vakaros track exports from Vakaros_staging/ into the permanent
+vakaros_data/ store, matching each file to a race in races.json by the date
+encoded in its filename (e.g. "Critical Mass 8-3-2026.csv" -> 2026-08-03,
+month-day-year per the Vakaros export naming convention) -- mirrors
+ebl_store.py's role for .ebl files, but keyed by filename date instead of
+content hash since each Vakaros export is one whole-race file, not a set of
+raw frames to dedup. A file whose date matches no known race is left alone
+and reported, not guessed at (see the 2026-08-05 Vakaros CSV that turned out
+to be an unrelated recording).
+
+Two file formats are supported: the original .csv track export, and .vkx
+(Vakaros' binary telemetry format, see vkx_parser.py -- all Vakaros exports
+going forward are expected to be .vkx). When both exist for the same race,
+.vkx wins (it's the higher-fidelity, forward-compatible source)."""
 import re
 import shutil
 from pathlib import Path
@@ -48,9 +53,10 @@ def parse_filename_date(name: str):
 
 
 def ingest_staging():
-    """Copies every *.csv in Vakaros_staging/ whose filename date matches a
-    known race into vakaros_data/ and registers it (replacing any prior file
-    registered for that race). Returns
+    """Copies every *.csv/*.vkx in Vakaros_staging/ whose filename date
+    matches a known race into vakaros_data/ and registers it (replacing any
+    prior file registered for that race; .vkx wins over .csv for the same
+    race if both are present in this staging pass). Returns
     (added: list[(filename, race_id)], unmatched: list[str])."""
     races_by_date = {r["race_date"]: r["id"] for r in load_races()["races"]}
     registry = load_registry()
@@ -60,16 +66,23 @@ def ingest_staging():
         return added, unmatched
 
     DATA_DIR.mkdir(exist_ok=True)
-    for src in sorted(STAGING_DIR.glob("*.csv")):
+    candidates = {}  # race_id -> src Path, preferring .vkx over .csv
+    for src in sorted(STAGING_DIR.glob("*.csv")) + sorted(STAGING_DIR.glob("*.vkx")):
         race_date = parse_filename_date(src.name)
         race_id = races_by_date.get(race_date) if race_date else None
         if race_id is None:
             unmatched.append(src.name)
             continue
+        existing = candidates.get(race_id)
+        if existing is None or src.suffix == ".vkx":
+            candidates[race_id] = src
+
+    for race_id, src in candidates.items():
+        race_date = parse_filename_date(src.name)
         dest = DATA_DIR / src.name
         shutil.copyfile(src, dest)
         registry["races"] = [r for r in registry["races"] if r["race_id"] != race_id]
-        registry["races"].append({"race_id": race_id, "csv_filename": src.name, "race_date": race_date})
+        registry["races"].append({"race_id": race_id, "filename": src.name, "race_date": race_date})
         added.append((src.name, race_id))
 
     registry["races"].sort(key=lambda r: r["race_id"])

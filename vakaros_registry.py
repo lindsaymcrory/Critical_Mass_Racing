@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """Registry of which race each ingested Vakaros CSV belongs to
-(vakaros_races.json): {"races": [{"race_id", "csv_filename", "race_date"}]}.
+(vakaros_races.json): {"races": [{"race_id", "filename", "race_date"}]}.
 Mirrors race_registry.py's role for races.json, but for the separate,
 independently-sourced Vakaros GPS-track data (see vakaros_store.py for how
 files land here)."""

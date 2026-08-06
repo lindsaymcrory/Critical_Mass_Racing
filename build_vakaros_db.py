@@ -14,10 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Builds course/maneuver data for a race's Vakaros GPS-track CSV, entirely
+"""Builds course/maneuver data for a race's Vakaros track file, entirely
 independent of the EBL/N2K pipeline (build_race_db.py, race_sessions.db):
-this reads straight from the CSV in vakaros_data/ each time, the same way
-render_race_page.py reads straight from race_sessions.db.
+this reads straight from the file in vakaros_data/ each time, the same way
+render_race_page.py reads straight from race_sessions.db. Supports both the
+original .csv track export and the newer .vkx binary format (vkx_parser.py)
+-- see read_track() for the dispatch.
 
 The Vakaros export carries GPS position, heading, speed over ground, heel,
 and pitch -- but no wind instrument data (no TWA/AWA), so unlike the EBL
@@ -34,6 +36,7 @@ from bisect import bisect_left
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import vkx_parser
 from dyc_marks import DYC_MARKS
 from export_course_data import project
 
@@ -60,9 +63,9 @@ def avg(values):
     return sum(values) / len(values) if values else None
 
 
-def read_csv(path):
+def _read_csv(path):
     """Returns rows as dicts with a parsed true-UTC `utc` datetime plus the
-    raw numeric fields, sorted by time."""
+    raw numeric fields, sorted by time -- the original Vakaros .csv export."""
     rows = []
     with open(path, newline="") as f:
         for r in csv.DictReader(f):
@@ -75,6 +78,16 @@ def read_csv(path):
             })
     rows.sort(key=lambda r: r["utc"])
     return rows
+
+
+def read_track(path):
+    """Dispatches to the right parser by file extension -- .vkx (the
+    current/future Vakaros export format) or .csv (the original format,
+    kept for any already-ingested races)."""
+    path = Path(path)
+    if path.suffix.lower() == ".vkx":
+        return vkx_parser.read_track(path)
+    return _read_csv(path)
 
 
 def resample_1hz(rows, start_utc, end_utc):
@@ -230,11 +243,11 @@ def detect_roundings(track, marks_xy):
     return roundings
 
 
-def build_race(race_id, csv_path, trim_start_utc, trim_end_utc):
+def build_race(race_id, track_path, trim_start_utc, trim_end_utc):
     """Returns the course-data dict for one race's Vakaros track (same
     consumer shape as export_course_data.export_for_race), or None if the
-    trim window has no data in this CSV."""
-    raw = read_csv(csv_path)
+    trim window has no data in this file."""
+    raw = read_track(track_path)
     track = resample_1hz(raw, trim_start_utc, trim_end_utc)
     if not track:
         return None
@@ -295,24 +308,24 @@ def build_race(race_id, csv_path, trim_start_utc, trim_end_utc):
 
 
 def build_for_race(race_meta):
-    """race_meta: an entry from races.json. Looks up this race's Vakaros CSV
-    (if any) via vakaros_registry and builds its course data, trimmed to the
-    same gun-to-finish window already established for the EBL analysis of
-    this race. Returns None if there's no Vakaros file registered for this
-    race, or it has no trim window yet."""
+    """race_meta: an entry from races.json. Looks up this race's Vakaros
+    track file (if any) via vakaros_registry and builds its course data,
+    trimmed to the same gun-to-finish window already established for the
+    EBL analysis of this race. Returns None if there's no Vakaros file
+    registered for this race, or it has no trim window yet."""
     import vakaros_registry
     entry = vakaros_registry.by_race_id().get(race_meta["id"])
     if entry is None:
         return None
-    csv_path = DATA_DIR / entry["csv_filename"]
-    if not csv_path.exists():
+    track_path = DATA_DIR / entry["filename"]
+    if not track_path.exists():
         return None
     trim_start = race_meta.get("trim_start_utc")
     trim_end = race_meta.get("trim_end_utc")
     if not trim_start or not trim_end:
         return None
     return build_race(
-        race_meta["id"], csv_path,
+        race_meta["id"], track_path,
         datetime.fromisoformat(trim_start), datetime.fromisoformat(trim_end),
     )
 
