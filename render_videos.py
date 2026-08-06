@@ -110,14 +110,23 @@ def _video_card_html(entry):
     date_str = datetime.fromisoformat(entry["date"]).strftime("%b %-d, %Y")
     note = html_mod.escape(entry["note"])
     url = html_mod.escape(entry["url"])
-    embed_url = _youtube_embed_url(entry["url"])
 
-    embed_html = (
-        f'<div class="video-embed"><iframe src="{html_mod.escape(embed_url)}" '
-        f'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" '
-        f'allowfullscreen loading="lazy"></iframe></div>'
-        if embed_url else ""
-    )
+    if entry["url"].lower().endswith(".mp4"):
+        # Served locally from Videos/ via app.py's /videos-media/ route --
+        # only works when browsing this instance directly (Videos/ is
+        # gitignored/dockerignored, so it 404s on a deployed/pushed copy).
+        embed_html = (
+            f'<div class="video-embed"><video src="{url}" controls preload="metadata" '
+            f'style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;"></video></div>'
+        )
+    else:
+        embed_url = _youtube_embed_url(entry["url"])
+        embed_html = (
+            f'<div class="video-embed"><iframe src="{html_mod.escape(embed_url)}" '
+            f'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" '
+            f'allowfullscreen loading="lazy"></iframe></div>'
+            if embed_url else ""
+        )
     return f"""<div class="video-card">
   {embed_html}
   <div class="video-meta">

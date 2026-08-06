@@ -39,6 +39,7 @@ from race_registry import add_race, load_registry, save_registry
 ROOT = Path(__file__).parent
 RACES_DIR = ROOT / "races"
 VAKAROS_DIR = ROOT / "vakaros"
+VIDEOS_DIR = ROOT / "Videos"
 
 app = Flask(__name__)
 app.secret_key = "critical-mass-local-dev"  # local personal tool, no auth/session sensitivity
@@ -157,6 +158,16 @@ def vakaros_page(filename):
     if not filename.endswith(".html"):
         abort(404)
     return send_from_directory(VAKAROS_DIR, filename)
+
+
+@app.route("/videos-media/<path:filename>")
+def videos_media(filename):
+    # Local-only: Videos/ is gitignored/dockerignored (raw + overlaid race
+    # footage is too large to ship), so this route only serves anything on
+    # a deployed/pushed instance, not the Docker image -- see render_videos.py.
+    if not filename.endswith(".mp4"):
+        abort(404)
+    return send_from_directory(VIDEOS_DIR, filename, conditional=True)
 
 
 @app.route("/CM_Logo.png")

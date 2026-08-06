@@ -1,11 +1,17 @@
 {
-  "next_id": 2,
+  "next_id": 3,
   "entries": [
     {
       "id": 1,
       "date": "2026-08-03",
       "url": "https://youtu.be/1Zc2GaSFR78",
       "note": "First Attempt at overlaying performance data with video"
+    },
+    {
+      "id": 2,
+      "date": "2026-08-05",
+      "url": "https://youtu.be/uA9sIvZlzHo",
+      "note": "Performance overlay - Aug 5 race (course map, boat speed, VMG, heel/trim)"
     }
   ]
 }
