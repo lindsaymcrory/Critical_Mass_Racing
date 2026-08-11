@@ -102,32 +102,26 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
   .scale { position: absolute; bottom: 16px; right: 14px; display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--dim); }
   .scale .bar { height: 2px; background: var(--dim); }
   .zoom-controls {
-    position: absolute; top: 14px; right: 14px; display: flex; gap: 6px; z-index: 15;
+    position: absolute; top: 14px; right: 14px; display: flex; gap: 10px; z-index: 15;
   }
   .zoom-btn {
     appearance: none; border: 1px solid var(--hair); background: rgba(10, 26, 32, 0.72); backdrop-filter: blur(4px);
-    color: var(--paper); font-size: 11px; padding: 6px 10px; border-radius: var(--radius); cursor: pointer;
+    color: var(--paper); font-size: 20px; padding: 10px 18px; border-radius: var(--radius); cursor: pointer;
   }
   :root[data-theme="light"] .zoom-btn { background: rgba(255,255,255,0.82); }
   .zoom-btn:hover { border-color: var(--dim); }
   .instrument-panel {
-    position: absolute; top: 56px; right: 14px; left: auto;
+    position: absolute; top: 88px; right: 14px; left: auto;
     background: rgba(10, 26, 32, 0.78); backdrop-filter: blur(4px);
-    padding: 10px 14px; border-radius: var(--radius); border: 1px solid var(--hair);
-    font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--paper);
+    padding: 18px 26px; border-radius: var(--radius); border: 1px solid var(--hair);
+    font-size: 23px; font-variant-numeric: tabular-nums; color: var(--paper);
     font-family: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
-    min-width: 158px;
+    min-width: 300px;
   }
   :root[data-theme="light"] .instrument-panel { background: rgba(255,255,255,0.88); }
   .instrument-panel .irow { line-height: 1.7; white-space: nowrap; }
   .instrument-panel .irow .ilabel { color: var(--dim); }
   .instrument-panel .irow strong { color: var(--paper); font-weight: 700; }
-  .instrument-bar {
-    display: flex; align-items: center; gap: 14px; padding: 12px 24px;
-    background: var(--panel-2); border-top: 1px solid var(--hair);
-  }
-  .instrument-bar input[type=range] { flex: 1; accent-color: var(--gybe); cursor: pointer; }
-  .instrument-time { font-size: 12.5px; color: var(--paper); min-width: 92px; text-align: right; font-variant-numeric: tabular-nums; }
   .trim-bar {
     display: flex; align-items: center; gap: 14px; padding: 12px 24px;
     background: var(--panel-2); border-top: 1px solid var(--hair);
@@ -289,11 +283,6 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
     </div>
     <div class="instrument-panel" id="instrumentPanel"></div>
     <div class="tooltip mono" id="courseTooltip"></div>
-  </div>
-  <div class="instrument-bar">
-    <span class="label">Time</span>
-    <input type="range" id="instrumentSlider" aria-label="Scrub through the race to view instrument readings">
-    <span class="mono instrument-time" id="instrumentTimeLabel"></span>
   </div>
   <div class="trim-bar">
     <span class="label">Trim finish</span>
@@ -745,7 +734,7 @@ __FLEET_COMPARISON_SECTION__
 
     function updateInstrumentMarkerPosition() {
       if (!currentMarkerEl || !sxFn) return;
-      const p = nearestByElapsed(+instrumentSlider.value);
+      const p = nearestByElapsed(+trimSlider.value);
       currentMarkerEl.setAttribute("cx", sxFn(p[1]));
       currentMarkerEl.setAttribute("cy", syFn(p[2]));
     }
@@ -787,21 +776,6 @@ __FLEET_COMPARISON_SECTION__
         `<div class="irow"><span class="ilabel">Heel</span> <strong>${fmtNum(heel, 0)}&deg;</strong>, <span class="ilabel">TRIM</span> <strong>${fmtNum(pitch, 0)}&deg;</strong></div>`;
     }
 
-    const instrumentSlider = document.getElementById("instrumentSlider");
-    const instrumentTimeLabel = document.getElementById("instrumentTimeLabel");
-    instrumentSlider.min = minElapsed;
-    instrumentSlider.max = maxElapsed;
-    instrumentSlider.step = 1;
-    instrumentSlider.value = minElapsed;
-    function updateInstrumentSlider() {
-      const p = nearestByElapsed(+instrumentSlider.value);
-      updateInstrumentPanel(p);
-      instrumentTimeLabel.textContent = fmtLocalTs(p[9]) + " ADT";
-      updateInstrumentMarkerPosition();
-    }
-    instrumentSlider.addEventListener("input", updateInstrumentSlider);
-    updateInstrumentSlider();
-
     const trimSlider = document.getElementById("trimSlider");
     const trimLabel = document.getElementById("trimLabel");
     trimSlider.min = minElapsed;
@@ -812,12 +786,18 @@ __FLEET_COMPARISON_SECTION__
       const vt = visibleTrack();
       trimLabel.textContent = vt.length ? fmtLocalTs(vt[vt.length - 1][9]) + " ADT" : "";
     }
+    function updateInstrumentFromSlider() {
+      updateInstrumentPanel(nearestByElapsed(+trimSlider.value));
+      updateInstrumentMarkerPosition();
+    }
     trimSlider.addEventListener("input", () => {
       cutoffElapsed = +trimSlider.value;
       updateTrimLabel();
+      updateInstrumentFromSlider();
       buildStats(); buildLog(); drawChart();
     });
     updateTrimLabel();
+    updateInstrumentFromSlider();
 
     // Save/clear the trim permanently: POSTs to the app, which stores the
     // cutoff in races.json and rebuilds this race's data (maneuvers + polar
