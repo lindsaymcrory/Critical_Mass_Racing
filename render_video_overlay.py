@@ -75,16 +75,17 @@ TILE_ZOOM = 15
 OSM_TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 OSM_USER_AGENT = "CriticalMassRacing/1.0 (personal race-video overlay tool)"
 
-FRAME_W, FRAME_H = 640, 480
 PANEL_FONT_PATH = "/System/Library/Fonts/Supplemental/Arial.ttf"
 PANEL_FONT_BOLD_PATH = "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
 
 # Title-safe margins: many players/devices overscan-crop roughly the outer
 # 10% of the frame, which was clipping the top panels and hiding the
-# bottom text entirely. Keep all overlay content inside this box.
-MARGIN_X = int(FRAME_W * 0.10)
-MARGIN_TOP = int(FRAME_H * 0.15)  # 10% safe margin + an extra 5% requested
-MARGIN_BOTTOM = int(FRAME_H * 0.10)
+# bottom text entirely. Keep all overlay content inside this box. Expressed
+# as fractions of the actual source video's dimensions (probed per-video --
+# footage isn't always the same resolution) rather than fixed pixel counts.
+MARGIN_X_FRAC = 0.10
+MARGIN_TOP_FRAC = 0.15  # 10% safe margin + an extra 5% requested
+MARGIN_BOTTOM_FRAC = 0.10
 
 TRACK_STEP_S = 3  # breadcrumb sampling interval (matches export_course_data.py's own decimation)
 
@@ -299,17 +300,21 @@ def draw_map_panel(draw_target, x, y, w, h, basemap_img, project_fn, marks, trai
                          outline=(239, 90, 76, 255), width=3, fill=(239, 90, 76, 120))
 
 
-def draw_bottom_text(draw, text, font):
+def draw_bottom_text(draw, text, font, frame_w, frame_h, margin_bottom):
     bbox = draw.textbbox((0, 0), text, font=font)
     tw = bbox[2] - bbox[0]
-    x = (FRAME_W - tw) / 2
-    y = FRAME_H - MARGIN_BOTTOM - 26
+    x = (frame_w - tw) / 2
+    y = frame_h - margin_bottom - 26
     pad = 8
     draw.rounded_rectangle([x - pad, y - 4, x + tw + pad, y + 22], radius=6, fill=(10, 26, 32, 150))
     draw.text((x, y), text, font=font, fill=(231, 237, 233, 255))
 
 
-def render_overlay_frames(race, series, video_start_utc, video_end_utc, sailing_start_utc, out_dir):
+def render_overlay_frames(race, series, video_start_utc, video_end_utc, sailing_start_utc, out_dir, frame_w, frame_h):
+    margin_x = int(frame_w * MARGIN_X_FRAC)
+    margin_top = int(frame_h * MARGIN_TOP_FRAC)
+    margin_bottom = int(frame_h * MARGIN_BOTTOM_FRAC)
+
     lats = [v[0] for v in series["position"][1] if v[0] is not None]
     lons = [v[1] for v in series["position"][1] if v[1] is not None]
     lat_pad = (max(lats) - min(lats)) * 0.2 or 0.002
@@ -351,12 +356,12 @@ def render_overlay_frames(race, series, video_start_utc, video_end_utc, sailing_
             track_latlon.append((samp["lat"], samp["lon"]))
         tt += timedelta(seconds=TRACK_STEP_S)
 
-    panel_x, panel_y, panel_w, panel_h = FRAME_W - MARGIN_X - 176, MARGIN_TOP, 176, 110
-    map_x, map_y = MARGIN_X, MARGIN_TOP
+    panel_x, panel_y, panel_w, panel_h = frame_w - margin_x - 176, margin_top, 176, 110
+    map_x, map_y = margin_x, margin_top
 
     for i in range(n_seconds):
         t = video_start_utc + timedelta(seconds=i)
-        frame = Image.new("RGBA", (FRAME_W, FRAME_H), (0, 0, 0, 0))
+        frame = Image.new("RGBA", (frame_w, frame_h), (0, 0, 0, 0))
         draw = ImageDraw.Draw(frame)
 
         sample = _sample(series, t)
@@ -371,7 +376,7 @@ def render_overlay_frames(race, series, video_start_utc, video_end_utc, sailing_
             clock_text = f"{label_prefix}  In sequence"
         else:
             clock_text = f"{label_prefix}  race time: {_fmt_clock((t - sailing_start_utc).total_seconds())}"
-        draw_bottom_text(draw, clock_text, bottom_font)
+        draw_bottom_text(draw, clock_text, bottom_font, frame_w, frame_h, margin_bottom)
 
         frame.save(out_dir / f"frame_{i:06d}.png")
 
@@ -385,6 +390,16 @@ def ffprobe_duration(video_path):
         capture_output=True, text=True, check=True,
     )
     return float(out.stdout.strip())
+
+
+def ffprobe_dimensions(video_path):
+    out = subprocess.run(
+        ["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
+         "-of", "csv=s=x:p=0", str(video_path)],
+        capture_output=True, text=True, check=True,
+    )
+    w, h = out.stdout.strip().split("x")
+    return int(w), int(h)
 
 
 def composite(video_path, overlay_dir, out_path):
@@ -430,13 +445,14 @@ def process_video(race_id, video_filename, video_offset_seconds):
 
     video_start_utc = race_start_utc - timedelta(seconds=video_offset_seconds)
     duration = ffprobe_duration(video_path)
+    frame_w, frame_h = ffprobe_dimensions(video_path)
     video_end_utc = video_start_utc + timedelta(seconds=duration)
-    print(f"#   video covers {video_start_utc} -> {video_end_utc} ({duration:.0f}s)")
+    print(f"#   video covers {video_start_utc} -> {video_end_utc} ({duration:.0f}s, {frame_w}x{frame_h})")
 
     with tempfile.TemporaryDirectory(prefix=f"overlay_{race_id}_") as tmp:
         overlay_dir = Path(tmp)
         print(f"# Rendering {int(duration)+1} overlay frames to {overlay_dir}...")
-        render_overlay_frames(race, series, video_start_utc, video_end_utc, race_start_utc, overlay_dir)
+        render_overlay_frames(race, series, video_start_utc, video_end_utc, race_start_utc, overlay_dir, frame_w, frame_h)
         print(f"# Compositing onto video -> {out_path}...")
         composite(video_path, overlay_dir, out_path)
 

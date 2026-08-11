@@ -26,7 +26,6 @@ from pathlib import Path
 from flask import Flask, request, redirect, send_from_directory, abort
 
 import build_race_db
-import coach
 import detect_maneuvers
 import polar_analysis
 import render_boat_check
@@ -195,47 +194,6 @@ def boat_check():
 @app.route("/videos")
 def videos():
     return render_videos.render_page()
-
-
-# ---------------------------------------------------------------- Save trim
-@app.route("/save-trim", methods=["POST"])
-def save_trim():
-    """Persists (or clears, when trim_end_utc is null) a race's trimmed end
-    time, then rebuilds just that race's data and page so maneuvers and
-    polar stats no longer include the trimmed tail (the trip to the dock)."""
-    if render_homepage.READ_ONLY:
-        return {"ok": False, "error": "This is a view-only deployment -- trims are saved locally."}, 403
-
-    data = request.get_json(silent=True) or {}
-    race_id = data.get("race_id")
-    trim_end_utc = data.get("trim_end_utc")  # None clears the trim
-    if not isinstance(race_id, int):
-        return {"ok": False, "error": "race_id required"}, 400
-
-    registry = load_registry()
-    race = next((r for r in registry["races"] if r["id"] == race_id), None)
-    if race is None:
-        return {"ok": False, "error": f"race {race_id} not found"}, 404
-
-    try:
-        if trim_end_utc:
-            race["trim_end_utc"] = trim_end_utc
-        else:
-            race.pop("trim_end_utc", None)
-        save_registry(registry)
-
-        build_race_db.rebuild_race(race_id)
-        detect_maneuvers.main()
-        polar_analysis.main()
-        # the trim changed this race's underlying data, so any existing coach
-        # report is now stale -- drop it (a new one gets written by hand, in
-        # a Claude session, once the trimmed data is settled)
-        coach.delete_report(race_id)
-        render_race_page.render_one(race_id)
-    except Exception:
-        return {"ok": False, "error": traceback.format_exc(limit=1).splitlines()[-1]}, 500
-
-    return {"ok": True}
 
 
 # ---------------------------------------------------------------- Add Race

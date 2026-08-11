@@ -122,23 +122,12 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
   .instrument-panel .irow { line-height: 1.7; white-space: nowrap; }
   .instrument-panel .irow .ilabel { color: var(--dim); }
   .instrument-panel .irow strong { color: var(--paper); font-weight: 700; }
-  .trim-bar {
+  .instrument-bar {
     display: flex; align-items: center; gap: 14px; padding: 12px 24px;
     background: var(--panel-2); border-top: 1px solid var(--hair);
   }
-  .trim-bar input[type=range] { flex: 1; accent-color: var(--mark); cursor: pointer; }
-  .trim-time { font-size: 12.5px; color: var(--paper); min-width: 92px; text-align: right; font-variant-numeric: tabular-nums; }
-  .trim-btn {
-    appearance: none; border: none; background: var(--mark); color: #201404;
-    font: inherit; font-size: 12px; font-weight: 700; padding: 7px 14px;
-    border-radius: var(--radius); cursor: pointer;
-  }
-  .trim-btn:hover { filter: brightness(1.05); }
-  .trim-btn:disabled { opacity: 0.55; cursor: wait; }
-  .trim-btn.secondary { background: transparent; color: var(--dim); border: 1px solid var(--hair); }
-  .trim-btn.secondary:hover { color: var(--paper); border-color: var(--dim); filter: none; }
-  .trim-status { font-size: 11.5px; color: var(--dim); }
-  .trim-status.err { color: var(--port); }
+  .instrument-bar input[type=range] { flex: 1; accent-color: var(--gybe); cursor: pointer; }
+  .instrument-time { font-size: 12.5px; color: var(--paper); min-width: 92px; text-align: right; font-variant-numeric: tabular-nums; }
   .marks-legend {
     top: auto; bottom: 14px; left: 14px; max-height: 46%; overflow-y: auto;
     display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 10.5px;
@@ -284,13 +273,10 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
     <div class="instrument-panel" id="instrumentPanel"></div>
     <div class="tooltip mono" id="courseTooltip"></div>
   </div>
-  <div class="trim-bar">
-    <span class="label">Trim finish</span>
-    <input type="range" id="trimSlider" aria-label="Trim the end of the displayed track">
-    <span class="mono trim-time" id="trimLabel"></span>
-    <button id="saveTrimBtn" class="trim-btn" type="button">Save trim</button>
-    <button id="clearTrimBtn" class="trim-btn secondary" type="button" hidden>Clear saved trim</button>
-    <span class="trim-status" id="trimStatus"></span>
+  <div class="instrument-bar">
+    <span class="label">Time</span>
+    <input type="range" id="instrumentSlider" aria-label="Scrub through the race to view instrument readings">
+    <span class="mono instrument-time" id="instrumentTimeLabel"></span>
   </div>
 </section>
 
@@ -331,7 +317,6 @@ __FLEET_COMPARISON_SECTION__
   <span>Polar target: j80_Polars.csv (crewed polar; may not reflect actual crew count)</span>
 </footer>
 
-<script id="race-meta" type="application/json">__RACE_META__</script>
 <script id="course-data" type="application/json">__COURSE_DATA__</script>
 <script id="polar-data" type="application/json">__POLAR_DATA__</script>
 <script>
@@ -431,18 +416,12 @@ __FLEET_COMPARISON_SECTION__
     });
     document.getElementById("zoomResetBtn").addEventListener("click", resetZoom);
 
-    // Trim slider state: the log includes the post-race trip back to the
-    // dock, so the displayed end time can be pulled back. Everything below
-    // (track, markers, log, stats) is computed from the trimmed window.
+    // The race's data is already bounded server-side by races.json's
+    // trim_start_utc/trim_end_utc (set once when the race is added), so the
+    // full fetched track is exactly what should be shown here -- no
+    // interactive re-trimming on this page.
     const fullTrack = COURSE.track;
     const minElapsed = fullTrack[0][0], maxElapsed = fullTrack[fullTrack.length - 1][0];
-    let cutoffElapsed = maxElapsed;
-    function visibleTrack() { return fullTrack.filter(p => p[0] <= cutoffElapsed); }
-    function visibleManeuvers() {
-      const vt = visibleTrack();
-      const lastTs = vt.length ? vt[vt.length - 1][9] : "";
-      return COURSE.maneuvers.filter(m => m.start_utc <= lastTs);
-    }
     function fmtLocalTs(ts) {
       // The logger's clock is true UTC (verified by GPS cross-correlation
       // against a Vakaros track with explicit timezone offsets -- 2 m median
@@ -494,13 +473,13 @@ __FLEET_COMPARISON_SECTION__
 
     function buildStats() {
       const el = document.getElementById("stats");
-      const mans = visibleManeuvers();
+      const mans = COURSE.maneuvers;
       const tacks = mans.filter(m => m.type === "tack");
       const gybes = mans.filter(m => m.type === "gybe");
       const roundings = mans.filter(m => m.type === "rounding" || m.type === "rounding-turn");
       const avgLoss = avgOf(tacks.concat(gybes).map(m => m.speed_loss_pct));
       const avgDur = avgOf(tacks.concat(gybes).map(m => m.duration_s));
-      const maxStw = Math.max(...visibleTrack().map(p => p[5] || 0));
+      const maxStw = Math.max(...fullTrack.map(p => p[5] || 0));
       el.innerHTML =
         statBlock(tacks.length, "", "Tacks") + statBlock(gybes.length, "", "Gybes") +
         statBlock(roundings.length, "", "Roundings") + statBlock(maxStw.toFixed(1), "kn", "Max speed") +
@@ -522,7 +501,7 @@ __FLEET_COMPARISON_SECTION__
 
     function buildLog() {
       const log = document.getElementById("log");
-      const mans = visibleManeuvers();
+      const mans = COURSE.maneuvers;
       document.getElementById("logCount").textContent = mans.length + " events";
       log.innerHTML = "";
 
@@ -563,9 +542,7 @@ __FLEET_COMPARISON_SECTION__
     }
 
     function drawChart() {
-      const track = visibleTrack();
-      // bounds come from the FULL track + marks so the view stays stable
-      // while the trim slider moves
+      const track = fullTrack;
       const xs = fullTrack.map(p => p[1]).concat(COURSE.waypoints.map(w => w.x));
       const ys = fullTrack.map(p => p[2]).concat(COURSE.waypoints.map(w => w.y));
       const minX = Math.min(...xs), maxX = Math.max(...xs);
@@ -682,7 +659,7 @@ __FLEET_COMPARISON_SECTION__
       });
 
       markerEls = [];
-      visibleManeuvers().forEach((m) => {
+      COURSE.maneuvers.forEach((m) => {
         let el;
         const cx = sx(m.x), cy = sy(m.y);
         if (m.type === "tack") {
@@ -734,7 +711,7 @@ __FLEET_COMPARISON_SECTION__
 
     function updateInstrumentMarkerPosition() {
       if (!currentMarkerEl || !sxFn) return;
-      const p = nearestByElapsed(+trimSlider.value);
+      const p = nearestByElapsed(+instrumentSlider.value);
       currentMarkerEl.setAttribute("cx", sxFn(p[1]));
       currentMarkerEl.setAttribute("cy", syFn(p[2]));
     }
@@ -776,65 +753,22 @@ __FLEET_COMPARISON_SECTION__
         `<div class="irow"><span class="ilabel">Heel</span> <strong>${fmtNum(heel, 0)}&deg;</strong>, <span class="ilabel">TRIM</span> <strong>${fmtNum(pitch, 0)}&deg;</strong></div>`;
     }
 
-    const trimSlider = document.getElementById("trimSlider");
-    const trimLabel = document.getElementById("trimLabel");
-    trimSlider.min = minElapsed;
-    trimSlider.max = maxElapsed;
-    trimSlider.step = 10;
-    trimSlider.value = maxElapsed;
-    function updateTrimLabel() {
-      const vt = visibleTrack();
-      trimLabel.textContent = vt.length ? fmtLocalTs(vt[vt.length - 1][9]) + " ADT" : "";
-    }
+    // Purely a client-side scrub control for the instrument panel/marker --
+    // it never modifies the race's data or persists anything server-side.
+    const instrumentSlider = document.getElementById("instrumentSlider");
+    const instrumentTimeLabel = document.getElementById("instrumentTimeLabel");
+    instrumentSlider.min = minElapsed;
+    instrumentSlider.max = maxElapsed;
+    instrumentSlider.step = 1;
+    instrumentSlider.value = minElapsed;
     function updateInstrumentFromSlider() {
-      updateInstrumentPanel(nearestByElapsed(+trimSlider.value));
+      const p = nearestByElapsed(+instrumentSlider.value);
+      updateInstrumentPanel(p);
+      instrumentTimeLabel.textContent = fmtLocalTs(p[9]) + " ADT";
       updateInstrumentMarkerPosition();
     }
-    trimSlider.addEventListener("input", () => {
-      cutoffElapsed = +trimSlider.value;
-      updateTrimLabel();
-      updateInstrumentFromSlider();
-      buildStats(); buildLog(); drawChart();
-    });
-    updateTrimLabel();
+    instrumentSlider.addEventListener("input", updateInstrumentFromSlider);
     updateInstrumentFromSlider();
-
-    // Save/clear the trim permanently: POSTs to the app, which stores the
-    // cutoff in races.json and rebuilds this race's data (maneuvers + polar
-    // recompute without the trimmed tail), then regenerates this page.
-    // Only works when served by the app (not when opened as a bare file).
-    const RACE_META = JSON.parse(document.getElementById("race-meta").textContent);
-    const saveBtn = document.getElementById("saveTrimBtn");
-    const clearBtn = document.getElementById("clearTrimBtn");
-    const trimStatus = document.getElementById("trimStatus");
-    if (RACE_META.trim_end_utc) {
-      clearBtn.hidden = false;
-      trimStatus.textContent = "trim saved";
-    }
-    async function postTrim(trimEndUtc, busyLabel) {
-      saveBtn.disabled = true; clearBtn.disabled = true;
-      trimStatus.classList.remove("err");
-      trimStatus.textContent = busyLabel + " recomputing race…";
-      try {
-        const r = await fetch("/save-trim", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ race_id: RACE_META.id, trim_end_utc: trimEndUtc }),
-        });
-        if (!r.ok) throw new Error("server returned " + r.status);
-        location.reload();
-      } catch (e) {
-        saveBtn.disabled = false; clearBtn.disabled = false;
-        trimStatus.classList.add("err");
-        trimStatus.textContent = "failed: " + e.message;
-      }
-    }
-    saveBtn.addEventListener("click", () => {
-      const vt = visibleTrack();
-      if (!vt.length) return;
-      postTrim(vt[vt.length - 1][9], "saving…");
-    });
-    clearBtn.addEventListener("click", () => postTrim(null, "clearing…"));
 
     buildLegend(); buildMarksLegend(); buildStats(); buildLog(); drawChart();
     window.addEventListener("resize", drawChart);
@@ -1194,7 +1128,6 @@ def render_race_page(conn, polar, race_meta):
                                 "run": {"n": 0, "avg_pct": None}}}
 
     title = f"{race_meta['race_date']} {race_meta['series']}"
-    meta = {"id": race_meta["id"], "trim_end_utc": race_meta.get("trim_end_utc")}
 
     fleet_section_html = _fleet_comparison_html(fleet_comparison.compute(conn, race_meta))
 
@@ -1209,7 +1142,6 @@ def render_race_page(conn, polar, race_meta):
             .replace("__TITLE__", title)
             .replace("__SERIES__", race_meta["series"])
             .replace("__BOAT__", race_meta.get("boat", "Critical Mass"))
-            .replace("__RACE_META__", json.dumps(meta))
             .replace("__COURSE_DATA__", json.dumps(course, separators=(",", ":")))
             .replace("__POLAR_DATA__", json.dumps(polar_data, separators=(",", ":")))
             .replace("__COACH_HTML__", coach_html)
@@ -1237,23 +1169,6 @@ def render_all():
 
     conn.close()
     return written
-
-
-def render_one(race_id):
-    """Regenerates a single race's page (used by the save-trim flow)."""
-    from race_registry import load_registry
-    matches = [r for r in load_registry()["races"] if r["id"] == race_id]
-    if not matches:
-        raise ValueError(f"race {race_id} not in registry")
-    polar = PolarTable(POLAR_PATH)
-    conn = sqlite3.connect(DB_PATH)
-    html = render_race_page(conn, polar, matches[0])
-    conn.close()
-    if html is None:
-        raise ValueError(f"race {race_id} has no data")
-    out_path = RACES_DIR / f"{race_id}.html"
-    out_path.write_text(html)
-    print(f"# Wrote {out_path} ({out_path.stat().st_size/1024:.0f} KB)")
 
 
 if __name__ == "__main__":
