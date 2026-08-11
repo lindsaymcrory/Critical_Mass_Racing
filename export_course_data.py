@@ -44,7 +44,8 @@ def project(lat, lon, lat0, lon0):
 def build_session(conn, sid, meta):
     cur = conn.execute(
         "SELECT utc_timestamp, elapsed_s, latitude, longitude, heading_deg, sog_kn, stw_kn, "
-        "twa_deg, tws_kn, tack, depth_m FROM nav_1hz WHERE session_id=? AND latitude IS NOT NULL "
+        "twa_deg, tws_kn, tack, depth_m, awa_deg, aws_kn, heel_deg, pitch_deg "
+        "FROM nav_1hz WHERE session_id=? AND latitude IS NOT NULL "
         "ORDER BY utc_timestamp", (sid,)
     )
     rows = cur.fetchall()
@@ -60,7 +61,7 @@ def build_session(conn, sid, meta):
     for i, r in enumerate(rows):
         if i % TRACK_STEP_S != 0 and i != len(rows) - 1:
             continue
-        ts, elapsed_s, lat, lon, hdg, sog, stw, twa, tws, tack, depth = r
+        ts, elapsed_s, lat, lon, hdg, sog, stw, twa, tws, tack, depth, awa, aws, heel, pitch = r
         x, y = project(lat, lon, lat0, lon0)
         track.append([
             round(elapsed_s, 0), x, y,
@@ -71,6 +72,10 @@ def build_session(conn, sid, meta):
             round(tws, 1) if tws is not None else None,
             tack[0] if tack else None,  # 'p'/'s'
             ts,
+            round(awa, 0) if awa is not None else None,
+            round(aws, 1) if aws is not None else None,
+            round(heel, 1) if heel is not None else None,
+            round(pitch, 1) if pitch is not None else None,
         ])
 
     # known club racing marks, shown on every race regardless of which ones

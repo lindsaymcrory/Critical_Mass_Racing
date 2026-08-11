@@ -87,8 +87,9 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
   .section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
 
   /* -- course plot -- */
-  .chart-wrap { background: var(--panel-2); position: relative; height: 62vh; min-height: 420px; }
-  #courseChart { width: 100%; height: 100%; display: block; }
+  .chart-wrap { background: var(--panel-2); position: relative; height: 62vh; min-height: 420px; overflow: hidden; }
+  #courseChart { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+  #courseChart.panning { cursor: grabbing; }
   .legend {
     position: absolute; top: 14px; left: 14px; display: flex; flex-direction: column; gap: 6px;
     background: rgba(10, 26, 32, 0.72); backdrop-filter: blur(4px);
@@ -100,6 +101,33 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
   .legend .ln { width: 16px; height: 3px; border-radius: 2px; flex: none; }
   .scale { position: absolute; bottom: 16px; right: 14px; display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--dim); }
   .scale .bar { height: 2px; background: var(--dim); }
+  .zoom-controls {
+    position: absolute; top: 14px; right: 14px; display: flex; gap: 6px; z-index: 15;
+  }
+  .zoom-btn {
+    appearance: none; border: 1px solid var(--hair); background: rgba(10, 26, 32, 0.72); backdrop-filter: blur(4px);
+    color: var(--paper); font-size: 11px; padding: 6px 10px; border-radius: var(--radius); cursor: pointer;
+  }
+  :root[data-theme="light"] .zoom-btn { background: rgba(255,255,255,0.82); }
+  .zoom-btn:hover { border-color: var(--dim); }
+  .instrument-panel {
+    position: absolute; top: 56px; right: 14px; left: auto;
+    background: rgba(10, 26, 32, 0.78); backdrop-filter: blur(4px);
+    padding: 10px 14px; border-radius: var(--radius); border: 1px solid var(--hair);
+    font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--paper);
+    font-family: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
+    min-width: 158px;
+  }
+  :root[data-theme="light"] .instrument-panel { background: rgba(255,255,255,0.88); }
+  .instrument-panel .irow { line-height: 1.7; white-space: nowrap; }
+  .instrument-panel .irow .ilabel { color: var(--dim); }
+  .instrument-panel .irow strong { color: var(--paper); font-weight: 700; }
+  .instrument-bar {
+    display: flex; align-items: center; gap: 14px; padding: 12px 24px;
+    background: var(--panel-2); border-top: 1px solid var(--hair);
+  }
+  .instrument-bar input[type=range] { flex: 1; accent-color: var(--gybe); cursor: pointer; }
+  .instrument-time { font-size: 12.5px; color: var(--paper); min-width: 92px; text-align: right; font-variant-numeric: tabular-nums; }
   .trim-bar {
     display: flex; align-items: center; gap: 14px; padding: 12px 24px;
     background: var(--panel-2); border-top: 1px solid var(--hair);
@@ -254,7 +282,18 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
     <div class="legend" id="legend"></div>
     <div class="legend marks-legend" id="marksLegend"></div>
     <div class="scale" id="scaleBar"></div>
+    <div class="zoom-controls">
+      <button class="zoom-btn" id="zoomInBtn" type="button" aria-label="Zoom in">+</button>
+      <button class="zoom-btn" id="zoomOutBtn" type="button" aria-label="Zoom out">&minus;</button>
+      <button class="zoom-btn" id="zoomResetBtn" type="button" aria-label="Reset zoom">Reset</button>
+    </div>
+    <div class="instrument-panel" id="instrumentPanel"></div>
     <div class="tooltip mono" id="courseTooltip"></div>
+  </div>
+  <div class="instrument-bar">
+    <span class="label">Time</span>
+    <input type="range" id="instrumentSlider" aria-label="Scrub through the race to view instrument readings">
+    <span class="mono instrument-time" id="instrumentTimeLabel"></span>
   </div>
   <div class="trim-bar">
     <span class="label">Trim finish</span>
@@ -336,6 +375,72 @@ __FLEET_COMPARISON_SECTION__
     const chartWrap = chart.parentElement;
     let hiRowEl = null;
     let markerEls = [];
+
+    // Zoom/pan: a sub-window (viewX/viewY/viewW/viewH) into the chart's
+    // fixed 0..baseW/0..baseH content coordinate space. Panning/zooming only
+    // ever changes this window, never the underlying drawn content, so it
+    // doesn't require redrawing the track/markers/grid.
+    let baseW = 0, baseH = 0, sxFn = null, syFn = null;
+    let zoom = 1, viewX = 0, viewY = 0;
+    const ZOOM_MIN = 1, ZOOM_MAX = 20;
+    let currentMarkerEl = null;
+
+    function applyViewBox() {
+      const vw = baseW / zoom, vh = baseH / zoom;
+      viewX = Math.max(0, Math.min(baseW - vw, viewX));
+      viewY = Math.max(0, Math.min(baseH - vh, viewY));
+      chart.setAttribute("viewBox", `${viewX} ${viewY} ${vw} ${vh}`);
+    }
+    function zoomAt(factor, screenX, screenY) {
+      const rect = chart.getBoundingClientRect();
+      // point under the cursor, in content coordinates, before zooming
+      const px = viewX + (screenX - rect.left) / rect.width * (baseW / zoom);
+      const py = viewY + (screenY - rect.top) / rect.height * (baseH / zoom);
+      zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, zoom * factor));
+      // re-center so the same content point stays under the cursor
+      viewX = px - (screenX - rect.left) / rect.width * (baseW / zoom);
+      viewY = py - (screenY - rect.top) / rect.height * (baseH / zoom);
+      applyViewBox();
+    }
+    function resetZoom() {
+      zoom = 1; viewX = 0; viewY = 0;
+      applyViewBox();
+    }
+
+    chart.addEventListener("wheel", (ev) => {
+      ev.preventDefault();
+      zoomAt(ev.deltaY < 0 ? 1.2 : 1 / 1.2, ev.clientX, ev.clientY);
+    }, { passive: false });
+
+    let panning = false, panStartX = 0, panStartY = 0, panOrigX = 0, panOrigY = 0;
+    chart.addEventListener("pointerdown", (ev) => {
+      panning = true;
+      chart.classList.add("panning");
+      chart.setPointerCapture(ev.pointerId);
+      panStartX = ev.clientX; panStartY = ev.clientY;
+      panOrigX = viewX; panOrigY = viewY;
+    });
+    chart.addEventListener("pointermove", (ev) => {
+      if (!panning) return;
+      const rect = chart.getBoundingClientRect();
+      const vw = baseW / zoom, vh = baseH / zoom;
+      viewX = panOrigX - (ev.clientX - panStartX) / rect.width * vw;
+      viewY = panOrigY - (ev.clientY - panStartY) / rect.height * vh;
+      applyViewBox();
+    });
+    function endPan() { panning = false; chart.classList.remove("panning"); }
+    chart.addEventListener("pointerup", endPan);
+    chart.addEventListener("pointercancel", endPan);
+
+    document.getElementById("zoomInBtn").addEventListener("click", () => {
+      const rect = chart.getBoundingClientRect();
+      zoomAt(1.4, rect.left + rect.width / 2, rect.top + rect.height / 2);
+    });
+    document.getElementById("zoomOutBtn").addEventListener("click", () => {
+      const rect = chart.getBoundingClientRect();
+      zoomAt(1 / 1.4, rect.left + rect.width / 2, rect.top + rect.height / 2);
+    });
+    document.getElementById("zoomResetBtn").addEventListener("click", resetZoom);
 
     // Trim slider state: the log includes the post-race trip back to the
     // dock, so the displayed end time can be pulled back. Everything below
@@ -486,8 +591,10 @@ __FLEET_COMPARISON_SECTION__
       const offX = (W - dataW * scale) / 2, offY = (H - dataH * scale) / 2;
       function sx(x) { return offX + (x - (minX - padX)) * scale; }
       function sy(y) { return H - (offY + (y - (minY - padY)) * scale); }
+      sxFn = sx; syFn = sy;
 
-      chart.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      baseW = W; baseH = H;
+      applyViewBox();
       chart.innerHTML = "";
 
       const rawStep = dataW / 6;
@@ -617,6 +724,30 @@ __FLEET_COMPARISON_SECTION__
       const scaleEl = document.getElementById("scaleBar");
       const barPx = step * scale;
       scaleEl.innerHTML = `<span class="bar" style="width:${barPx}px"></span><span>${step >= 1000 ? (step/1000)+" km" : step+" m"}</span>`;
+
+      currentMarkerEl = document.createElementNS(svgNS, "circle");
+      currentMarkerEl.setAttribute("r", "6.5");
+      currentMarkerEl.setAttribute("fill", "var(--gybe)");
+      currentMarkerEl.setAttribute("stroke", "var(--ink)"); currentMarkerEl.setAttribute("stroke-width", "1.5");
+      currentMarkerEl.style.pointerEvents = "none";
+      chart.appendChild(currentMarkerEl);
+      updateInstrumentMarkerPosition();
+    }
+
+    function nearestByElapsed(elapsedVal) {
+      let best = fullTrack[0], bestDiff = Infinity;
+      for (const p of fullTrack) {
+        const diff = Math.abs(p[0] - elapsedVal);
+        if (diff < bestDiff) { best = p; bestDiff = diff; }
+      }
+      return best;
+    }
+
+    function updateInstrumentMarkerPosition() {
+      if (!currentMarkerEl || !sxFn) return;
+      const p = nearestByElapsed(+instrumentSlider.value);
+      currentMarkerEl.setAttribute("cx", sxFn(p[1]));
+      currentMarkerEl.setAttribute("cy", syFn(p[2]));
     }
 
     function maneuverTooltip(m) {
@@ -643,6 +774,33 @@ __FLEET_COMPARISON_SECTION__
       tooltip.style.top = (ev.clientY - wrapRect.top + 14) + "px";
     }
     function hideTooltip() { tooltip.classList.remove("show"); }
+
+    function fmtNum(v, digits) { return (v === null || v === undefined) ? "&mdash;" : Number(v).toFixed(digits); }
+    function updateInstrumentPanel(p) {
+      const el = document.getElementById("instrumentPanel");
+      if (!p) { el.innerHTML = `<div class="irow">No data</div>`; return; }
+      const stw = p[5], twa = p[6], tws = p[7], awa = p[10], aws = p[11], heel = p[12], pitch = p[13];
+      el.innerHTML =
+        `<div class="irow"><span class="ilabel">BSP</span> <strong>${fmtNum(stw, 1)}</strong></div>` +
+        `<div class="irow"><span class="ilabel">TWA</span> <strong>${fmtNum(twa, 0)}&deg;</strong>, <span class="ilabel">AWA</span> <strong>${fmtNum(awa, 0)}&deg;</strong></div>` +
+        `<div class="irow"><span class="ilabel">TWS</span> <strong>${fmtNum(tws, 1)}</strong>, <span class="ilabel">AWS</span> <strong>${fmtNum(aws, 1)}</strong></div>` +
+        `<div class="irow"><span class="ilabel">Heel</span> <strong>${fmtNum(heel, 0)}&deg;</strong>, <span class="ilabel">TRIM</span> <strong>${fmtNum(pitch, 0)}&deg;</strong></div>`;
+    }
+
+    const instrumentSlider = document.getElementById("instrumentSlider");
+    const instrumentTimeLabel = document.getElementById("instrumentTimeLabel");
+    instrumentSlider.min = minElapsed;
+    instrumentSlider.max = maxElapsed;
+    instrumentSlider.step = 1;
+    instrumentSlider.value = minElapsed;
+    function updateInstrumentSlider() {
+      const p = nearestByElapsed(+instrumentSlider.value);
+      updateInstrumentPanel(p);
+      instrumentTimeLabel.textContent = fmtLocalTs(p[9]) + " ADT";
+      updateInstrumentMarkerPosition();
+    }
+    instrumentSlider.addEventListener("input", updateInstrumentSlider);
+    updateInstrumentSlider();
 
     const trimSlider = document.getElementById("trimSlider");
     const trimLabel = document.getElementById("trimLabel");
