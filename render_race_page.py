@@ -193,6 +193,26 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
   .curve-key .sw { width: 18px; height: 2px; flex: none; }
   .curve-key .details { color: var(--dim); font-size: 10.5px; }
 
+  /* -- Race Summary -- */
+  .coach-box {
+    margin: 14px 24px 24px; padding: 20px 24px;
+    border: 1px solid var(--hair); border-radius: var(--radius);
+    background: var(--panel); font-size: 13.5px; line-height: 1.65;
+    max-width: 900px;
+  }
+  .coach-box h3 { font-size: 15px; margin: 20px 0 8px; color: var(--mark); }
+  .coach-box h3:first-child { margin-top: 0; }
+  .coach-box h4 { font-size: 13px; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dim); }
+  .coach-box ul, .coach-box ol { margin: 6px 0 12px; padding-left: 22px; }
+  .coach-box li { margin: 3px 0; }
+  .coach-box p { margin: 8px 0; }
+  .coach-box strong { color: var(--paper); }
+  .coach-empty { color: var(--dim); font-style: italic; }
+  table.coach-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 10px 0 14px; }
+  table.coach-table th, table.coach-table td { padding: 7px 12px; text-align: left; border-top: 1px solid var(--hair); }
+  table.coach-table th { text-transform: uppercase; letter-spacing: 0.05em; font-size: 10px; color: var(--dim); background: var(--panel-2); border-top: none; }
+  table.coach-table tr:first-child td { border-top: none; }
+
   /* -- Fleet Comparison -- */
   .fleet-summary {
     margin: 4px 24px 20px; padding: 16px 20px;
@@ -270,6 +290,12 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
   </div>
 </section>
 
+<section id="coach-section">
+  <div class="section-head">
+    <span class="section-title">Race Summary</span>
+  </div>
+  <div class="coach-box">__COACH_HTML__</div>
+</section>
 __FLEET_COMPARISON_SECTION__
 <footer>
   <span>Course: GPS position, 1 Hz, decimated 1:3</span>
@@ -814,9 +840,22 @@ __FLEET_COMPARISON_SECTION__
 """
 
 
+_TABLE_SEP_RE = re.compile(r"^\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)+\|?$")
+
+
+def _split_table_row(line):
+    cells = line.strip()
+    if cells.startswith("|"):
+        cells = cells[1:]
+    if cells.endswith("|"):
+        cells = cells[:-1]
+    return [c.strip() for c in cells.split("|")]
+
+
 def _coach_markdown_to_html(text):
-    """Minimal markdown -> HTML: headers, bullet/numbered lists, bold, paragraphs.
-    Good enough for the coach report's fixed structure; not a general renderer."""
+    """Minimal markdown -> HTML: headers, bullet/numbered lists, bold,
+    paragraphs, and simple GFM-style pipe tables. Good enough for the coach
+    report's fixed structure; not a general renderer."""
     lines = text.strip("\n").split("\n")
     out = []
     list_stack = []  # tags of currently-open <ul>/<ol>
@@ -831,16 +870,36 @@ def _coach_markdown_to_html(text):
         s = re.sub(r"(?<!\*)\*([^*]+?)\*(?!\*)", r"<em>\1</em>", s)
         return s
 
-    for raw in lines:
-        line = raw.rstrip()
+    i = 0
+    n = len(lines)
+    while i < n:
+        line = lines[i].rstrip()
         if not line.strip():
             close_lists()
+            i += 1
+            continue
+        if line.strip().startswith("|") and i + 1 < n and _TABLE_SEP_RE.match(lines[i + 1].strip()):
+            close_lists()
+            header = _split_table_row(line)
+            body_rows = []
+            j = i + 2
+            while j < n and lines[j].strip().startswith("|"):
+                body_rows.append(_split_table_row(lines[j]))
+                j += 1
+            thead = "<tr>" + "".join(f"<th>{inline(c)}</th>" for c in header) + "</tr>"
+            tbody = "".join(
+                "<tr>" + "".join(f"<td>{inline(c)}</td>" for c in row) + "</tr>"
+                for row in body_rows
+            )
+            out.append(f'<table class="coach-table"><thead>{thead}</thead><tbody>{tbody}</tbody></table>')
+            i = j
             continue
         h = re.match(r"^(#{1,4})\s+(.*)$", line)
         if h:
             close_lists()
             level = {1: "h3", 2: "h3", 3: "h4", 4: "h4"}[len(h.group(1))]
             out.append(f"<{level}>{inline(h.group(2))}</{level}>")
+            i += 1
             continue
         m = re.match(r"^\s*[-*]\s+(.*)$", line)
         if m:
@@ -849,6 +908,7 @@ def _coach_markdown_to_html(text):
                 list_stack.append("ul")
                 out.append("<ul>")
             out.append(f"<li>{inline(m.group(1))}</li>")
+            i += 1
             continue
         m = re.match(r"^\s*\d+[.)]\s+(.*)$", line)
         if m:
@@ -857,9 +917,11 @@ def _coach_markdown_to_html(text):
                 list_stack.append("ol")
                 out.append("<ol>")
             out.append(f"<li>{inline(m.group(1))}</li>")
+            i += 1
             continue
         close_lists()
         out.append(f"<p>{inline(line.strip())}</p>")
+        i += 1
 
     close_lists()
     return "\n".join(out)
@@ -998,6 +1060,13 @@ def render_race_page(conn, polar, race_meta):
 
     fleet_section_html = _fleet_comparison_html(fleet_comparison.compute(conn, race_meta))
 
+    import coach
+    report_text = coach.load_report(sid)
+    if report_text:
+        coach_html = _coach_markdown_to_html(report_text)
+    else:
+        coach_html = "<p class='coach-empty'>No summary yet for this race.</p>"
+
     html = (PAGE_TEMPLATE
             .replace("__TITLE__", title)
             .replace("__SERIES__", race_meta["series"])
@@ -1005,6 +1074,7 @@ def render_race_page(conn, polar, race_meta):
             .replace("__RACE_META__", json.dumps(meta))
             .replace("__COURSE_DATA__", json.dumps(course, separators=(",", ":")))
             .replace("__POLAR_DATA__", json.dumps(polar_data, separators=(",", ":")))
+            .replace("__COACH_HTML__", coach_html)
             .replace("__FLEET_COMPARISON_SECTION__", fleet_section_html))
     return html
 

@@ -154,6 +154,26 @@
   .curve-key .sw { width: 18px; height: 2px; flex: none; }
   .curve-key .details { color: var(--dim); font-size: 10.5px; }
 
+  /* -- Race Summary -- */
+  .coach-box {
+    margin: 14px 24px 24px; padding: 20px 24px;
+    border: 1px solid var(--hair); border-radius: var(--radius);
+    background: var(--panel); font-size: 13.5px; line-height: 1.65;
+    max-width: 900px;
+  }
+  .coach-box h3 { font-size: 15px; margin: 20px 0 8px; color: var(--mark); }
+  .coach-box h3:first-child { margin-top: 0; }
+  .coach-box h4 { font-size: 13px; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dim); }
+  .coach-box ul, .coach-box ol { margin: 6px 0 12px; padding-left: 22px; }
+  .coach-box li { margin: 3px 0; }
+  .coach-box p { margin: 8px 0; }
+  .coach-box strong { color: var(--paper); }
+  .coach-empty { color: var(--dim); font-style: italic; }
+  table.coach-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 10px 0 14px; }
+  table.coach-table th, table.coach-table td { padding: 7px 12px; text-align: left; border-top: 1px solid var(--hair); }
+  table.coach-table th { text-transform: uppercase; letter-spacing: 0.05em; font-size: 10px; color: var(--dim); background: var(--panel-2); border-top: none; }
+  table.coach-table tr:first-child td { border-top: none; }
+
   /* -- Fleet Comparison -- */
   .fleet-summary {
     margin: 4px 24px 20px; padding: 16px 20px;
@@ -231,6 +251,22 @@
   </div>
 </section>
 
+<section id="coach-section">
+  <div class="section-head">
+    <span class="section-title">Race Summary</span>
+  </div>
+  <div class="coach-box"><h4>Wind &amp; Comparable Races</h4>
+<p>True wind ranged 5.4–15.8 kn (avg 10.1 kn) — light-to-moderate, per the race note, and close to race 9 (2026-07-27, avg 9.1 kn, 4.5–15.5 kn), the most recent and best-matched comparable on wind.</p>
+<p>Overall this was the stronger downwind race of the pair: 80.6% of polar target downwind against race 9&#x27;s 62.3%, while upwind performance was similar between the two (73.8% vs 71.5%). Upwind VMG averaged 3.32 kn against a 4.42 kn target (75% of target VMG), with TWA running 3.8° wide of target (42.9° vs 39.1°) — a smaller gap than most races reviewed. Downwind angle was close to optimal (152.6° vs a 149.8° target, 2.8° deep), a much tighter match than race 9&#x27;s 21.9° deviation, and the strong 80.6% run percentage reflects that better angle discipline.</p>
+<p>Fifteen tacks lost 36.3% on average with 6.6s recovery, and five gybes lost 26.7% — both roughly in line with the rest of the dataset. Three mark roundings were logged, still too few for reliable leg-by-leg splits. The Vakaros line was never pinged this race, so no distance-to-line figure is available; boat speed just after the gun was approximately 5.0 kn. Heel while beating averaged 18.3° with a clear positive imbalance (+5.9° signed) — the largest signed heel skew recorded so far, which could reflect more time on one tack, uneven crew weight, or a rig asymmetry; the data can&#x27;t distinguish between those. The two clearest strengths were downwind performance (the best run result recorded) and tight downwind angle discipline; the two most important gaps were the recurring upwind angle deviation and the beat heel imbalance.</p>
+<table class="coach-table"><thead><tr><th>Metric</th><th>This Race</th><th>Race 9 (2026-07-27)</th></tr></thead><tbody><tr><td>TWS avg (range)</td><td>10.1 kn (5.4–15.8)</td><td>9.1 kn (4.5–15.5)</td></tr><tr><td>Beat % of target</td><td>73.8%</td><td>71.5%</td></tr><tr><td>Run % of target</td><td>80.6%</td><td>62.3%</td></tr><tr><td>Run TWA (actual vs target)</td><td>152.6° vs 149.8°</td><td>170.6° vs 148.7°</td></tr><tr><td>Tacks (n / avg loss)</td><td>15 / 36.3%</td><td>8 / 34.2%</td></tr></tbody></table>
+<h4>Coaching Recommendations</h4>
+<ol>
+<li>Downwind was the standout this race (80.6% of target with angle within 3° of optimal, the best run result recorded) — identify what changed from race 9 and work to repeat it.</li>
+<li>Upwind TWA ran 3.8° wide of target — a smaller version of a pattern seen across several races; keep working on pointing without giving up the current speed.</li>
+<li>Beat heel showed a +5.9° signed imbalance, the largest recorded — worth checking crew weight placement or rig tune for a possible asymmetry.</li>
+</ol></div>
+</section>
 
 <section id="fleet-section">
   <div class="section-head"><span class="section-title">Fleet Comparison</span></div>

@@ -154,6 +154,26 @@
   .curve-key .sw { width: 18px; height: 2px; flex: none; }
   .curve-key .details { color: var(--dim); font-size: 10.5px; }
 
+  /* -- Race Summary -- */
+  .coach-box {
+    margin: 14px 24px 24px; padding: 20px 24px;
+    border: 1px solid var(--hair); border-radius: var(--radius);
+    background: var(--panel); font-size: 13.5px; line-height: 1.65;
+    max-width: 900px;
+  }
+  .coach-box h3 { font-size: 15px; margin: 20px 0 8px; color: var(--mark); }
+  .coach-box h3:first-child { margin-top: 0; }
+  .coach-box h4 { font-size: 13px; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dim); }
+  .coach-box ul, .coach-box ol { margin: 6px 0 12px; padding-left: 22px; }
+  .coach-box li { margin: 3px 0; }
+  .coach-box p { margin: 8px 0; }
+  .coach-box strong { color: var(--paper); }
+  .coach-empty { color: var(--dim); font-style: italic; }
+  table.coach-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 10px 0 14px; }
+  table.coach-table th, table.coach-table td { padding: 7px 12px; text-align: left; border-top: 1px solid var(--hair); }
+  table.coach-table th { text-transform: uppercase; letter-spacing: 0.05em; font-size: 10px; color: var(--dim); background: var(--panel-2); border-top: none; }
+  table.coach-table tr:first-child td { border-top: none; }
+
   /* -- Fleet Comparison -- */
   .fleet-summary {
     margin: 4px 24px 20px; padding: 16px 20px;
@@ -231,6 +251,21 @@
   </div>
 </section>
 
+<section id="coach-section">
+  <div class="section-head">
+    <span class="section-title">Race Summary</span>
+  </div>
+  <div class="coach-box"><h4>Wind &amp; Comparable Races</h4>
+<p>True wind ranged 0.7–16.3 kn (avg 7.3 kn) — light and shifty per the note, and an almost exact match to race 6 (2026-07-08, avg 7.3 kn, 0.9–12.5 kn), the best comparable on record for average wind, though today&#x27;s range extended further at the top end.</p>
+<p>Overall the boat achieved 68.8% of polar target upwind (close to race 6&#x27;s 67.5%) and 68.4% downwind (well ahead of race 6&#x27;s 57.4%), but the reach collapsed to just 40.6% of target — the weakest single point-of-sail result recorded in this dataset. Upwind VMG averaged 2.9 kn against a 4.23 kn target (69% of target VMG), with TWA running 5° wide of target (45.0° vs 40.0°). Downwind angle was close to optimal (147.5° vs a 145.7° target, only 1.8° off), consistent with the solid 68.4% run result.</p>
+<p>Only three tacks were logged, but they lost 43.9% of speed on average — the highest tack loss percentage recorded in this dataset, on a very small sample; two gybes lost 24.8%. One mark rounding was logged, too few for leg-by-leg splits. The Vakaros line was never pinged this race, so no distance-to-line figure is available; boat speed just after the gun was approximately 3.7 kn. Heel while reaching showed a +5.9° signed imbalance — on the same point of sail where the reach percentage cratered to 40.6%; the two appearing together is worth investigating, though this data alone doesn&#x27;t establish that the heel imbalance caused the reach shortfall. The two clearest strengths were downwind performance (near-optimal angle) and upwind percentage holding level with the comparable race; the two most important gaps were the reach collapse and tack execution.</p>
+<table class="coach-table"><thead><tr><th>Metric</th><th>This Race</th><th>Race 6 (2026-07-08)</th></tr></thead><tbody><tr><td>TWS avg (range)</td><td>7.3 kn (0.7–16.3)</td><td>7.3 kn (0.9–12.5)</td></tr><tr><td>Beat % of target</td><td>68.8%</td><td>67.5%</td></tr><tr><td>Reach % of target</td><td>40.6%</td><td>63.3%</td></tr><tr><td>Run % of target</td><td>68.4%</td><td>57.4%</td></tr><tr><td>Tacks (n / avg loss)</td><td>3 / 43.9%</td><td>8 / 34.0%</td></tr></tbody></table>
+<h4>Coaching Recommendations</h4>
+<ol>
+<li>The reach collapsed to 40.6% of target, the weakest point-of-sail result recorded — investigate reach mode specifically; the reach also showed the largest heel imbalance of the race (+5.9° signed), worth checking together.</li>
+<li>Tack loss (43.9%) was the highest on record, though only three tacks were logged this race — treat as a small-sample flag to watch rather than a confirmed trend, and revisit once more tacks are logged in similar conditions.</li>
+</ol></div>
+</section>
 
 <footer>
   <span>Course: GPS position, 1 Hz, decimated 1:3</span>

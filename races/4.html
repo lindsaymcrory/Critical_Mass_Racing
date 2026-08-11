@@ -154,6 +154,26 @@
   .curve-key .sw { width: 18px; height: 2px; flex: none; }
   .curve-key .details { color: var(--dim); font-size: 10.5px; }
 
+  /* -- Race Summary -- */
+  .coach-box {
+    margin: 14px 24px 24px; padding: 20px 24px;
+    border: 1px solid var(--hair); border-radius: var(--radius);
+    background: var(--panel); font-size: 13.5px; line-height: 1.65;
+    max-width: 900px;
+  }
+  .coach-box h3 { font-size: 15px; margin: 20px 0 8px; color: var(--mark); }
+  .coach-box h3:first-child { margin-top: 0; }
+  .coach-box h4 { font-size: 13px; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dim); }
+  .coach-box ul, .coach-box ol { margin: 6px 0 12px; padding-left: 22px; }
+  .coach-box li { margin: 3px 0; }
+  .coach-box p { margin: 8px 0; }
+  .coach-box strong { color: var(--paper); }
+  .coach-empty { color: var(--dim); font-style: italic; }
+  table.coach-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 10px 0 14px; }
+  table.coach-table th, table.coach-table td { padding: 7px 12px; text-align: left; border-top: 1px solid var(--hair); }
+  table.coach-table th { text-transform: uppercase; letter-spacing: 0.05em; font-size: 10px; color: var(--dim); background: var(--panel-2); border-top: none; }
+  table.coach-table tr:first-child td { border-top: none; }
+
   /* -- Fleet Comparison -- */
   .fleet-summary {
     margin: 4px 24px 20px; padding: 16px 20px;
@@ -231,6 +251,21 @@
   </div>
 </section>
 
+<section id="coach-section">
+  <div class="section-head">
+    <span class="section-title">Race Summary</span>
+  </div>
+  <div class="coach-box"><h4>Wind &amp; Comparable Races</h4>
+<p>True wind ranged 0.0–24.0 kn (avg 10.0 kn) — a wide swing from calm patches to a strong puff, with the mean sitting in moderate breeze. The only previous races on record are race 7 (avg 6.6 kn, 0.1–12.7 kn) and race 8 (avg 6.1 kn, 0.6–14.0 kn), both notably lighter on average and without anything close to a 24 kn gust. Neither is a strong match, so the comparison below should be read as a loose baseline rather than a like-for-like comparison.</p>
+<p>Overall the boat achieved 70.4% of polar target upwind and 71.5% downwind — both close together and slightly ahead of either prior race&#x27;s upwind number. Upwind VMG averaged 3.05 kn against a 3.99 kn target (76% of target VMG). A clear pattern shows up in the angles: upwind TWA averaged 37.4°, about 3.7° tighter than the 41.1° target, and downwind TWA averaged 145.8°, about 4.7° short of the 150.5° target — both readings point the same way, toward sailing higher (closer to the wind axis) than the polar target on both points of sail, not just one. Nineteen tacks lost 36.9% of speed on average with a 7.9s recovery, and eight gybes lost 23.7% — both higher-volume and higher-loss than either comparable race, though the wider wind range here likely includes some maneuvers caught in stronger puffs. Four mark roundings were logged, still too few for reliable leg-by-leg splits.</p>
+<p>No start-of-race data is available for this race. Heel while beating averaged only 8.1° despite gusts to 24 kn, well below the 13-23° range seen on beat legs in later, more consistently breezy races — consistent with much of this race being sailed in the lighter part of its wide wind range, though the data can&#x27;t separate that from crew positioning or depowering choices. The two clearest strengths were downwind speed (71.5% of target, the best of the three points of sail) and upwind VMG efficiency (76% of target). The two biggest gaps were tack execution (36.9% loss across 19 tacks, the highest tack loss on record so far) and the consistent high-angle tendency on both beat and run.</p>
+<table class="coach-table"><thead><tr><th>Metric</th><th>This Race</th><th>Race 7 (loose)</th><th>Race 8 (loose)</th></tr></thead><tbody><tr><td>TWS avg (range)</td><td>10.0 kn (0.0–24.0)</td><td>6.6 kn (0.1–12.7)</td><td>6.1 kn (0.6–14.0)</td></tr><tr><td>Beat % of target</td><td>70.4%</td><td>66.8%</td><td>58.8%</td></tr><tr><td>Run % of target</td><td>71.5%</td><td>71.1%</td><td>67.4%</td></tr><tr><td>Tacks (n / avg loss)</td><td>19 / 36.9%</td><td>5 / 23.5%</td><td>4 / 31.8%</td></tr><tr><td>Gybes (n / avg loss)</td><td>8 / 23.7%</td><td>2 / 16.0%</td><td>3 / 18.2%</td></tr></tbody></table>
+<h4>Coaching Recommendations</h4>
+<ol>
+<li>Both beat (37.4° vs 41.1° target) and run (145.8° vs 150.5° target) show the boat sailing higher than optimal — worth checking whether this is deliberate pointing mode or a steering/angle habit worth correcting on both points of sail together.</li>
+<li>Tack loss (36.9% across 19 tacks) is the highest of any race analyzed so far — prioritize tack drills, especially in the puffier upper end of this wind range.</li>
+</ol></div>
+</section>
 
 <footer>
   <span>Course: GPS position, 1 Hz, decimated 1:3</span>

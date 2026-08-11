@@ -154,6 +154,26 @@
   .curve-key .sw { width: 18px; height: 2px; flex: none; }
   .curve-key .details { color: var(--dim); font-size: 10.5px; }
 
+  /* -- Race Summary -- */
+  .coach-box {
+    margin: 14px 24px 24px; padding: 20px 24px;
+    border: 1px solid var(--hair); border-radius: var(--radius);
+    background: var(--panel); font-size: 13.5px; line-height: 1.65;
+    max-width: 900px;
+  }
+  .coach-box h3 { font-size: 15px; margin: 20px 0 8px; color: var(--mark); }
+  .coach-box h3:first-child { margin-top: 0; }
+  .coach-box h4 { font-size: 13px; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dim); }
+  .coach-box ul, .coach-box ol { margin: 6px 0 12px; padding-left: 22px; }
+  .coach-box li { margin: 3px 0; }
+  .coach-box p { margin: 8px 0; }
+  .coach-box strong { color: var(--paper); }
+  .coach-empty { color: var(--dim); font-style: italic; }
+  table.coach-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 10px 0 14px; }
+  table.coach-table th, table.coach-table td { padding: 7px 12px; text-align: left; border-top: 1px solid var(--hair); }
+  table.coach-table th { text-transform: uppercase; letter-spacing: 0.05em; font-size: 10px; color: var(--dim); background: var(--panel-2); border-top: none; }
+  table.coach-table tr:first-child td { border-top: none; }
+
   /* -- Fleet Comparison -- */
   .fleet-summary {
     margin: 4px 24px 20px; padding: 16px 20px;
@@ -231,6 +251,21 @@
   </div>
 </section>
 
+<section id="coach-section">
+  <div class="section-head">
+    <span class="section-title">Race Summary</span>
+  </div>
+  <div class="coach-box"><h4>Wind &amp; Comparable Races</h4>
+<p>True wind ranged 0.9–12.5 kn (avg 7.3 kn) — light-to-moderate, closely matching both race 7 (avg 6.6 kn, 0.1–12.7 kn) and race 8 (avg 6.1 kn, 0.6–14.0 kn), the two best comparables on wind alone. Both were sailed with fewer crew (3 and 2, vs 4 here), so any comparison should account for that difference.</p>
+<p>Overall the boat achieved 67.5% of polar target upwind, in line with the comparable races (66.8% and 58.8%), but only 57.4% downwind — the weakest run performance of any race analyzed so far. Upwind VMG averaged 2.69 kn against a 3.75 kn target (72% of target VMG). Notably, both upwind and downwind angles sat close to their polar targets — beat TWA 42.8° vs a 41.8° target (within 1°), run TWA 149.3° vs a 147.0° target (within 2.3°) — meaning the downwind shortfall here reads as a speed problem, not a sailing-angle problem, unlike the angle-driven gaps seen in some earlier races.</p>
+<p>Eight tacks lost 34.0% of speed on average and took 11.4s to recover, one of the slower recoveries on record; eight gybes lost 23.2%, similar to the comparable races. Three mark roundings were logged, still too few for reliable leg-by-leg splits. No start-of-race data is available for this race. Heel while running averaged 5.7° with a slight positive imbalance (+1.6° signed) — moderate, and the data doesn&#x27;t show a clear trim explanation for the low downwind percentage. The two clearest strengths were upwind and downwind pointing angle, both within about 2° of target; the two most important gaps were downwind boat speed despite the on-target angle, and tack recovery time.</p>
+<table class="coach-table"><thead><tr><th>Metric</th><th>This Race</th><th>Race 7</th><th>Race 8</th></tr></thead><tbody><tr><td>TWS avg (range)</td><td>7.3 kn (0.9–12.5)</td><td>6.6 kn (0.1–12.7)</td><td>6.1 kn (0.6–14.0)</td></tr><tr><td>Beat % of target</td><td>67.5%</td><td>66.8%</td><td>58.8%</td></tr><tr><td>Run % of target</td><td>57.4%</td><td>71.1%</td><td>67.4%</td></tr><tr><td>Run TWA (actual vs target)</td><td>149.3° vs 147.0°</td><td>150.4° vs 146.0°</td><td>136.1° vs 145.3°</td></tr><tr><td>Tacks (n / avg loss / recovery)</td><td>8 / 34.0% / 11.4s</td><td>5 / 23.5% / 3.6s</td><td>4 / 31.8% / 13.5s</td></tr></tbody></table>
+<h4>Coaching Recommendations</h4>
+<ol>
+<li>Downwind speed (57.4% of target) is the weakest run performance on record despite an on-target angle — a likely speed gap in trim, sail shape, or crew weight rather than a steering issue; worth focused downwind speed testing.</li>
+<li>Tack recovery (11.4s) is slower than most other races on record — drill tack exits to rebuild speed faster.</li>
+</ol></div>
+</section>
 
 <footer>
   <span>Course: GPS position, 1 Hz, decimated 1:3</span>
