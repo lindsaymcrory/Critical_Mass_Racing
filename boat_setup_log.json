@@ -1,5 +1,5 @@
 {
-  "next_id": 16,
+  "next_id": 18,
   "entries": [
     {
       "id": 1,
@@ -141,6 +141,22 @@
       "label": "Bottom clean",
       "values": [
         "Port side of hull was much dirtier than starboard."
+      ]
+    },
+    {
+      "id": 16,
+      "date": "2026-08-17",
+      "label": "Sail Change",
+      "values": [
+        "Switch to 2022 North Class Jib"
+      ]
+    },
+    {
+      "id": 17,
+      "date": "2026-05-13",
+      "label": "Sail Config",
+      "values": [
+        "Main - 2024 North Carbon, Jib 2023 North Carbon, Spin 2022 North Class Blue"
       ]
     }
   ]
