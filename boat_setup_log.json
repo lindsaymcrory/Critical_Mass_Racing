@@ -1,5 +1,5 @@
 {
-  "next_id": 14,
+  "next_id": 16,
   "entries": [
     {
       "id": 1,
@@ -123,6 +123,24 @@
         "28",
         "Slack",
         "5"
+      ]
+    },
+    {
+      "id": 14,
+      "date": "2026-08-17",
+      "label": "rig tune",
+      "values": [
+        "30",
+        "15",
+        "15"
+      ]
+    },
+    {
+      "id": 15,
+      "date": "2026-08-17",
+      "label": "Bottom clean",
+      "values": [
+        "Port side of hull was much dirtier than starboard."
       ]
     }
   ]
