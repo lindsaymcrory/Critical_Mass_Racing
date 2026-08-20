@@ -15,8 +15,8 @@
 # limitations under the License.
 
 """Local web app for the Critical Mass race-analysis site: serves the
-homepage and static race pages, and handles the remaining server-side nav
-actions (Boat Check, Save Trim, Add Race -- unlinked but still functional).
+homepage, static race pages, Rig Tune, Hull Analysis, and Videos, plus the
+remaining server-side Add Race flow (unlinked but still functional).
 Update EBL / Update HTML were removed: race data is now added and rebuilt
 via Claude Code sessions instead of the web UI."""
 import os
@@ -28,9 +28,10 @@ from flask import Flask, request, redirect, send_from_directory, abort
 import build_race_db
 import detect_maneuvers
 import polar_analysis
-import render_boat_check
 import render_homepage
+import render_hull_analysis
 import render_race_page
+import render_rig_tune
 import render_videos
 from ebl_store import list_files_with_ranges
 from race_registry import add_race, load_registry, save_registry
@@ -184,10 +185,16 @@ def how_it_fits_image():
     return send_from_directory(ROOT, "how_it_fits.png")
 
 
-# --------------------------------------------------------------- Boat Check
-@app.route("/boat-check")
-def boat_check():
-    return render_boat_check.render_page()
+# ----------------------------------------------------------------- Rig Tune
+@app.route("/rig-tune")
+def rig_tune():
+    return render_rig_tune.render_page()
+
+
+# ------------------------------------------------------------- Hull Analysis
+@app.route("/hull-analysis")
+def hull_analysis():
+    return render_hull_analysis.render_page()
 
 
 # ------------------------------------------------------------------ Videos

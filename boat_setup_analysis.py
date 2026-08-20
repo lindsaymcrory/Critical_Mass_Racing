@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Season-wide boat-performance analysis for the Boat Check page: computes
+"""Season-wide boat-performance analysis for the Hull Analysis page: computes
 port-vs-starboard tack symmetry by wind band and angle, and hull drag
 (average reaching speed by wind band across the season) directly from
 nav_1hz -- cached into boat_setup_analysis.json so the published site never

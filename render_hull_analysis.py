@@ -14,14 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Renders the Boat Check page: season-wide port/starboard tack symmetry,
-hull-drag (bottom fouling) trend, and the Boat Setup Log table. Reads
+"""Renders the Hull Analysis page (formerly Boat Check): season-wide
+port/starboard tack symmetry and hull-drag (bottom fouling) trend. Reads
 boat_setup_analysis.json (computed by boat_setup_analysis.py at build time)
-and boat_setup_log.json / boat_setup_notes.md (both hand-authored/edited
-directly, like season_summary.md), so this page never needs a live database
-connection -- consistent with the app's READ_ONLY view-only deployment
-mode."""
-import html as html_mod
+and boat_setup_notes.md (hand-authored/edited directly, like
+season_summary.md), so this page never needs a live database connection --
+consistent with the app's READ_ONLY view-only deployment mode. The Boat
+Setup Log table now lives on its own page (see render_rig_tune.py)."""
 import json
 import re
 from pathlib import Path
@@ -30,10 +29,9 @@ from render_race_page import _coach_markdown_to_html
 
 ROOT = Path(__file__).parent
 ANALYSIS_PATH = ROOT / "boat_setup_analysis.json"
-LOG_PATH = ROOT / "boat_setup_log.json"
 NOTES_PATH = ROOT / "boat_setup_notes.md"
 
-PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
+PAGE_TEMPLATE = """<title>Hull Analysis — Critical Mass Racing</title>
 <style>
   :root {
     --ink: #0a1a20; --panel: #122a32; --panel-2: #0e222a;
@@ -110,13 +108,6 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
   .note-box ul { margin: 4px 0; padding-left: 20px; }
   .note-box li { margin: 5px 0; }
 
-  .log-table-wrap { margin: 4px 24px 24px; border: 1px solid var(--hair); border-radius: var(--radius); overflow: hidden; }
-  table.log-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  table.log-table th, table.log-table td { padding: 9px 14px; text-align: left; border-top: 1px solid var(--hair); }
-  table.log-table th { text-transform: uppercase; letter-spacing: 0.06em; font-size: 12px; color: var(--dim); background: var(--panel-2); border-top: none; }
-  table.log-table tr:first-child td { border-top: none; }
-  table.log-table td.values { font-family: ui-monospace, "SF Mono", "Cascadia Mono", monospace; }
-
   footer { padding: 12px 24px; background: var(--panel-2); font-size: 12px; color: var(--dim-2); }
   ::-webkit-scrollbar { width: 9px; height: 9px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -126,8 +117,8 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
 <header>
   <a class="back" href="/">&larr; All races</a>
   <div class="brand">
-    <div class="title">Boat Check</div>
-    <div class="sub">Speed, Rig &amp; Bottom</div>
+    <div class="title">Hull Analysis</div>
+    <div class="sub">Speed &amp; Bottom</div>
   </div>
 </header>
 
@@ -150,7 +141,7 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
   <div class="note-box">__RIG_NOTES_HTML__</div>
 </section>
 
-<section id="hull-section">
+<section id="hull-section" style="border-bottom: none">
   <div class="section-head">
     <span class="section-title">Hull Drag Analysis</span>
     <div class="section-sub">Detecting performance loss caused by bottom fouling.</div>
@@ -161,19 +152,6 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
   </div>
   <div class="chart-legend" id="hullLegend"></div>
   <div class="note-box">__HULL_NOTES_HTML__</div>
-</section>
-
-<section id="log-section" style="border-bottom: none">
-  <div class="section-head">
-    <span class="section-title">Boat Setup Log</span>
-    <div class="section-sub">Tuning and maintenance events that may affect boat speed.</div>
-  </div>
-  <div class="log-table-wrap">
-    <table class="log-table">
-      <thead><tr><th>Date</th><th>Label</th><th>Values</th></tr></thead>
-      <tbody>__LOG_ROWS__</tbody>
-    </table>
-  </div>
 </section>
 
 <footer>Tack and hull-drag analysis: nav_1hz samples with boat speed &ge; 1.5 kn, computed once at build time.</footer>
@@ -410,18 +388,6 @@ PAGE_TEMPLATE = """<title>Boat Check — Critical Mass Racing</title>
 """
 
 
-def _log_rows_html(entries):
-    rows = []
-    for e in sorted(entries, key=lambda e: e["date"], reverse=True):
-        values = ", ".join(str(v) for v in e["values"])
-        rows.append(
-            f"<tr><td class='mono'>{html_mod.escape(e['date'])}</td>"
-            f"<td>{html_mod.escape(e['label'])}</td>"
-            f"<td class='values'>{html_mod.escape(values)}</td></tr>"
-        )
-    return "\n".join(rows) if rows else "<tr><td colspan='3'>No entries yet.</td></tr>"
-
-
 def _split_notes(text):
     """Splits boat_setup_notes.md on its top-level '## ' headers, stripping
     each header line (the page already shows its own section titles)."""
@@ -439,7 +405,6 @@ def render_page():
         "wind_bands_tack": [], "wind_bands_hull": [], "angle_buckets": [],
         "tack_performance": {}, "hull_drag": {},
     }
-    log = json.loads(LOG_PATH.read_text()) if LOG_PATH.exists() else {"entries": []}
     notes_text = NOTES_PATH.read_text() if NOTES_PATH.exists() else ""
     rig_notes, hull_notes = _split_notes(notes_text)
     rig_html = _coach_markdown_to_html(rig_notes) if rig_notes else "<p><em>No notes yet.</em></p>"
@@ -448,8 +413,7 @@ def render_page():
     return (PAGE_TEMPLATE
             .replace("__ANALYSIS_JSON__", json.dumps(analysis))
             .replace("__RIG_NOTES_HTML__", rig_html)
-            .replace("__HULL_NOTES_HTML__", hull_html)
-            .replace("__LOG_ROWS__", _log_rows_html(log["entries"])))
+            .replace("__HULL_NOTES_HTML__", hull_html))
 
 
 if __name__ == "__main__":
