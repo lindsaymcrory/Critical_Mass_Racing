@@ -239,6 +239,10 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
   table.fleet-table tr.us { background: rgba(245, 185, 66, 0.1); }
   table.fleet-table tr.us td:first-child { border-left: 2px solid var(--mark); }
   .fleet-subhead { padding: 20px 24px 8px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim); }
+  .fleet-chart-wrap {
+    margin: 4px 24px 24px; padding: 16px 20px;
+    border: 1px solid var(--hair); border-radius: var(--radius); background: var(--panel);
+  }
 
   footer {
     padding: 12px 24px; background: var(--panel-2);
@@ -1012,6 +1016,56 @@ def _short_time(s):
 _US_CLASS = ' class="us"'
 
 
+def _seconds_to_win_svg(comparison):
+    """Static (no-JS) horizontal bar chart: for each of the top 3 finishers
+    (excluding our own boat), how many seconds faster our elapsed time would
+    need to be for our corrected time to match theirs -- using the same
+    fixed-allowance model as the rest of fleet_comparison.py (allowance =
+    our actual corrected minus elapsed, assumed constant as elapsed
+    improves), so a corrected-time gap converts 1:1 into an elapsed-time
+    gap. Returns '' if there's no other boat to compare against."""
+    target = comparison["target_name"]
+    our_corrected = comparison["tiers"][0]["corrected_s"]
+    fleet = sorted(comparison["fleet_results"], key=lambda r: r.get("rank") if r.get("rank") is not None else 999)
+    top3 = [r for r in fleet if r.get("boat_name") != target][:3]
+
+    bars = []
+    for r in top3:
+        their_corrected = fleet_comparison._parse_dhms(r.get("corrected_time"))
+        if their_corrected is None:
+            continue
+        bars.append((r.get("boat_name") or "—", our_corrected - their_corrected))
+    if not bars:
+        return ""
+
+    max_gap = max(1, max(abs(g) for _, g in bars))
+    row_h, label_w, bar_area_w = 44, 170, 400
+    W = label_w + bar_area_w + 130
+    H = 16 + row_h * len(bars)
+
+    rows_svg = []
+    for i, (name, gap_s) in enumerate(bars):
+        y = 8 + i * row_h
+        bar_w = max(3.0, abs(gap_s) / max_gap * bar_area_w)
+        color = "var(--mark)" if gap_s > 0 else "var(--starboard)"
+        value_text = (
+            f"{fleet_comparison.format_hms(gap_s)} faster" if gap_s > 0
+            else "already ahead" if gap_s < 0 else "tied"
+        )
+        rows_svg.append(
+            f'<text x="{label_w - 12}" y="{y + 20}" text-anchor="end" fill="var(--paper)" '
+            f'font-size="13" font-weight="700">{html_mod.escape(name)}</text>'
+            f'<rect x="{label_w}" y="{y + 4}" width="{bar_w:.1f}" height="20" rx="3" fill="{color}"></rect>'
+            f'<text x="{label_w + bar_w + 10:.1f}" y="{y + 20}" fill="var(--dim)" font-size="12.5" '
+            f'font-family="ui-monospace, SF Mono, Cascadia Mono, monospace">{html_mod.escape(value_text)}</text>'
+        )
+
+    return (
+        f'<svg viewBox="0 0 {W} {H}" style="width:100%;max-width:640px;height:auto;display:block;">'
+        f'{"".join(rows_svg)}</svg>'
+    )
+
+
 def _fleet_comparison_html(comparison):
     """Builds the Fleet Comparison section's inner HTML from
     fleet_comparison.compute()'s result, or '' if the race has no fleet
@@ -1063,21 +1117,7 @@ def _fleet_comparison_html(comparison):
         "</tbody></table>"
     )
 
-    tier_rows = []
-    for t in comparison["tiers"]:
-        gap = f"{t['gap_to_next_s']:.0f}s behind {t['next_boat']}" if t["gap_to_next_s"] is not None else "in the lead"
-        tier_rows.append(
-            f"<tr><td>{html_mod.escape(t['label'])}</td>"
-            f"<td class='mono'>{fleet_comparison.format_hms(t['elapsed_s'])}</td>"
-            f"<td class='mono'>{fleet_comparison.format_hms(t['corrected_s'])}</td>"
-            f"<td class='mono'>{t['rank']} / {comparison['n_finishers']}</td>"
-            f"<td>{html_mod.escape(gap)}</td></tr>"
-        )
-    tier_table = (
-        "<table class='fleet-table'><thead><tr><th>Scenario</th>"
-        "<th class='mono'>Elapsed</th><th class='mono'>Corrected</th><th>Rank</th><th>Gap</th></tr></thead>"
-        f"<tbody>{''.join(tier_rows)}</tbody></table>"
-    )
+    win_gap_svg = _seconds_to_win_svg(comparison)
 
     final_tier = comparison["tiers"][-1]
     if comparison["boats_beaten"]:
@@ -1103,10 +1143,10 @@ def _fleet_comparison_html(comparison):
 <section id="fleet-section">
   <div class="section-head"><span class="section-title">Fleet Comparison</span></div>
   <div class="fleet-table-wrap">{fleet_table}</div>
-  <div class="fleet-subhead">Mistakes by type</div>
+  <div class="fleet-subhead">Performance by Maneuver</div>
   <div class="fleet-table-wrap">{loss_table}</div>
-  <div class="fleet-subhead">Progression if mistakes had not been made</div>
-  <div class="fleet-table-wrap">{tier_table}</div>
+  <div class="fleet-subhead">Seconds Faster Needed to Win</div>
+  <div class="fleet-chart-wrap">{win_gap_svg}</div>
   <div class="fleet-summary">{summary}</div>
 </section>
 """
