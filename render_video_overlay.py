@@ -87,6 +87,18 @@ MARGIN_X_FRAC = 0.10
 MARGIN_TOP_FRAC = 0.15  # 10% safe margin + an extra 5% requested
 MARGIN_BOTTOM_FRAC = 0.10
 
+# Map/panel sizes, also expressed as fractions of the source video's
+# dimensions rather than fixed pixel counts, so they scale safely (no
+# overlap with each other or the margins) across different footage
+# resolutions instead of just always being e.g. 340px regardless of frame
+# size. These fractions equal double the original fixed pixel sizes
+# (170px map, 176x110 panel) at a 1920x1080 frame, per the "double the
+# size" request.
+MAP_SIZE_FRAC = 340 / 1080     # of frame_h
+PANEL_W_FRAC = 352 / 1920      # of frame_w
+PANEL_H_FRAC = 220 / 1080      # of frame_h
+PANEL_FONT_SIZE_FRAC = 24 / 1080  # of frame_h
+
 TRACK_STEP_S = 3  # breadcrumb sampling interval (matches export_course_data.py's own decimation)
 
 
@@ -257,7 +269,7 @@ def _fmt_clock(seconds):
 
 
 def draw_performance_panel(draw, x, y, w, h, sample, font, font_bold):
-    draw.rounded_rectangle([x, y, x + w, y + h], radius=8, fill=(10, 26, 32, 165))
+    draw.rounded_rectangle([x, y, x + w, y + h], radius=14, fill=(10, 26, 32, 165))
     stw = sample["stw_kn"]
     twa = sample["twa_deg"]
     heel = sample["heel_deg"]
@@ -277,8 +289,8 @@ def draw_performance_panel(draw, x, y, w, h, sample, font, font_bold):
     line_h = h / len(lines)
     for i, (label, value) in enumerate(lines):
         ly = y + i * line_h + line_h / 2
-        draw.text((x + 12, ly), f"{label}:", font=font, fill=(127, 163, 171, 255), anchor="lm")
-        draw.text((x + w - 12, ly), value, font=font_bold, fill=(231, 237, 233, 255), anchor="rm")
+        draw.text((x + 20, ly), f"{label}:", font=font, fill=(190, 219, 226, 255), anchor="lm")
+        draw.text((x + w - 20, ly), value, font=font_bold, fill=(255, 199, 60, 255), anchor="rm")
 
 
 def draw_map_panel(draw_target, x, y, w, h, basemap_img, project_fn, marks, trail, boat_latlon):
@@ -287,17 +299,19 @@ def draw_map_panel(draw_target, x, y, w, h, basemap_img, project_fn, marks, trai
 
     for mark_id, name, lat, lon in marks:
         mx, my = project_fn(lat, lon)
-        overlay.ellipse([x + mx - 4, y + my - 4, x + mx + 4, y + my + 4], fill=(245, 185, 66, 230))
-        overlay.text((x + mx + 6, y + my), mark_id, fill=(245, 185, 66, 255))
+        overlay.ellipse([x + mx - 8, y + my - 8, x + mx + 8, y + my + 8], fill=(245, 185, 66, 230))
+        overlay.text((x + mx + 12, y + my), mark_id, fill=(245, 185, 66, 255))
 
     if len(trail) > 1:
         pts = [(x + project_fn(lat, lon)[0], y + project_fn(lat, lon)[1]) for lat, lon in trail]
-        overlay.line(pts, fill=(63, 191, 127, 200), width=2)
+        overlay.line(pts, fill=(63, 191, 127, 200), width=4)
 
     if boat_latlon and boat_latlon[0] is not None:
         bx, by = project_fn(*boat_latlon)
-        overlay.ellipse([x + bx - 6, y + by - 6, x + bx + 6, y + by + 6],
-                         outline=(239, 90, 76, 255), width=3, fill=(239, 90, 76, 120))
+        overlay.ellipse([x + bx - 12, y + by - 12, x + bx + 12, y + by + 12],
+                         outline=(239, 90, 76, 255), width=6, fill=(239, 90, 76, 120))
+
+    overlay.rectangle([x, y, x + w - 1, y + h - 1], outline=(231, 237, 233, 230), width=3)
 
 
 def draw_bottom_text(draw, text, font, frame_w, frame_h, margin_bottom):
@@ -322,7 +336,7 @@ def render_overlay_frames(race, series, video_start_utc, video_end_utc, sailing_
     lat_min, lat_max = min(lats) - lat_pad, max(lats) + lat_pad
     lon_min, lon_max = min(lons) - lon_pad, max(lons) + lon_pad
 
-    map_w, map_h = 170, 170
+    map_w = map_h = max(120, int(frame_h * MAP_SIZE_FRAC))
     try:
         basemap_img, project_fn = build_basemap(lat_min, lat_max, lon_min, lon_max, map_w, map_h)
         print("# using real OSM basemap")
@@ -333,8 +347,9 @@ def render_overlay_frames(race, series, video_start_utc, video_end_utc, sailing_
     marks = [m for m in DYC_MARKS if lat_min - lat_pad <= m[2] <= lat_max + lat_pad
              and lon_min - lon_pad <= m[3] <= lon_max + lon_pad]
 
-    panel_font = _font(PANEL_FONT_PATH, 13)
-    panel_font_bold = _font(PANEL_FONT_BOLD_PATH, 13)
+    panel_font_size = max(11, int(frame_h * PANEL_FONT_SIZE_FRAC))
+    panel_font = _font(PANEL_FONT_PATH, panel_font_size)
+    panel_font_bold = _font(PANEL_FONT_BOLD_PATH, panel_font_size)
     bottom_font = _font(PANEL_FONT_BOLD_PATH, 15)
 
     date_str = datetime.fromisoformat(race["race_date"]).strftime("%b %-d, %Y")
@@ -356,7 +371,9 @@ def render_overlay_frames(race, series, video_start_utc, video_end_utc, sailing_
             track_latlon.append((samp["lat"], samp["lon"]))
         tt += timedelta(seconds=TRACK_STEP_S)
 
-    panel_x, panel_y, panel_w, panel_h = frame_w - margin_x - 176, margin_top, 176, 110
+    panel_w = int(frame_w * PANEL_W_FRAC)
+    panel_h = int(frame_h * PANEL_H_FRAC)
+    panel_x, panel_y = frame_w - margin_x - panel_w, margin_top
     map_x, map_y = margin_x, margin_top
 
     for i in range(n_seconds):
