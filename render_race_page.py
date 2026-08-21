@@ -240,6 +240,7 @@ PAGE_TEMPLATE = """<title>__TITLE__ — Race Results</title>
   table.fleet-table tr.us { background: rgba(245, 185, 66, 0.1); }
   table.fleet-table tr.us td:first-child { border-left: 2px solid var(--mark); }
   .fleet-subhead { padding: 20px 24px 8px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim); }
+  .fleet-subhead-desc { padding: 0 24px 12px; font-size: 12.5px; color: var(--dim); max-width: 640px; }
   .fleet-chart-wrap {
     margin: 4px 24px 24px; padding: 16px 20px;
     border: 1px solid var(--hair); border-radius: var(--radius); background: var(--panel);
@@ -1321,7 +1322,8 @@ def _fleet_comparison_html(comparison):
   <div class="fleet-table-wrap">{fleet_table}</div>
   <div class="fleet-subhead">Performance by Maneuver</div>
   <div class="fleet-table-wrap">{loss_table}</div>
-  <div class="fleet-subhead">Seconds Faster Needed to Win</div>
+  <div class="fleet-subhead">Time Needed to Beat the Top 3</div>
+  <div class="fleet-subhead-desc">Each bar shows how much faster Critical Mass's elapsed time (H:MM:SS) would need to be to match that boat's corrected time, assuming the same handicap allowance earned that race.</div>
   <div class="fleet-chart-wrap">{win_gap_svg}</div>
   <div class="fleet-summary">{summary}</div>
 </section>
