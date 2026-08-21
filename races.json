@@ -589,6 +589,80 @@
       "bsp_range": [
         1.5,
         6.3
+      ],
+      "fleet_results": [
+        {
+          "rank": 1,
+          "sail_number": null,
+          "boat_name": "Chaos",
+          "boat_type": null,
+          "skipper": "Mark Gosine",
+          "handicap": 30,
+          "corrected_time": "0:01:05:03",
+          "delta": "0:00:00:00",
+          "elapsed_time": "0:00:51:57",
+          "finish_time": "19:06:57"
+        },
+        {
+          "rank": 2,
+          "sail_number": null,
+          "boat_name": "Five of Harts",
+          "boat_type": null,
+          "skipper": "Gordon Hart",
+          "handicap": 81,
+          "corrected_time": "0:01:16:01",
+          "delta": "-0:00:10:58",
+          "elapsed_time": "0:01:06:17",
+          "finish_time": "19:21:17"
+        },
+        {
+          "rank": 3,
+          "sail_number": "CAN 56",
+          "boat_name": "Equinox",
+          "boat_type": "C&C 99",
+          "skipper": "Rod Stright",
+          "handicap": 99,
+          "corrected_time": "0:01:19:35",
+          "delta": "-0:00:14:32",
+          "elapsed_time": "0:01:11:27",
+          "finish_time": "19:26:27"
+        },
+        {
+          "rank": 4,
+          "sail_number": null,
+          "boat_name": "Trident",
+          "boat_type": null,
+          "skipper": "Richard Gerstenberger",
+          "handicap": 87,
+          "corrected_time": "0:01:21:23",
+          "delta": "-0:00:16:20",
+          "elapsed_time": "0:01:11:40",
+          "finish_time": "19:26:40"
+        },
+        {
+          "rank": 5,
+          "sail_number": null,
+          "boat_name": "Critical Mass",
+          "boat_type": null,
+          "skipper": "Lindsay McRory",
+          "handicap": 123,
+          "corrected_time": "0:01:43:34",
+          "delta": "-0:00:38:31",
+          "elapsed_time": "0:01:36:34",
+          "finish_time": "19:51:34"
+        },
+        {
+          "rank": 6,
+          "sail_number": "29",
+          "boat_name": "Eclipse",
+          "boat_type": null,
+          "skipper": "Tyler Ford",
+          "handicap": 120,
+          "corrected_time": "0:01:47:41",
+          "delta": "-0:00:42:38",
+          "elapsed_time": "0:01:39:56",
+          "finish_time": "19:54:56"
+        }
       ]
     }
   ]
