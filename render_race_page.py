@@ -25,6 +25,7 @@ import html as html_mod
 import json
 import re
 import sqlite3
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import fleet_comparison
@@ -326,6 +327,7 @@ __FLEET_COMPARISON_SECTION__
   <div class="section-head"><span class="section-title">True Wind Speed</span></div>
   <div class="wind-chart-wrap">
     <svg id="windChart" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="legend" id="windLegend"></div>
     <div class="tooltip mono" id="windTooltip"></div>
   </div>
 </section>
@@ -335,6 +337,7 @@ __FLEET_COMPARISON_SECTION__
   <span>Polar target: j80_Polars.csv (crewed polar; may not reflect actual crew count)</span>
 </footer>
 
+<script id="wind-markers" type="application/json">__WIND_MARKERS__</script>
 <script id="course-data" type="application/json">__COURSE_DATA__</script>
 <script id="polar-data" type="application/json">__POLAR_DATA__</script>
 <script>
@@ -940,6 +943,9 @@ __FLEET_COMPARISON_SECTION__
       .map(p => ({ t: p[0], ts: p[9], tws: p[7] }))
       .filter(d => d.tws !== null && d.tws !== undefined);
 
+    const WIND_MARKERS = JSON.parse(document.getElementById("wind-markers").textContent);
+    const OTHER_MARKER_COLORS = ["var(--starboard)", "var(--port)", "#c792f0"];
+
     function showTooltip(ev, p) {
       const wrapRect = chartWrap.getBoundingClientRect();
       tooltip.innerHTML = `<div class="t-title">${fmtLocalTs(p.ts)} ADT</div>TWS ${p.tws.toFixed(1)} kn`;
@@ -958,7 +964,9 @@ __FLEET_COMPARISON_SECTION__
       const plotW = W - padL - padR, plotH = H - padT - padB;
 
       const minT = windData[0].t, maxT = windData[windData.length - 1].t;
-      const maxTws = Math.max(...windData.map(d => d.tws)) * 1.15 || 1;
+      const dataMaxTws = Math.max(...windData.map(d => d.tws));
+      let maxTws = 20;
+      while (dataMaxTws > maxTws) maxTws += 5;
       const xScale = t => padL + ((t - minT) / (maxT - minT || 1)) * plotW;
       const yScale = v => padT + plotH - (v / maxTws) * plotH;
 
@@ -1004,6 +1012,23 @@ __FLEET_COMPARISON_SECTION__
       path.setAttribute("fill", "none"); path.setAttribute("stroke", "var(--gybe)"); path.setAttribute("stroke-width", "2.5");
       path.setAttribute("stroke-linejoin", "round"); path.setAttribute("stroke-linecap", "round");
       chart.appendChild(path);
+
+      let otherIdx = 0;
+      const legendRows = [`<div class="row"><span class="ln" style="background:var(--gybe)"></span>True wind speed</div>`];
+      WIND_MARKERS.forEach((m) => {
+        const color = m.is_us ? "var(--mark)" : OTHER_MARKER_COLORS[otherIdx++ % OTHER_MARKER_COLORS.length];
+        const x = Math.max(padL, Math.min(W - padR, xScale(m.elapsed_s)));
+        const line = document.createElementNS(svgNS, "line");
+        line.setAttribute("x1", x); line.setAttribute("x2", x);
+        line.setAttribute("y1", padT); line.setAttribute("y2", H - padB);
+        line.setAttribute("stroke", color); line.setAttribute("stroke-width", m.is_us ? "2.5" : "2");
+        line.setAttribute("stroke-dasharray", "5,4");
+        chart.appendChild(line);
+        legendRows.push(
+          `<div class="row"><span class="ln" style="background:${color}"></span>${m.boat_name} finish</div>`
+        );
+      });
+      document.getElementById("windLegend").innerHTML = legendRows.join("");
 
       const hoverGroup = document.createElementNS(svgNS, "g");
       const HOVER_STEP = Math.max(1, Math.floor(windData.length / 400));
@@ -1179,6 +1204,44 @@ def _seconds_to_win_svg(comparison):
     )
 
 
+def _wind_finish_markers(comparison, race_meta):
+    """[{boat_name, elapsed_s, is_us}] for the top 3 finishers plus our own
+    boat, for the True Wind Speed chart's finish-time markers -- elapsed_s
+    on the same clock the chart's x-axis already uses (seconds since
+    trim_start_utc, the gun), converted from each boat's ADT finish_time.
+    Returns [] when there's no fleet data or no trim_start_utc to anchor to."""
+    if comparison is None:
+        return []
+    trim_start = race_meta.get("trim_start_utc")
+    if not trim_start:
+        return []
+    trim_start_dt = datetime.fromisoformat(trim_start)
+    race_date = race_meta["race_date"]
+    target = comparison["target_name"]
+
+    fleet = sorted(comparison["fleet_results"], key=lambda r: r.get("rank") if r.get("rank") is not None else 999)
+    top3 = [r for r in fleet if r.get("boat_name") != target][:3]
+    us_row = next((r for r in fleet if r.get("boat_name") == target), None)
+
+    markers = []
+    for r in top3 + ([us_row] if us_row else []):
+        finish_time = r.get("finish_time")
+        if not finish_time:
+            continue
+        try:
+            local_dt = datetime.fromisoformat(f"{race_date} {finish_time}")
+        except ValueError:
+            continue
+        finish_utc = local_dt + timedelta(hours=3)  # ADT -> UTC
+        elapsed_s = (finish_utc - trim_start_dt).total_seconds()
+        markers.append({
+            "boat_name": r.get("boat_name") or "—",
+            "elapsed_s": round(elapsed_s, 0),
+            "is_us": r.get("boat_name") == target,
+        })
+    return markers
+
+
 def _fleet_comparison_html(comparison):
     """Builds the Fleet Comparison section's inner HTML from
     fleet_comparison.compute()'s result, or '' if the race has no fleet
@@ -1282,7 +1345,9 @@ def render_race_page(conn, polar, race_meta):
 
     title = f"{race_meta['race_date']} {race_meta['series']}"
 
-    fleet_section_html = _fleet_comparison_html(fleet_comparison.compute(conn, race_meta))
+    comparison = fleet_comparison.compute(conn, race_meta)
+    fleet_section_html = _fleet_comparison_html(comparison)
+    wind_markers = _wind_finish_markers(comparison, race_meta)
 
     import coach
     report_text = coach.load_report(sid)
@@ -1298,7 +1363,8 @@ def render_race_page(conn, polar, race_meta):
             .replace("__COURSE_DATA__", json.dumps(course, separators=(",", ":")))
             .replace("__POLAR_DATA__", json.dumps(polar_data, separators=(",", ":")))
             .replace("__COACH_HTML__", coach_html)
-            .replace("__FLEET_COMPARISON_SECTION__", fleet_section_html))
+            .replace("__FLEET_COMPARISON_SECTION__", fleet_section_html)
+            .replace("__WIND_MARKERS__", json.dumps(wind_markers)))
     return html
 
 
