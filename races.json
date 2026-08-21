@@ -560,6 +560,80 @@
       "bsp_range": [
         2.4,
         8.4
+      ],
+      "fleet_results": [
+        {
+          "rank": 1,
+          "sail_number": null,
+          "boat_name": "Trident",
+          "boat_type": null,
+          "skipper": "Richard Gerstenberger",
+          "handicap": 87,
+          "corrected_time": "0:01:15:56",
+          "delta": "0:00:00:00",
+          "elapsed_time": "0:01:06:52",
+          "finish_time": "19:21:52"
+        },
+        {
+          "rank": 2,
+          "sail_number": "CAN 1046",
+          "boat_name": "Five of Harts",
+          "boat_type": null,
+          "skipper": "Gordon Hart",
+          "handicap": 81,
+          "corrected_time": "0:01:17:43",
+          "delta": "-0:00:01:47",
+          "elapsed_time": "0:01:07:46",
+          "finish_time": "19:22:46"
+        },
+        {
+          "rank": 3,
+          "sail_number": "CAN 338",
+          "boat_name": "Mulligan",
+          "boat_type": "Jeanneau 32 Attalia",
+          "skipper": "Alyson Petsche",
+          "handicap": 174,
+          "corrected_time": "0:01:20:25",
+          "delta": "-0:00:04:29",
+          "elapsed_time": "0:01:20:53",
+          "finish_time": "19:35:53"
+        },
+        {
+          "rank": 4,
+          "sail_number": null,
+          "boat_name": "Critical Mass",
+          "boat_type": null,
+          "skipper": "Lindsay McRory",
+          "handicap": 123,
+          "corrected_time": "0:01:23:38",
+          "delta": "-0:00:07:42",
+          "elapsed_time": "0:01:17:59",
+          "finish_time": "19:32:59"
+        },
+        {
+          "rank": 5,
+          "sail_number": "CAN 285",
+          "boat_name": "Daydreamer",
+          "boat_type": "Beneteau",
+          "skipper": "Dave Farrell",
+          "handicap": 216,
+          "corrected_time": "0:01:31:46",
+          "delta": "-0:00:15:49",
+          "elapsed_time": "0:01:37:50",
+          "finish_time": "19:52:50"
+        },
+        {
+          "rank": 6,
+          "sail_number": null,
+          "boat_name": "Harmony",
+          "boat_type": null,
+          "skipper": "Johnathan Belbin",
+          "handicap": 219,
+          "corrected_time": "0:01:33:24",
+          "delta": "-0:00:17:28",
+          "elapsed_time": "0:01:39:59",
+          "finish_time": "19:54:59"
+        }
       ]
     },
     {
