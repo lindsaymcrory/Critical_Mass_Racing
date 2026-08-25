@@ -1,5 +1,5 @@
 {
-  "next_id": 16,
+  "next_id": 17,
   "races": [
     {
       "id": 1,
@@ -737,6 +737,79 @@
           "elapsed_time": "0:01:39:56",
           "finish_time": "19:54:56"
         }
+      ]
+    },
+    {
+      "id": 16,
+      "race_date": "2026-08-24",
+      "local_start_time": "18:15",
+      "series": "Monday Night",
+      "boat": "Critical Mass",
+      "crew_count": 5,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000010_006.ebl",
+        "000010_007.ebl",
+        "000010_008.ebl",
+        "000010_009.ebl",
+        "000010_010.ebl",
+        "000010_011.ebl",
+        "000010_012.ebl",
+        "000010_013.ebl",
+        "000010_014.ebl",
+        "000010_015.ebl",
+        "000010_016.ebl",
+        "000010_017.ebl"
+      ],
+      "notes": "Long legs and experimenting with downwind angles and vang sheeting.",
+      "html_path": "races/16.html",
+      "trim_start_utc": "2026-08-24 21:15:00",
+      "trim_end_utc": "2026-08-24 22:44:59",
+      "fleet_results": [
+        {
+          "rank": 1,
+          "sail_number": null,
+          "boat_name": "Trident",
+          "boat_type": null,
+          "skipper": "Richard Gerstenberger",
+          "handicap": 87,
+          "corrected_time": "0:01:27:35",
+          "delta": "0:00:00:00",
+          "elapsed_time": "0:01:17:07",
+          "finish_time": "19:43:07"
+        },
+        {
+          "rank": 2,
+          "sail_number": "CAN 1046",
+          "boat_name": "Five of Harts",
+          "boat_type": null,
+          "skipper": "Gordon Hart",
+          "handicap": 81,
+          "corrected_time": "0:01:28:47",
+          "delta": "-0:00:01:13",
+          "elapsed_time": "0:01:17:25",
+          "finish_time": "19:43:25"
+        },
+        {
+          "rank": 3,
+          "sail_number": null,
+          "boat_name": "Critical Mass",
+          "boat_type": null,
+          "skipper": "Lindsay McRory",
+          "handicap": 123,
+          "corrected_time": "0:01:36:31",
+          "delta": "-0:00:08:56",
+          "elapsed_time": "0:01:29:59",
+          "finish_time": "19:55:59"
+        }
+      ],
+      "tws_range": [
+        4.5,
+        20.9
+      ],
+      "bsp_range": [
+        2.0,
+        9.5
       ]
     }
   ]

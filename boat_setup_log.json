@@ -1,5 +1,5 @@
 {
-  "next_id": 18,
+  "next_id": 19,
   "entries": [
     {
       "id": 1,
@@ -157,6 +157,16 @@
       "label": "Sail Config",
       "values": [
         "Main - 2024 North Carbon, Jib 2023 North Carbon, Spin 2022 North Class Blue"
+      ]
+    },
+    {
+      "id": 18,
+      "date": "2026-08-24",
+      "label": "rig tune",
+      "values": [
+        "28",
+        "5",
+        "slack"
       ]
     }
   ]
