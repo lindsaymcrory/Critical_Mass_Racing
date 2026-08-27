@@ -93,9 +93,10 @@ MARGIN_BOTTOM_FRAC = 0.10
 # resolutions instead of just always being e.g. 340px regardless of frame
 # size. These fractions equal double the original fixed pixel sizes
 # (170px map, 176x110 panel) at a 1920x1080 frame, per the "double the
-# size" request.
+# size" request. Panel width is NOT in this list -- it's derived from
+# actual text measurements at render time (see render_overlay_frames) so
+# the label/value columns never overlap regardless of resolution.
 MAP_SIZE_FRAC = 340 / 1080     # of frame_h
-PANEL_W_FRAC = 352 / 1920      # of frame_w
 PANEL_H_FRAC = 220 / 1080      # of frame_h
 PANEL_FONT_SIZE_FRAC = 24 / 1080  # of frame_h
 
@@ -268,7 +269,21 @@ def _fmt_clock(seconds):
     return f"{h:02d}:{m:02d}:{s:02d}"
 
 
-def draw_performance_panel(draw, x, y, w, h, sample, font, font_bold):
+PANEL_LABELS = ("Boat Speed", "Up VMG", "Down VMG", "Heel", "Trim")
+
+
+def panel_content_size(font, font_bold, pad, gap):
+    """Minimum panel width that fits the widest label/value pair without
+    the left-anchored label and right-anchored value text overlapping,
+    at the given font -- measured directly rather than assumed, so it's
+    correct at any font size/resolution instead of just the one frame
+    size the panel was originally tuned against."""
+    label_w = max(font.getlength(f"{label}:") for label in PANEL_LABELS)
+    value_w = max(font_bold.getlength(v) for v in ("-99.9 kn", "-99.9 kn", "-99.9 kn", "-999°", "-999°"))
+    return int(label_w + gap + value_w + pad * 2)
+
+
+def draw_performance_panel(draw, x, y, w, h, sample, font, font_bold, pad):
     draw.rounded_rectangle([x, y, x + w, y + h], radius=14, fill=(10, 26, 32, 165))
     stw = sample["stw_kn"]
     twa = sample["twa_deg"]
@@ -289,8 +304,8 @@ def draw_performance_panel(draw, x, y, w, h, sample, font, font_bold):
     line_h = h / len(lines)
     for i, (label, value) in enumerate(lines):
         ly = y + i * line_h + line_h / 2
-        draw.text((x + 20, ly), f"{label}:", font=font, fill=(190, 219, 226, 255), anchor="lm")
-        draw.text((x + w - 20, ly), value, font=font_bold, fill=(255, 199, 60, 255), anchor="rm")
+        draw.text((x + pad, ly), f"{label}:", font=font, fill=(190, 219, 226, 255), anchor="lm")
+        draw.text((x + w - pad, ly), value, font=font_bold, fill=(255, 199, 60, 255), anchor="rm")
 
 
 def draw_map_panel(draw_target, x, y, w, h, basemap_img, project_fn, marks, trail, boat_latlon):
@@ -331,10 +346,28 @@ def render_overlay_frames(race, series, video_start_utc, video_end_utc, sailing_
 
     lats = [v[0] for v in series["position"][1] if v[0] is not None]
     lons = [v[1] for v in series["position"][1] if v[1] is not None]
-    lat_pad = (max(lats) - min(lats)) * 0.2 or 0.002
-    lon_pad = (max(lons) - min(lons)) * 0.2 or 0.002
-    lat_min, lat_max = min(lats) - lat_pad, max(lats) + lat_pad
-    lon_min, lon_max = min(lons) - lon_pad, max(lons) + lon_pad
+    track_lat_min, track_lat_max = min(lats), max(lats)
+    track_lon_min, track_lon_max = min(lons), max(lons)
+    search_lat_pad = (track_lat_max - track_lat_min) * 0.2 or 0.002
+    search_lon_pad = (track_lon_max - track_lon_min) * 0.2 or 0.002
+
+    # Marks "near this race" are found in a search box around the track;
+    # the visible map area must then be widened to the union of the track
+    # and every mark found, or a mark near the edge of the search box
+    # would fall outside the (narrower) plotted area and get clipped.
+    marks = [
+        m for m in DYC_MARKS
+        if track_lat_min - search_lat_pad <= m[2] <= track_lat_max + search_lat_pad
+        and track_lon_min - search_lon_pad <= m[3] <= track_lon_max + search_lon_pad
+    ]
+    lat_min = min([track_lat_min] + [m[2] for m in marks])
+    lat_max = max([track_lat_max] + [m[2] for m in marks])
+    lon_min = min([track_lon_min] + [m[3] for m in marks])
+    lon_max = max([track_lon_max] + [m[3] for m in marks])
+    lat_pad = (lat_max - lat_min) * 0.15 or 0.002
+    lon_pad = (lon_max - lon_min) * 0.15 or 0.002
+    lat_min, lat_max = lat_min - lat_pad, lat_max + lat_pad
+    lon_min, lon_max = lon_min - lon_pad, lon_max + lon_pad
 
     map_w = map_h = max(120, int(frame_h * MAP_SIZE_FRAC))
     try:
@@ -344,13 +377,12 @@ def render_overlay_frames(race, series, video_start_utc, video_end_utc, sailing_
         print(f"# OSM basemap fetch failed ({e}); using schematic fallback")
         basemap_img, project_fn = build_schematic_basemap(lat_min, lat_max, lon_min, lon_max, map_w, map_h)
 
-    marks = [m for m in DYC_MARKS if lat_min - lat_pad <= m[2] <= lat_max + lat_pad
-             and lon_min - lon_pad <= m[3] <= lon_max + lon_pad]
-
     panel_font_size = max(11, int(frame_h * PANEL_FONT_SIZE_FRAC))
     panel_font = _font(PANEL_FONT_PATH, panel_font_size)
     panel_font_bold = _font(PANEL_FONT_BOLD_PATH, panel_font_size)
     bottom_font = _font(PANEL_FONT_BOLD_PATH, 15)
+    panel_pad = max(12, int(panel_font_size * 0.8))
+    panel_gap = max(10, int(panel_font_size * 1.0))
 
     date_str = datetime.fromisoformat(race["race_date"]).strftime("%b %-d, %Y")
     label_prefix = f"Critical Mass: {race['series']} {date_str}"
@@ -371,7 +403,7 @@ def render_overlay_frames(race, series, video_start_utc, video_end_utc, sailing_
             track_latlon.append((samp["lat"], samp["lon"]))
         tt += timedelta(seconds=TRACK_STEP_S)
 
-    panel_w = int(frame_w * PANEL_W_FRAC)
+    panel_w = panel_content_size(panel_font, panel_font_bold, panel_pad, panel_gap)
     panel_h = int(frame_h * PANEL_H_FRAC)
     panel_x, panel_y = frame_w - margin_x - panel_w, margin_top
     map_x, map_y = margin_x, margin_top
@@ -382,7 +414,7 @@ def render_overlay_frames(race, series, video_start_utc, video_end_utc, sailing_
         draw = ImageDraw.Draw(frame)
 
         sample = _sample(series, t)
-        draw_performance_panel(draw, panel_x, panel_y, panel_w, panel_h, sample, panel_font, panel_font_bold)
+        draw_performance_panel(draw, panel_x, panel_y, panel_w, panel_h, sample, panel_font, panel_font_bold, panel_pad)
 
         trail_end = bisect.bisect_right(track_ts, t)
         trail = track_latlon[:trail_end]

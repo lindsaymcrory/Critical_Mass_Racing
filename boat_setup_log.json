@@ -1,5 +1,5 @@
 {
-  "next_id": 19,
+  "next_id": 20,
   "entries": [
     {
       "id": 1,
@@ -166,6 +166,16 @@
       "values": [
         "28",
         "5",
+        "slack"
+      ]
+    },
+    {
+      "id": 19,
+      "date": "2026-08-26",
+      "label": "Rig Tune",
+      "values": [
+        "28",
+        "7",
         "slack"
       ]
     }
