@@ -1,5 +1,5 @@
 {
-  "next_id": 18,
+  "next_id": 19,
   "races": [
     {
       "id": 1,
@@ -846,6 +846,135 @@
       "bsp_range": [
         1.5,
         7.6
+      ]
+    },
+    {
+      "id": 18,
+      "race_date": "2026-08-31",
+      "local_start_time": "18:00",
+      "series": "Monday Nights",
+      "boat": "Critical Mass",
+      "crew_count": 2,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000010_031.ebl",
+        "000010_032.ebl",
+        "000010_033.ebl",
+        "000010_034.ebl",
+        "000010_035.ebl",
+        "000010_036.ebl",
+        "000010_037.ebl",
+        "000010_038.ebl"
+      ],
+      "notes": "Double handed white sail, steady winds, beautiful night.",
+      "html_path": "races/18.html",
+      "trim_start_utc": "2026-08-31 21:00:00",
+      "trim_end_utc": "2026-08-31 22:08:33",
+      "fleet_results": [
+        {
+          "rank": 1,
+          "sail_number": null,
+          "boat_name": "Trident",
+          "boat_type": null,
+          "skipper": "Richard Gerstenberger",
+          "handicap": 87,
+          "corrected_time": "0:01:03:47",
+          "delta": "0:00:00:00",
+          "elapsed_time": "0:00:56:10",
+          "finish_time": "18:56:10"
+        },
+        {
+          "rank": 2,
+          "sail_number": "CAN 1046",
+          "boat_name": "Five of Harts",
+          "boat_type": null,
+          "skipper": "Gordon Hart",
+          "handicap": 81,
+          "corrected_time": "0:01:05:04",
+          "delta": "-0:00:01:17",
+          "elapsed_time": "0:00:56:44",
+          "finish_time": "18:56:44"
+        },
+        {
+          "rank": 3,
+          "sail_number": "CAN 338",
+          "boat_name": "Mulligan",
+          "boat_type": "Jeanneau 32 Attalia",
+          "skipper": "Alyson Petsche",
+          "handicap": 156,
+          "corrected_time": "0:01:06:34",
+          "delta": "-0:00:02:47",
+          "elapsed_time": "0:01:05:14",
+          "finish_time": "19:05:14"
+        },
+        {
+          "rank": 4,
+          "sail_number": null,
+          "boat_name": "Critical Mass",
+          "boat_type": null,
+          "skipper": "Lindsay McRory",
+          "handicap": 138,
+          "corrected_time": "0:01:11:52",
+          "delta": "-0:00:08:04",
+          "elapsed_time": "0:01:08:33",
+          "finish_time": "19:08:33"
+        },
+        {
+          "rank": 5,
+          "sail_number": null,
+          "boat_name": "Pyxi",
+          "boat_type": null,
+          "skipper": "Brad Cornick",
+          "handicap": 234,
+          "corrected_time": "0:01:24:42",
+          "delta": "-0:00:20:55",
+          "elapsed_time": "0:01:32:30",
+          "finish_time": "19:32:30"
+        },
+        {
+          "rank": 6,
+          "sail_number": null,
+          "boat_name": "Harmony",
+          "boat_type": null,
+          "skipper": "Johnathan Belbin",
+          "handicap": 219,
+          "corrected_time": "0:01:24:59",
+          "delta": "-0:00:21:11",
+          "elapsed_time": "0:01:30:58",
+          "finish_time": "19:30:58"
+        },
+        {
+          "rank": 7,
+          "sail_number": null,
+          "boat_name": "Sea Diamond",
+          "boat_type": null,
+          "skipper": "Les Reece",
+          "handicap": 183,
+          "corrected_time": "0:01:32:13",
+          "delta": "-0:00:28:26",
+          "elapsed_time": "0:01:33:57",
+          "finish_time": "19:33:57"
+        },
+        {
+          "rank": 8,
+          "sail_number": "CAN 285",
+          "boat_name": "Daydreamer",
+          "boat_type": "Beneteau",
+          "skipper": "Dave Farrell",
+          "handicap": 216,
+          "corrected_time": "0:01:32:32",
+          "delta": "-0:00:28:45",
+          "elapsed_time": "0:01:38:40",
+          "finish_time": "19:38:40"
+        }
+      ],
+      "tws_range": [
+        6.1,
+        21.0
+      ],
+      "bsp_range": [
+        2.7,
+        7.3
       ]
     }
   ]

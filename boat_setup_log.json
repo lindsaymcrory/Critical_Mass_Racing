@@ -1,5 +1,5 @@
 {
-  "next_id": 20,
+  "next_id": 21,
   "entries": [
     {
       "id": 1,
@@ -177,6 +177,17 @@
         "28",
         "7",
         "slack"
+      ]
+    },
+    {
+      "id": 20,
+      "date": "2026-08-31",
+      "label": "rig tune",
+      "values": [
+        "30",
+        "15",
+        "15",
+        "Tuned for a higher wind range to help de-power double handed."
       ]
     }
   ]
