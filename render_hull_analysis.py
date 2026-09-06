@@ -14,13 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Renders the Hull Analysis page (formerly Boat Check): season-wide
-port/starboard tack symmetry and hull-drag (bottom fouling) trend. Reads
-boat_setup_analysis.json (computed by boat_setup_analysis.py at build time)
-and boat_setup_notes.md (hand-authored/edited directly, like
-season_summary.md), so this page never needs a live database connection --
-consistent with the app's READ_ONLY view-only deployment mode. The Boat
-Setup Log table now lives on its own page (see render_rig_tune.py)."""
+"""Renders the Hull Analysis page (formerly Boat Check): a reverse-
+chronological port/starboard performance heatmap (most recent race on the
+left) and the season-wide hull-drag (bottom fouling) trend. Reads
+boat_setup_analysis.json (computed by boat_setup_analysis.py at build time,
+using hull_performance.py's aggregation) and boat_setup_notes.md
+(hand-authored/edited directly, like season_summary.md), so this page never
+needs a live database connection -- consistent with the app's READ_ONLY
+view-only deployment mode. The Boat Setup Log table now lives on its own
+page (see render_rig_tune.py)."""
 import json
 import re
 from pathlib import Path
@@ -55,6 +57,10 @@ PAGE_TEMPLATE = """<title>Hull Analysis — Critical Mass Racing</title>
   a { color: inherit; }
   a.back { text-decoration: none; color: var(--dim); font-size: 12px; }
   a.back:hover { color: var(--paper); }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
 
   header {
     display: flex; align-items: center; gap: 22px; flex-wrap: wrap;
@@ -70,6 +76,57 @@ PAGE_TEMPLATE = """<title>Hull Analysis — Critical Mass Racing</title>
   .section-head { padding: 20px 24px 4px; }
   .section-title { font-size: 14.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
   .section-sub { font-size: 14px; color: var(--dim); margin-top: 4px; }
+
+  .heatmap-controls {
+    display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end;
+    padding: 10px 24px; font-size: 12.5px; color: var(--dim);
+  }
+  .control-group { display: flex; flex-direction: column; gap: 5px; }
+  .control-group.disabled { opacity: 0.4; pointer-events: none; }
+  .control-group select {
+    background: var(--panel-2); color: var(--paper); border: 1px solid var(--hair);
+    border-radius: var(--radius); padding: 5px 8px; font-size: 13px;
+  }
+  .filter-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dim-2); }
+  .filter-chip {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px;
+    margin-right: 12px; cursor: pointer; user-select: none; white-space: nowrap;
+  }
+  .heatmap-frame {
+    display: flex; margin: 6px 24px 0; border: 1px solid var(--hair);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .heatmap-row-labels {
+    flex: 0 0 auto; width: 168px; background: var(--panel-2); border-right: 1px solid var(--hair);
+  }
+  .heatmap-row-label {
+    display: flex; flex-direction: column; justify-content: center; padding: 0 10px;
+    font-size: 11.5px; color: var(--dim); line-height: 1.2; box-sizing: border-box;
+  }
+  .heatmap-row-label.group-start { border-top: 1px solid var(--hair); }
+  .heatmap-row-label .wind-part { font-weight: 700; color: var(--paper); font-size: 11.5px; display: block; }
+  .heatmap-row-label .tack-angle-part { color: var(--dim); }
+  .heatmap-scroll {
+    flex: 1; min-width: 0; overflow-x: auto; overflow-y: hidden; background: var(--panel-2);
+  }
+  .heatmap-scroll svg { display: block; }
+  .heatmap-scroll rect:focus-visible { outline: 2px solid var(--paper); outline-offset: -2px; }
+  .heatmap-legend { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; padding: 12px 24px; font-size: 12.5px; color: var(--dim); }
+  .heatmap-legend .row { display: flex; align-items: center; gap: 6px; }
+  .heatmap-legend .swatch { width: 16px; height: 12px; border-radius: 2px; display: inline-block; }
+  .heatmap-legend .swatch.hatch {
+    background-color: var(--panel-2);
+    background-image: radial-gradient(var(--hair) 1.1px, transparent 1.2px);
+    background-size: 7px 7px;
+    border: 1px solid var(--hair);
+  }
+  .heatmap-tooltip {
+    position: fixed; pointer-events: none; background: var(--panel);
+    border: 1px solid var(--grid-strong); border-radius: var(--radius);
+    padding: 8px 10px; font-size: 12.5px; line-height: 1.55; max-width: 260px; white-space: normal;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.35); opacity: 0; transition: opacity 0.08s; z-index: 40;
+  }
+  .heatmap-tooltip.show { opacity: 1; }
 
   .chart-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -127,17 +184,39 @@ PAGE_TEMPLATE = """<title>Hull Analysis — Critical Mass Racing</title>
 <section id="tack-section">
   <div class="section-head">
     <span class="section-title">Port vs. Starboard Performance</span>
-    <div class="section-sub">Boat speed by sailing angle and wind range, port vs. starboard tack.</div>
+    <div class="section-sub">Boat speed vs. polar target by wind range, tack, and sailing angle &mdash; most recent race on the left.</div>
   </div>
-  <div class="chart-grid" id="polarGrid"></div>
-  <div class="chart-legend">
-    <span class="row"><span class="ln" style="border-top:3px dashed var(--port);height:0;width:16px"></span>port (dashed)</span>
-    <span class="row"><span class="ln" style="background:var(--starboard)"></span>starboard (solid)</span>
+  <p class="sr-only" id="heatmapDescription">A heatmap of Critical Mass's boat speed against its polar target, broken
+    down by wind-speed range (0-6, 6-12, 12-20, and 20-plus knots), tack (port or starboard), and sailing-angle band
+    (upwind, reach, downwind). Columns are races, ordered with the most recent race on the left and the start of the
+    season on the right. Cell colour shows performance percentage versus target: coral red for well below target,
+    a neutral tone at target, and green for above target. Cells with no logged data, or too few samples for a
+    reliable reading, are shown with a diagonal hatch pattern rather than a colour, so they are never mistaken for a
+    measured zero. Vertical dashed lines mark logged rig-tune, sail-change, hull-cleaning, repair, and crew-change
+    events at the point in the season they occurred. Every cell's exact values are available as text in its
+    hover or keyboard-focus tooltip, and the view can be switched between percentage-vs-target, actual speed, and
+    starboard-minus-port difference, with wind range, tack, and angle band each independently show/hideable.</p>
+  <div class="heatmap-controls">
+    <div class="control-group">
+      <label class="filter-title" for="heatmapMode">View</label>
+      <select id="heatmapMode">
+        <option value="percent">% vs. target</option>
+        <option value="speed">Actual speed (kn)</option>
+        <option value="diff">Starboard &minus; port (kn)</option>
+      </select>
+    </div>
+    <div class="control-group" id="windFilterGroup"></div>
+    <div class="control-group" id="tackFilterGroup"></div>
+    <div class="control-group" id="angleFilterGroup"></div>
   </div>
-  <div class="section-head" style="padding-top:6px">
-    <div class="section-sub">Starboard minus port speed, by angle &mdash; above zero favours starboard, below favours port.</div>
+  <div class="heatmap-frame">
+    <div class="heatmap-row-labels" id="heatmapRowLabels"></div>
+    <div class="heatmap-scroll" id="heatmapScroll">
+      <svg id="heatmapSvg" xmlns="http://www.w3.org/2000/svg" role="img" aria-describedby="heatmapDescription"></svg>
+    </div>
   </div>
-  <div class="chart-grid" id="diffGrid"></div>
+  <div class="heatmap-legend" id="heatmapLegend"></div>
+  <div class="heatmap-tooltip mono" id="heatmapTooltip" role="tooltip"></div>
   <div class="note-box">__RIG_NOTES_HTML__</div>
 </section>
 
@@ -154,7 +233,7 @@ PAGE_TEMPLATE = """<title>Hull Analysis — Critical Mass Racing</title>
   <div class="note-box">__HULL_NOTES_HTML__</div>
 </section>
 
-<footer>Tack and hull-drag analysis: nav_1hz samples with boat speed &ge; 1.5 kn, computed once at build time.</footer>
+<footer>Tack and hull-drag analysis: nav_1hz/polar_performance samples, computed once at build time.</footer>
 
 <script id="boat-setup-analysis" type="application/json">__ANALYSIS_JSON__</script>
 <script>
@@ -162,144 +241,372 @@ PAGE_TEMPLATE = """<title>Hull Analysis — Critical Mass Racing</title>
   const svgNS = "http://www.w3.org/2000/svg";
   const ANALYSIS = JSON.parse(document.getElementById("boat-setup-analysis").textContent);
 
-  function bandLabel(lo, hi) { return hi === null ? `${lo}+ kn` : `${lo}-${hi} kn`; }
-  function bandKey(lo, hi) { return hi === null ? `${lo}+` : `${lo}-${hi}`; }
+  // ------------------------------------------------------- heatmap
+  const WIND_RANGES = ["0-6", "6-12", "12-20", "20+"];
+  const TACKS = ["port", "starboard"];
+  const ANGLE_BANDS = ["upwind", "reach", "downwind"];
+  const ANGLE_LABELS = { upwind: "Upwind", reach: "Reach", downwind: "Downwind" };
+  const TACK_LABELS = { port: "Port", starboard: "Stbd" };
+  const EVENT_LABELS = {
+    "rig-tune": "Rig tune", "sail-change": "Sail change", "hull-cleaning": "Hull cleaning",
+    "repair": "Repair", "crew-change": "Crew change", "other": "Event",
+  };
+  const EVENT_COLORS = {
+    "rig-tune": "var(--mark)", "sail-change": "var(--gybe)", "hull-cleaning": "var(--starboard)",
+    "repair": "var(--port)", "crew-change": "var(--dim)", "other": "var(--dim-2)",
+  };
+  const MIN_SAMPLES = 5;
+  const ROW_H = 22, HEADER_H = 86, COL_W = 30;
 
-  function makeCard(parent, title) {
-    const card = document.createElement("div");
-    card.className = "chart-card";
-    card.innerHTML = `<div class="card-title">${title}</div><svg xmlns="${svgNS}"></svg><div class="tooltip mono"></div>`;
-    parent.appendChild(card);
-    return card;
-  }
+  const sessions = ANALYSIS.sessions || [];
+  const observations = ANALYSIS.performance_observations || [];
+  const events = ANALYSIS.events || [];
 
-  function toXY(angle, radius, side, originX, originY, scale) {
-    const rad = angle * Math.PI / 180;
-    return [originX + side * radius * Math.sin(rad) * scale, originY - radius * Math.cos(rad) * scale];
-  }
+  const obsMap = {};
+  observations.forEach(o => {
+    obsMap[o.sessionId] = obsMap[o.sessionId] || {};
+    obsMap[o.sessionId][o.windRange] = obsMap[o.sessionId][o.windRange] || {};
+    obsMap[o.sessionId][o.windRange][o.tack] = obsMap[o.sessionId][o.windRange][o.tack] || {};
+    obsMap[o.sessionId][o.windRange][o.tack][o.angleBand] = o;
+  });
 
-  function pointTooltip(el, card, text) {
-    const tooltip = card.querySelector(".tooltip");
-    el.addEventListener("mouseenter", (ev) => {
-      const wrapRect = card.getBoundingClientRect();
-      tooltip.innerHTML = text;
-      tooltip.classList.add("show");
-      tooltip.style.left = (ev.clientX - wrapRect.left + 10) + "px";
-      tooltip.style.top = (ev.clientY - wrapRect.top + 10) + "px";
+  const diffMap = {};
+  const diffList = [];
+  sessions.forEach(s => {
+    WIND_RANGES.forEach(wr => {
+      ANGLE_BANDS.forEach(ab => {
+        const byWind = (obsMap[s.id] || {})[wr] || {};
+        const portObs = (byWind.port || {})[ab];
+        const stbdObs = (byWind.starboard || {})[ab];
+        if (!portObs || !stbdObs) return;
+        const entry = {
+          value: stbdObs.actualSpeedKnots - portObs.actualSpeedKnots,
+          n: portObs.sampleCount + stbdObs.sampleCount,
+          insufficient: portObs.sampleCount < MIN_SAMPLES || stbdObs.sampleCount < MIN_SAMPLES,
+          portObs, stbdObs,
+        };
+        diffMap[`${s.id}|${wr}|${ab}`] = entry;
+        diffList.push(entry);
+      });
     });
-    el.addEventListener("mouseleave", () => tooltip.classList.remove("show"));
+  });
+
+  function percentOf(obs) {
+    return obs.targetSpeedKnots ? ((obs.actualSpeedKnots / obs.targetSpeedKnots) - 1) * 100 : null;
   }
 
-  function drawPolarMini(card, portPts, stbdPts) {
-    const svg = card.querySelector("svg");
-    const rect = card.getBoundingClientRect();
-    const W = Math.max(240, rect.width), H = Math.max(260, rect.height);
-    const allSpeeds = [...portPts, ...stbdPts].map(p => p.avg_stw);
-    const maxSpeed = (allSpeeds.length ? Math.max(...allSpeeds) : 1) * 1.15;
-    const originX = W / 2, originY = H * 0.5;
-    const usable = Math.min(W / 2, H * 0.46);
-    const scale = usable / maxSpeed;
+  const validObs = observations.filter(o => o.sampleCount >= MIN_SAMPLES);
+  const percentValues = validObs.map(percentOf).filter(v => v !== null);
+  const PERCENT_MAX_ABS = percentValues.length ? Math.max(...percentValues.map(Math.abs)) : 50;
+  const speedValues = validObs.map(o => o.actualSpeedKnots);
+  const SPEED_MIN = speedValues.length ? Math.min(...speedValues) : 0;
+  const SPEED_MAX = speedValues.length ? Math.max(...speedValues) : 1;
+  const diffValid = diffList.filter(d => !d.insufficient).map(d => d.value);
+  const DIFF_MAX_ABS = diffValid.length ? Math.max(...diffValid.map(Math.abs)) : 1;
+
+  const filters = {
+    windRanges: new Set(WIND_RANGES),
+    tacks: new Set(TACKS),
+    angleBands: new Set(ANGLE_BANDS),
+  };
+  let mode = "percent";
+
+  function cssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  function hexToRgb(hex) {
+    hex = hex.replace("#", "");
+    if (hex.length === 3) hex = hex.split("").map(c => c + c).join("");
+    const num = parseInt(hex, 16);
+    return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
+  }
+  function mixRgb(a, b, t) {
+    const r = Math.round(a[0] + (b[0] - a[0]) * t);
+    const g = Math.round(a[1] + (b[1] - a[1]) * t);
+    const bl = Math.round(a[2] + (b[2] - a[2]) * t);
+    return `rgb(${r},${g},${bl})`;
+  }
+
+  function getVisibleRows() {
+    const rows = [];
+    WIND_RANGES.forEach(wr => {
+      if (!filters.windRanges.has(wr)) return;
+      let groupStart = true;
+      if (mode === "diff") {
+        ANGLE_BANDS.forEach(ab => {
+          if (!filters.angleBands.has(ab)) return;
+          rows.push({ windRange: wr, tack: null, angleBand: ab, groupStart });
+          groupStart = false;
+        });
+      } else {
+        TACKS.forEach(tack => {
+          if (!filters.tacks.has(tack)) return;
+          ANGLE_BANDS.forEach(ab => {
+            if (!filters.angleBands.has(ab)) return;
+            rows.push({ windRange: wr, tack, angleBand: ab, groupStart });
+            groupStart = false;
+          });
+        });
+      }
+    });
+    return rows;
+  }
+
+  function cellInfo(row, session) {
+    if (mode === "diff") {
+      const d = diffMap[`${session.id}|${row.windRange}|${row.angleBand}`];
+      if (!d) return { status: "missing" };
+      if (d.insufficient) return { status: "insufficient", n: d.n, portObs: d.portObs, stbdObs: d.stbdObs };
+      return { status: "ok", value: d.value, n: d.n, portObs: d.portObs, stbdObs: d.stbdObs };
+    }
+    const byWind = (obsMap[session.id] || {})[row.windRange] || {};
+    const obs = (byWind[row.tack] || {})[row.angleBand];
+    if (!obs) return { status: "missing" };
+    if (obs.sampleCount < MIN_SAMPLES) return { status: "insufficient", n: obs.sampleCount, obs };
+    if (mode === "speed") return { status: "ok", value: obs.actualSpeedKnots, n: obs.sampleCount, obs };
+    const pct = percentOf(obs);
+    if (pct === null) return { status: "insufficient", n: obs.sampleCount, obs };
+    return { status: "ok", value: pct, n: obs.sampleCount, obs };
+  }
+
+  function fillFor(info, palette) {
+    if (info.status !== "ok") return "url(#missingHatch)";
+    if (mode === "speed") {
+      const t = SPEED_MAX > SPEED_MIN ? (info.value - SPEED_MIN) / (SPEED_MAX - SPEED_MIN) : 0.5;
+      return mixRgb(palette.neutral, palette.sequential, t);
+    }
+    const maxAbs = mode === "diff" ? DIFF_MAX_ABS : PERCENT_MAX_ABS;
+    const t = maxAbs ? Math.max(-1, Math.min(1, info.value / maxAbs)) : 0;
+    return t >= 0 ? mixRgb(palette.neutral, palette.positive, t) : mixRgb(palette.neutral, palette.negative, -t);
+  }
+
+  function tooltipHtml(row, session, info) {
+    const windLabel = row.windRange + " kn";
+    const tackLabel = row.tack ? TACK_LABELS[row.tack] : "Starboard &minus; Port";
+    const angleLabel = ANGLE_LABELS[row.angleBand];
+    const lines = [`<strong>${session.name}</strong>`, `${windLabel} &middot; ${tackLabel} &middot; ${angleLabel}`];
+    if (info.status === "missing") {
+      lines.push("No data logged for this cell.");
+    } else if (mode === "diff") {
+      if (info.status === "insufficient") {
+        lines.push(`Insufficient samples (n=${info.n}) to compare tacks reliably.`);
+      } else {
+        lines.push(`Starboard ${info.stbdObs.actualSpeedKnots.toFixed(2)} kn, port ${info.portObs.actualSpeedKnots.toFixed(2)} kn`);
+        lines.push(`Difference: ${info.value >= 0 ? "+" : ""}${info.value.toFixed(2)} kn (n=${info.n})`);
+      }
+    } else {
+      const obs = info.obs;
+      if (info.status === "insufficient") lines.push(`Insufficient samples (n=${info.n}) for a reliable reading.`);
+      lines.push(`Actual: ${obs.actualSpeedKnots.toFixed(2)} kn &middot; Target: ${obs.targetSpeedKnots != null ? obs.targetSpeedKnots.toFixed(2) + " kn" : "n/a"}`);
+      const pct = percentOf(obs);
+      if (pct !== null) lines.push(`Performance: ${pct >= 0 ? "+" : ""}${pct.toFixed(1)}% vs. target`);
+      lines.push(`n=${obs.sampleCount} sample(s)`);
+    }
+    const related = events.filter(e => e.date === session.date);
+    if (related.length) lines.push(`<em>${related.map(e => e.label).join(", ")} logged this date</em>`);
+    return lines.join("<br>");
+  }
+
+  function placeEvents() {
+    return events.map(e => ({
+      event: e,
+      boundaryIndex: sessions.filter(s => s.date >= e.date).length,
+    }));
+  }
+
+  function buildFilterGroup(container, title, options, labelFn, setRef, onChange) {
+    container.innerHTML = "";
+    const heading = document.createElement("span");
+    heading.className = "filter-title";
+    heading.textContent = title;
+    container.appendChild(heading);
+    const row = document.createElement("div");
+    options.forEach(opt => {
+      const wrap = document.createElement("label");
+      wrap.className = "filter-chip";
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.checked = true;
+      wrap.appendChild(input);
+      wrap.appendChild(document.createTextNode(" " + labelFn(opt)));
+      input.addEventListener("change", () => {
+        if (input.checked) setRef.add(opt); else setRef.delete(opt);
+        onChange();
+      });
+      row.appendChild(wrap);
+    });
+    container.appendChild(row);
+  }
+
+  function buildLegend() {
+    const legend = document.getElementById("heatmapLegend");
+    legend.innerHTML = "";
+    let rowsHtml;
+    if (mode === "speed") {
+      rowsHtml = `
+        <span class="row"><span class="swatch" style="background:${cssVar("--panel-2")}"></span>${SPEED_MIN.toFixed(1)} kn</span>
+        <span class="row"><span class="swatch" style="background:${cssVar("--gybe")}"></span>${SPEED_MAX.toFixed(1)} kn</span>`;
+    } else {
+      const maxAbs = mode === "diff" ? DIFF_MAX_ABS : PERCENT_MAX_ABS;
+      const unit = mode === "diff" ? " kn" : "%";
+      const sign = mode === "diff" ? "" : "";
+      rowsHtml = `
+        <span class="row"><span class="swatch" style="background:${cssVar("--port")}"></span>-${maxAbs.toFixed(1)}${unit}${sign}</span>
+        <span class="row"><span class="swatch" style="background:${cssVar("--panel-2")}"></span>0${unit}</span>
+        <span class="row"><span class="swatch" style="background:${cssVar("--starboard")}"></span>+${maxAbs.toFixed(1)}${unit}</span>`;
+    }
+    legend.innerHTML = rowsHtml + `<span class="row"><span class="swatch hatch"></span>missing / insufficient data</span>`;
+  }
+
+  function buildHeatmap() {
+    const rows = getVisibleRows();
+    const svg = document.getElementById("heatmapSvg");
+    const labelWrap = document.getElementById("heatmapRowLabels");
+    const tooltip = document.getElementById("heatmapTooltip");
+
+    const palette = {
+      negative: hexToRgb(cssVar("--port")),
+      positive: hexToRgb(cssVar("--starboard")),
+      neutral: hexToRgb(cssVar("--panel-2")),
+      sequential: hexToRgb(cssVar("--gybe")),
+    };
+
+    const plotW = Math.max(1, sessions.length) * COL_W;
+    const plotH = Math.max(1, rows.length) * ROW_H;
+    const W = plotW + 4;
+    const H = HEADER_H + plotH + 4;
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.setAttribute("width", W);
+    svg.setAttribute("height", H);
     svg.innerHTML = "";
 
-    const ringStep = maxSpeed > 8 ? 2 : 1;
-    for (let r = ringStep; r <= maxSpeed; r += ringStep) {
-      const [x0, y0] = toXY(0, r, -1, originX, originY, scale);
-      const [x180, y180] = toXY(180, r, -1, originX, originY, scale);
-      const path = document.createElementNS(svgNS, "path");
-      path.setAttribute("d", `M ${x0} ${y0} A ${r * scale} ${r * scale} 0 0 0 ${x180} ${y180}`);
-      path.setAttribute("fill", "none"); path.setAttribute("stroke", "var(--grid)"); path.setAttribute("stroke-width", "1.5");
-      svg.appendChild(path);
-    }
-    [20, 90, 180].forEach(a => {
-      [-1, 1].forEach(side => {
-        const [x, y] = toXY(a, maxSpeed, side, originX, originY, scale);
-        const line = document.createElementNS(svgNS, "line");
-        line.setAttribute("x1", originX); line.setAttribute("y1", originY);
-        line.setAttribute("x2", x); line.setAttribute("y2", y);
-        line.setAttribute("stroke", "var(--grid)"); line.setAttribute("stroke-width", "1.5");
-        svg.appendChild(line);
+    // A dot pattern rather than a diagonal hatch -- fine diagonal lines at
+    // this cell size moire badly when many hatched cells sit side by side,
+    // which a sparse dot grid doesn't.
+    const defs = document.createElementNS(svgNS, "defs");
+    defs.innerHTML = `<pattern id="missingHatch" width="7" height="7" patternUnits="userSpaceOnUse">
+      <rect width="7" height="7" fill="var(--panel-2)"></rect>
+      <circle cx="3.5" cy="3.5" r="1.1" fill="var(--hair)"></circle>
+    </pattern>`;
+    svg.appendChild(defs);
+
+    rows.forEach((row, ri) => {
+      if (row.groupStart && ri > 0) {
+        const y = HEADER_H + ri * ROW_H;
+        const sep = document.createElementNS(svgNS, "line");
+        sep.setAttribute("x1", 0); sep.setAttribute("x2", plotW);
+        sep.setAttribute("y1", y); sep.setAttribute("y2", y);
+        sep.setAttribute("stroke", "var(--hair)"); sep.setAttribute("stroke-width", "1.5");
+        svg.appendChild(sep);
+      }
+    });
+
+    sessions.forEach((session, ci) => {
+      const x = ci * COL_W;
+      rows.forEach((row, ri) => {
+        const y = HEADER_H + ri * ROW_H;
+        const info = cellInfo(row, session);
+        const rect = document.createElementNS(svgNS, "rect");
+        rect.setAttribute("x", x + 1); rect.setAttribute("y", y + 1);
+        rect.setAttribute("width", COL_W - 2); rect.setAttribute("height", ROW_H - 2);
+        rect.setAttribute("rx", 2);
+        rect.setAttribute("fill", fillFor(info, palette));
+        rect.setAttribute("tabindex", "0");
+        rect.setAttribute("role", "img");
+        rect.setAttribute("aria-label", tooltipHtml(row, session, info).replace(/<[^>]+>/g, " ").replace(/\\s+/g, " ").trim());
+        const show = (clientX, clientY) => {
+          tooltip.innerHTML = tooltipHtml(row, session, info);
+          tooltip.classList.add("show");
+          tooltip.style.left = Math.min(window.innerWidth - 270, clientX + 14) + "px";
+          tooltip.style.top = (clientY + 14) + "px";
+        };
+        rect.addEventListener("mouseenter", ev => show(ev.clientX, ev.clientY));
+        rect.addEventListener("mousemove", ev => show(ev.clientX, ev.clientY));
+        rect.addEventListener("mouseleave", () => tooltip.classList.remove("show"));
+        rect.addEventListener("focus", () => {
+          const box = rect.getBoundingClientRect();
+          show(box.left, box.top + box.height + 6);
+        });
+        rect.addEventListener("blur", () => tooltip.classList.remove("show"));
+        svg.appendChild(rect);
       });
     });
 
-    function drawSide(pts, side, color, dashed) {
-      if (!pts.length) return;
-      const sorted = [...pts].sort((a, b) => a.angle - b.angle);
-      const d = sorted.map((p, i) => {
-        const [x, y] = toXY(p.angle, p.avg_stw, side, originX, originY, scale);
-        return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
-      }).join(" ");
-      const path = document.createElementNS(svgNS, "path");
-      path.setAttribute("d", d); path.setAttribute("fill", "none");
-      path.setAttribute("stroke", color); path.setAttribute("stroke-width", "4");
-      if (dashed) path.setAttribute("stroke-dasharray", "7,4");
-      svg.appendChild(path);
-      sorted.forEach(p => {
-        const [x, y] = toXY(p.angle, p.avg_stw, side, originX, originY, scale);
-        const c = document.createElementNS(svgNS, "circle");
-        c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", "3");
-        c.setAttribute("fill", color);
-        pointTooltip(c, card, `${p.angle}&deg; &middot; ${p.avg_stw.toFixed(2)} kn<br>n=${p.n}`);
-        svg.appendChild(c);
-      });
-    }
-    drawSide(portPts, -1, "var(--port)", true);
-    drawSide(stbdPts, 1, "var(--starboard)", false);
-  }
+    sessions.forEach((session, ci) => {
+      const x = ci * COL_W + COL_W / 2;
+      const label = document.createElementNS(svgNS, "text");
+      label.setAttribute("x", x); label.setAttribute("y", HEADER_H - 8);
+      label.setAttribute("fill", "var(--dim)"); label.setAttribute("font-size", "10.5");
+      label.setAttribute("text-anchor", "start");
+      label.setAttribute("transform", `rotate(-55 ${x} ${HEADER_H - 8})`);
+      label.textContent = session.date;
+      svg.appendChild(label);
+    });
 
-  function drawDiffMini(card, angles, portPts, stbdPts) {
-    const svg = card.querySelector("svg");
-    const rect = card.getBoundingClientRect();
-    const W = Math.max(240, rect.width), H = Math.max(260, rect.height);
-    const portByAngle = Object.fromEntries(portPts.map(p => [p.angle, p]));
-    const stbdByAngle = Object.fromEntries(stbdPts.map(p => [p.angle, p]));
-    const diffs = angles
-      .filter(a => portByAngle[a] && stbdByAngle[a])
-      .map(a => ({ angle: a, diff: stbdByAngle[a].avg_stw - portByAngle[a].avg_stw, n: portByAngle[a].n + stbdByAngle[a].n }));
-    const maxAbs = diffs.length ? Math.max(0.2, ...diffs.map(d => Math.abs(d.diff))) * 1.2 : 1;
-    const padL = 30, padR = 12, padT = 12, padB = 22;
-    const plotW = W - padL - padR, plotH = H - padT - padB;
-    const span = angles[angles.length - 1] - angles[0];
-    const xScale = a => padL + ((a - angles[0]) / span) * plotW;
-    const yScale = v => padT + plotH / 2 - (v / maxAbs) * (plotH / 2);
-    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-    svg.innerHTML = "";
+    // Event lines run the full height of the plot; their labels live in a
+    // dedicated lane strip at the very top (separate from the rotated
+    // per-race date labels below it), cycling across a few vertical lanes
+    // so labels for closely-spaced events don't stack on top of each
+    // other -- and skipping the label entirely (keeping just the line and
+    // its hover/title text) when two events are close enough that even
+    // staggered lanes would still collide.
+    const EVENT_LANE_Y = [9, 20, 31];
+    const placements = placeEvents().sort((a, b) => a.boundaryIndex - b.boundaryIndex);
+    let lastLabelX = -9999, lane = 0;
+    placements.forEach(p => {
+      const x = Math.max(2, Math.min(plotW - 2, p.boundaryIndex * COL_W));
+      const color = EVENT_COLORS[p.event.type] || "var(--dim)";
+      const line = document.createElementNS(svgNS, "line");
+      line.setAttribute("x1", x); line.setAttribute("x2", x);
+      line.setAttribute("y1", 2); line.setAttribute("y2", H - 2);
+      line.setAttribute("stroke", color); line.setAttribute("stroke-width", "1.5");
+      line.setAttribute("stroke-dasharray", "4,3");
+      const titleEl = document.createElementNS(svgNS, "title");
+      titleEl.textContent = `${EVENT_LABELS[p.event.type] || "Event"} — ${p.event.date}: ${p.event.description || p.event.label}`;
+      line.appendChild(titleEl);
+      svg.appendChild(line);
 
-    const zero = document.createElementNS(svgNS, "line");
-    zero.setAttribute("x1", padL); zero.setAttribute("x2", W - padR);
-    zero.setAttribute("y1", yScale(0)); zero.setAttribute("y2", yScale(0));
-    zero.setAttribute("stroke", "var(--grid-strong)"); zero.setAttribute("stroke-width", "2.5");
-    svg.appendChild(zero);
+      const gap = x - lastLabelX;
+      if (gap < 12) return; // too close even for a staggered lane -- rely on the line's hover title
+      lane = gap < 46 ? (lane + 1) % EVENT_LANE_Y.length : 0;
+      lastLabelX = x;
+      const text = document.createElementNS(svgNS, "text");
+      text.setAttribute("x", x + 3); text.setAttribute("y", EVENT_LANE_Y[lane]);
+      text.setAttribute("fill", color); text.setAttribute("font-size", "10");
+      text.textContent = EVENT_LABELS[p.event.type] || p.event.label;
+      svg.appendChild(text);
+    });
 
-    if (diffs.length > 1) {
-      const d = diffs.map((p, i) => `${i === 0 ? "M" : "L"}${xScale(p.angle).toFixed(1)},${yScale(p.diff).toFixed(1)}`).join(" ");
-      const path = document.createElementNS(svgNS, "path");
-      path.setAttribute("d", d); path.setAttribute("fill", "none");
-      path.setAttribute("stroke", "var(--mark)"); path.setAttribute("stroke-width", "4");
-      svg.appendChild(path);
-    }
-    diffs.forEach(p => {
-      const c = document.createElementNS(svgNS, "circle");
-      c.setAttribute("cx", xScale(p.angle)); c.setAttribute("cy", yScale(p.diff)); c.setAttribute("r", "3");
-      c.setAttribute("fill", "var(--mark)");
-      pointTooltip(c, card, `${p.angle}&deg; &middot; ${p.diff >= 0 ? "+" : ""}${p.diff.toFixed(2)} kn<br>n=${p.n}`);
-      svg.appendChild(c);
+    labelWrap.innerHTML = "";
+    const spacer = document.createElement("div");
+    spacer.style.height = HEADER_H + "px";
+    labelWrap.appendChild(spacer);
+    rows.forEach(row => {
+      const div = document.createElement("div");
+      div.className = "heatmap-row-label" + (row.groupStart ? " group-start" : "");
+      div.style.height = ROW_H + "px";
+      const windPart = row.groupStart ? `<span class="wind-part">${row.windRange} kn</span>` : "";
+      const tackAngle = row.tack ? `${TACK_LABELS[row.tack]} &middot; ${ANGLE_LABELS[row.angleBand]}` : ANGLE_LABELS[row.angleBand];
+      div.innerHTML = `${windPart}<span class="tack-angle-part">${tackAngle}</span>`;
+      labelWrap.appendChild(div);
     });
   }
 
-  function buildTackCharts() {
-    const grid = document.getElementById("polarGrid");
-    const diffGrid = document.getElementById("diffGrid");
-    grid.innerHTML = ""; diffGrid.innerHTML = "";
-    ANALYSIS.wind_bands_tack.forEach(([lo, hi]) => {
-      const label = bandLabel(lo, hi);
-      const key = bandKey(lo, hi);
-      const band = ANALYSIS.tack_performance[key] || { port: [], starboard: [] };
-      drawPolarMini(makeCard(grid, label), band.port, band.starboard);
-      drawDiffMini(makeCard(diffGrid, label), ANALYSIS.angle_buckets, band.port, band.starboard);
+  function initHeatmap() {
+    buildFilterGroup(document.getElementById("windFilterGroup"), "Wind", WIND_RANGES, w => w + " kn", filters.windRanges, buildHeatmap);
+    buildFilterGroup(document.getElementById("tackFilterGroup"), "Tack", TACKS, t => TACK_LABELS[t], filters.tacks, buildHeatmap);
+    buildFilterGroup(document.getElementById("angleFilterGroup"), "Angle", ANGLE_BANDS, a => ANGLE_LABELS[a], filters.angleBands, buildHeatmap);
+    document.getElementById("heatmapMode").addEventListener("change", ev => {
+      mode = ev.target.value;
+      document.getElementById("tackFilterGroup").classList.toggle("disabled", mode === "diff");
+      buildLegend();
+      buildHeatmap();
     });
+    buildLegend();
+    buildHeatmap();
   }
 
+  // ------------------------------------------------------- hull drag chart
   const HULL_COLORS = { "0-8": "var(--gybe)", "8-12": "var(--starboard)", "12-20": "var(--mark)", "20+": "var(--port)" };
 
   function buildHullChart() {
@@ -310,7 +617,7 @@ PAGE_TEMPLATE = """<title>Hull Analysis — Critical Mass Racing</title>
     const W = Math.max(360, rect.width), H = Math.max(320, rect.height);
 
     const dateSet = new Set();
-    Object.values(ANALYSIS.hull_drag).forEach(entries => entries.forEach(e => dateSet.add(e.race_date)));
+    Object.values(ANALYSIS.hull_drag || {}).forEach(entries => entries.forEach(e => dateSet.add(e.race_date)));
     const dates = [...dateSet].sort();
     svg.innerHTML = "";
     if (!dates.length) return;
@@ -380,9 +687,9 @@ PAGE_TEMPLATE = """<title>Hull Analysis — Critical Mass Racing</title>
     });
   }
 
-  buildTackCharts();
+  initHeatmap();
   buildHullChart();
-  window.addEventListener("resize", () => { buildTackCharts(); buildHullChart(); });
+  window.addEventListener("resize", buildHullChart);
 })();
 </script>
 """
@@ -402,8 +709,8 @@ def _split_notes(text):
 
 def render_page():
     analysis = json.loads(ANALYSIS_PATH.read_text()) if ANALYSIS_PATH.exists() else {
-        "wind_bands_tack": [], "wind_bands_hull": [], "angle_buckets": [],
-        "tack_performance": {}, "hull_drag": {},
+        "sessions": [], "performance_observations": [], "events": [],
+        "wind_bands_hull": [], "hull_drag": {},
     }
     notes_text = NOTES_PATH.read_text() if NOTES_PATH.exists() else ""
     rig_notes, hull_notes = _split_notes(notes_text)

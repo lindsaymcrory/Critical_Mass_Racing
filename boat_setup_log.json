@@ -1,5 +1,5 @@
 {
-  "next_id": 21,
+  "next_id": 23,
   "entries": [
     {
       "id": 1,
@@ -188,6 +188,25 @@
         "15",
         "15",
         "Tuned for a higher wind range to help de-power double handed."
+      ]
+    },
+    {
+      "id": 21,
+      "date": "2026-09-02",
+      "label": "rig tune",
+      "values": [
+        "30",
+        "15",
+        "15",
+        "Remeasured, 0 delta."
+      ]
+    },
+    {
+      "id": 22,
+      "date": "2026-09-02",
+      "label": "sailchange",
+      "values": [
+        "Back to North AP carbon jib"
       ]
     }
   ]
