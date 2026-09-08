@@ -1,6 +1,11 @@
 {
   "sessions": [
     {
+      "id": "20",
+      "date": "2026-09-07",
+      "name": "2026-09-07 Monday Win the Night"
+    },
+    {
       "id": "19",
       "date": "2026-09-02",
       "name": "2026-09-02 Wednesday Night"
@@ -3679,6 +3684,162 @@
       "targetSpeedKnots": 5.623,
       "sampleCount": 1,
       "validDurationSeconds": 1
+    },
+    {
+      "sessionId": "20",
+      "sessionName": "2026-09-07 Monday Win the Night",
+      "date": "2026-09-07",
+      "windRange": "6-12",
+      "tack": "starboard",
+      "angleBand": "upwind",
+      "actualSpeedKnots": 5.366,
+      "targetSpeedKnots": 6.341,
+      "sampleCount": 879,
+      "validDurationSeconds": 879
+    },
+    {
+      "sessionId": "20",
+      "sessionName": "2026-09-07 Monday Win the Night",
+      "date": "2026-09-07",
+      "windRange": "12-20",
+      "tack": "starboard",
+      "angleBand": "upwind",
+      "actualSpeedKnots": 5.531,
+      "targetSpeedKnots": 6.506,
+      "sampleCount": 611,
+      "validDurationSeconds": 611
+    },
+    {
+      "sessionId": "20",
+      "sessionName": "2026-09-07 Monday Win the Night",
+      "date": "2026-09-07",
+      "windRange": "6-12",
+      "tack": "port",
+      "angleBand": "upwind",
+      "actualSpeedKnots": 5.083,
+      "targetSpeedKnots": 6.331,
+      "sampleCount": 493,
+      "validDurationSeconds": 493
+    },
+    {
+      "sessionId": "20",
+      "sessionName": "2026-09-07 Monday Win the Night",
+      "date": "2026-09-07",
+      "windRange": "12-20",
+      "tack": "port",
+      "angleBand": "upwind",
+      "actualSpeedKnots": 5.4,
+      "targetSpeedKnots": 6.44,
+      "sampleCount": 417,
+      "validDurationSeconds": 417
+    },
+    {
+      "sessionId": "20",
+      "sessionName": "2026-09-07 Monday Win the Night",
+      "date": "2026-09-07",
+      "windRange": "6-12",
+      "tack": "port",
+      "angleBand": "reach",
+      "actualSpeedKnots": 5.113,
+      "targetSpeedKnots": 6.702,
+      "sampleCount": 28,
+      "validDurationSeconds": 28
+    },
+    {
+      "sessionId": "20",
+      "sessionName": "2026-09-07 Monday Win the Night",
+      "date": "2026-09-07",
+      "windRange": "12-20",
+      "tack": "port",
+      "angleBand": "reach",
+      "actualSpeedKnots": 5.194,
+      "targetSpeedKnots": 7.064,
+      "sampleCount": 14,
+      "validDurationSeconds": 14
+    },
+    {
+      "sessionId": "20",
+      "sessionName": "2026-09-07 Monday Win the Night",
+      "date": "2026-09-07",
+      "windRange": "6-12",
+      "tack": "starboard",
+      "angleBand": "reach",
+      "actualSpeedKnots": 4.07,
+      "targetSpeedKnots": 6.845,
+      "sampleCount": 10,
+      "validDurationSeconds": 10
+    },
+    {
+      "sessionId": "20",
+      "sessionName": "2026-09-07 Monday Win the Night",
+      "date": "2026-09-07",
+      "windRange": "12-20",
+      "tack": "starboard",
+      "angleBand": "downwind",
+      "actualSpeedKnots": 4.869,
+      "targetSpeedKnots": 6.839,
+      "sampleCount": 102,
+      "validDurationSeconds": 102
+    },
+    {
+      "sessionId": "20",
+      "sessionName": "2026-09-07 Monday Win the Night",
+      "date": "2026-09-07",
+      "windRange": "6-12",
+      "tack": "starboard",
+      "angleBand": "downwind",
+      "actualSpeedKnots": 4.194,
+      "targetSpeedKnots": 6.261,
+      "sampleCount": 334,
+      "validDurationSeconds": 334
+    },
+    {
+      "sessionId": "20",
+      "sessionName": "2026-09-07 Monday Win the Night",
+      "date": "2026-09-07",
+      "windRange": "12-20",
+      "tack": "port",
+      "angleBand": "downwind",
+      "actualSpeedKnots": 6.398,
+      "targetSpeedKnots": 7.419,
+      "sampleCount": 480,
+      "validDurationSeconds": 480
+    },
+    {
+      "sessionId": "20",
+      "sessionName": "2026-09-07 Monday Win the Night",
+      "date": "2026-09-07",
+      "windRange": "6-12",
+      "tack": "port",
+      "angleBand": "downwind",
+      "actualSpeedKnots": 5.348,
+      "targetSpeedKnots": 6.617,
+      "sampleCount": 539,
+      "validDurationSeconds": 539
+    },
+    {
+      "sessionId": "20",
+      "sessionName": "2026-09-07 Monday Win the Night",
+      "date": "2026-09-07",
+      "windRange": "12-20",
+      "tack": "starboard",
+      "angleBand": "reach",
+      "actualSpeedKnots": 5.966,
+      "targetSpeedKnots": 7.429,
+      "sampleCount": 15,
+      "validDurationSeconds": 15
+    },
+    {
+      "sessionId": "20",
+      "sessionName": "2026-09-07 Monday Win the Night",
+      "date": "2026-09-07",
+      "windRange": "0-6",
+      "tack": "port",
+      "angleBand": "reach",
+      "actualSpeedKnots": 4.626,
+      "targetSpeedKnots": 5.615,
+      "sampleCount": 1,
+      "validDurationSeconds": 1
     }
   ],
   "events": [
@@ -4056,6 +4217,12 @@
         "race_date": "2026-09-02",
         "avg_stw": 3.98,
         "n": 6
+      },
+      {
+        "race_id": 20,
+        "race_date": "2026-09-07",
+        "avg_stw": 4.46,
+        "n": 11
       }
     ],
     "12-20": [
@@ -4124,6 +4291,12 @@
         "race_date": "2026-08-31",
         "avg_stw": 5.54,
         "n": 4
+      },
+      {
+        "race_id": 20,
+        "race_date": "2026-09-07",
+        "avg_stw": 5.65,
+        "n": 22
       }
     ],
     "20+": [
