@@ -586,133 +586,13 @@
       "sessionId": "4",
       "sessionName": "2026-06-17 Wed Nights",
       "date": "2026-06-17",
-      "windRange": "0-6",
-      "tack": "port",
-      "angleBand": "upwind",
-      "actualSpeedKnots": 3.823,
-      "targetSpeedKnots": 5.036,
-      "sampleCount": 1127,
-      "validDurationSeconds": 1127
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "0-6",
-      "tack": "starboard",
-      "angleBand": "upwind",
-      "actualSpeedKnots": 3.629,
-      "targetSpeedKnots": 5.036,
-      "sampleCount": 944,
-      "validDurationSeconds": 944
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "0-6",
-      "tack": "port",
-      "angleBand": "reach",
-      "actualSpeedKnots": 3.379,
-      "targetSpeedKnots": 5.605,
-      "sampleCount": 277,
-      "validDurationSeconds": 277
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "0-6",
-      "tack": "port",
-      "angleBand": "downwind",
-      "actualSpeedKnots": 2.874,
-      "targetSpeedKnots": 4.474,
-      "sampleCount": 222,
-      "validDurationSeconds": 222
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "6-12",
-      "tack": "port",
-      "angleBand": "upwind",
-      "actualSpeedKnots": 4.097,
-      "targetSpeedKnots": 5.981,
-      "sampleCount": 2763,
-      "validDurationSeconds": 2763
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
       "windRange": "6-12",
       "tack": "starboard",
       "angleBand": "upwind",
-      "actualSpeedKnots": 4.221,
-      "targetSpeedKnots": 6.068,
-      "sampleCount": 2974,
-      "validDurationSeconds": 2974
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "12-20",
-      "tack": "starboard",
-      "angleBand": "upwind",
-      "actualSpeedKnots": 4.787,
-      "targetSpeedKnots": 6.477,
-      "sampleCount": 622,
-      "validDurationSeconds": 622
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "12-20",
-      "tack": "port",
-      "angleBand": "upwind",
-      "actualSpeedKnots": 4.134,
-      "targetSpeedKnots": 6.53,
-      "sampleCount": 412,
-      "validDurationSeconds": 412
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "6-12",
-      "tack": "port",
-      "angleBand": "reach",
-      "actualSpeedKnots": 4.272,
-      "targetSpeedKnots": 6.602,
-      "sampleCount": 938,
-      "validDurationSeconds": 938
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "6-12",
-      "tack": "port",
-      "angleBand": "downwind",
-      "actualSpeedKnots": 4.438,
-      "targetSpeedKnots": 5.98,
-      "sampleCount": 1709,
-      "validDurationSeconds": 1709
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "0-6",
-      "tack": "starboard",
-      "angleBand": "reach",
-      "actualSpeedKnots": 3.262,
-      "targetSpeedKnots": 5.636,
-      "sampleCount": 279,
-      "validDurationSeconds": 279
+      "actualSpeedKnots": 4.848,
+      "targetSpeedKnots": 6.028,
+      "sampleCount": 1494,
+      "validDurationSeconds": 1494
     },
     {
       "sessionId": "4",
@@ -721,34 +601,106 @@
       "windRange": "6-12",
       "tack": "starboard",
       "angleBand": "reach",
-      "actualSpeedKnots": 4.536,
-      "targetSpeedKnots": 6.698,
-      "sampleCount": 388,
-      "validDurationSeconds": 388
+      "actualSpeedKnots": 4.847,
+      "targetSpeedKnots": 6.509,
+      "sampleCount": 36,
+      "validDurationSeconds": 36
+    },
+    {
+      "sessionId": "4",
+      "sessionName": "2026-06-17 Wed Nights",
+      "date": "2026-06-17",
+      "windRange": "6-12",
+      "tack": "port",
+      "angleBand": "upwind",
+      "actualSpeedKnots": 4.474,
+      "targetSpeedKnots": 5.966,
+      "sampleCount": 604,
+      "validDurationSeconds": 604
+    },
+    {
+      "sessionId": "4",
+      "sessionName": "2026-06-17 Wed Nights",
+      "date": "2026-06-17",
+      "windRange": "0-6",
+      "tack": "port",
+      "angleBand": "upwind",
+      "actualSpeedKnots": 2.601,
+      "targetSpeedKnots": 5.057,
+      "sampleCount": 121,
+      "validDurationSeconds": 121
     },
     {
       "sessionId": "4",
       "sessionName": "2026-06-17 Wed Nights",
       "date": "2026-06-17",
       "windRange": "12-20",
+      "tack": "starboard",
+      "angleBand": "upwind",
+      "actualSpeedKnots": 5.325,
+      "targetSpeedKnots": 6.427,
+      "sampleCount": 283,
+      "validDurationSeconds": 283
+    },
+    {
+      "sessionId": "4",
+      "sessionName": "2026-06-17 Wed Nights",
+      "date": "2026-06-17",
+      "windRange": "0-6",
+      "tack": "starboard",
+      "angleBand": "upwind",
+      "actualSpeedKnots": 3.296,
+      "targetSpeedKnots": 5.078,
+      "sampleCount": 355,
+      "validDurationSeconds": 355
+    },
+    {
+      "sessionId": "4",
+      "sessionName": "2026-06-17 Wed Nights",
+      "date": "2026-06-17",
+      "windRange": "0-6",
       "tack": "starboard",
       "angleBand": "reach",
-      "actualSpeedKnots": 5.289,
-      "targetSpeedKnots": 7.557,
-      "sampleCount": 746,
-      "validDurationSeconds": 746
+      "actualSpeedKnots": 3.179,
+      "targetSpeedKnots": 5.641,
+      "sampleCount": 27,
+      "validDurationSeconds": 27
+    },
+    {
+      "sessionId": "4",
+      "sessionName": "2026-06-17 Wed Nights",
+      "date": "2026-06-17",
+      "windRange": "0-6",
+      "tack": "port",
+      "angleBand": "reach",
+      "actualSpeedKnots": 3.016,
+      "targetSpeedKnots": 5.559,
+      "sampleCount": 11,
+      "validDurationSeconds": 11
+    },
+    {
+      "sessionId": "4",
+      "sessionName": "2026-06-17 Wed Nights",
+      "date": "2026-06-17",
+      "windRange": "6-12",
+      "tack": "port",
+      "angleBand": "reach",
+      "actualSpeedKnots": 4.026,
+      "targetSpeedKnots": 6.428,
+      "sampleCount": 41,
+      "validDurationSeconds": 41
     },
     {
       "sessionId": "4",
       "sessionName": "2026-06-17 Wed Nights",
       "date": "2026-06-17",
       "windRange": "12-20",
-      "tack": "starboard",
-      "angleBand": "downwind",
-      "actualSpeedKnots": 4.74,
-      "targetSpeedKnots": 7.605,
-      "sampleCount": 564,
-      "validDurationSeconds": 564
+      "tack": "port",
+      "angleBand": "upwind",
+      "actualSpeedKnots": 5.021,
+      "targetSpeedKnots": 6.423,
+      "sampleCount": 69,
+      "validDurationSeconds": 69
     },
     {
       "sessionId": "4",
@@ -757,82 +709,10 @@
       "windRange": "6-12",
       "tack": "starboard",
       "angleBand": "downwind",
-      "actualSpeedKnots": 4.642,
-      "targetSpeedKnots": 6.136,
-      "sampleCount": 807,
-      "validDurationSeconds": 807
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "12-20",
-      "tack": "port",
-      "angleBand": "reach",
-      "actualSpeedKnots": 6.046,
-      "targetSpeedKnots": 7.805,
-      "sampleCount": 921,
-      "validDurationSeconds": 921
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "12-20",
-      "tack": "port",
-      "angleBand": "downwind",
-      "actualSpeedKnots": 6.083,
-      "targetSpeedKnots": 8.461,
-      "sampleCount": 1831,
-      "validDurationSeconds": 1831
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "20+",
-      "tack": "port",
-      "angleBand": "downwind",
-      "actualSpeedKnots": 6.955,
-      "targetSpeedKnots": 10.22,
-      "sampleCount": 241,
-      "validDurationSeconds": 241
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "20+",
-      "tack": "port",
-      "angleBand": "reach",
-      "actualSpeedKnots": 7.01,
-      "targetSpeedKnots": 9.031,
-      "sampleCount": 24,
-      "validDurationSeconds": 24
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "20+",
-      "tack": "starboard",
-      "angleBand": "downwind",
-      "actualSpeedKnots": 6.076,
-      "targetSpeedKnots": 10.081,
-      "sampleCount": 5,
-      "validDurationSeconds": 5
-    },
-    {
-      "sessionId": "4",
-      "sessionName": "2026-06-17 Wed Nights",
-      "date": "2026-06-17",
-      "windRange": "20+",
-      "tack": "starboard",
-      "angleBand": "reach",
-      "actualSpeedKnots": 6.517,
-      "targetSpeedKnots": 8.896,
-      "sampleCount": 4,
-      "validDurationSeconds": 4
+      "actualSpeedKnots": 4.614,
+      "targetSpeedKnots": 6.02,
+      "sampleCount": 540,
+      "validDurationSeconds": 540
     },
     {
       "sessionId": "4",
@@ -841,166 +721,118 @@
       "windRange": "0-6",
       "tack": "starboard",
       "angleBand": "downwind",
-      "actualSpeedKnots": 2.756,
-      "targetSpeedKnots": 4.64,
-      "sampleCount": 281,
-      "validDurationSeconds": 281
+      "actualSpeedKnots": 2.053,
+      "targetSpeedKnots": 4.505,
+      "sampleCount": 71,
+      "validDurationSeconds": 71
     },
     {
       "sessionId": "4",
       "sessionName": "2026-06-17 Wed Nights",
       "date": "2026-06-17",
-      "windRange": "20+",
+      "windRange": "0-6",
+      "tack": "port",
+      "angleBand": "downwind",
+      "actualSpeedKnots": 2.873,
+      "targetSpeedKnots": 4.388,
+      "sampleCount": 159,
+      "validDurationSeconds": 159
+    },
+    {
+      "sessionId": "4",
+      "sessionName": "2026-06-17 Wed Nights",
+      "date": "2026-06-17",
+      "windRange": "6-12",
+      "tack": "port",
+      "angleBand": "downwind",
+      "actualSpeedKnots": 4.616,
+      "targetSpeedKnots": 5.795,
+      "sampleCount": 1196,
+      "validDurationSeconds": 1196
+    },
+    {
+      "sessionId": "4",
+      "sessionName": "2026-06-17 Wed Nights",
+      "date": "2026-06-17",
+      "windRange": "12-20",
+      "tack": "port",
+      "angleBand": "downwind",
+      "actualSpeedKnots": 6.282,
+      "targetSpeedKnots": 6.889,
+      "sampleCount": 266,
+      "validDurationSeconds": 266
+    },
+    {
+      "sessionId": "4",
+      "sessionName": "2026-06-17 Wed Nights",
+      "date": "2026-06-17",
+      "windRange": "12-20",
+      "tack": "starboard",
+      "angleBand": "downwind",
+      "actualSpeedKnots": 5.992,
+      "targetSpeedKnots": 6.838,
+      "sampleCount": 228,
+      "validDurationSeconds": 228
+    },
+    {
+      "sessionId": "4",
+      "sessionName": "2026-06-17 Wed Nights",
+      "date": "2026-06-17",
+      "windRange": "12-20",
+      "tack": "starboard",
+      "angleBand": "reach",
+      "actualSpeedKnots": 5.702,
+      "targetSpeedKnots": 7.573,
+      "sampleCount": 3,
+      "validDurationSeconds": 3
+    },
+    {
+      "sessionId": "5",
+      "sessionName": "2026-06-24 Wed Nights",
+      "date": "2026-06-24",
+      "windRange": "6-12",
       "tack": "port",
       "angleBand": "upwind",
-      "actualSpeedKnots": 5.618,
-      "targetSpeedKnots": 7.347,
+      "actualSpeedKnots": 5.322,
+      "targetSpeedKnots": 6.082,
+      "sampleCount": 1417,
+      "validDurationSeconds": 1417
+    },
+    {
+      "sessionId": "5",
+      "sessionName": "2026-06-24 Wed Nights",
+      "date": "2026-06-24",
+      "windRange": "6-12",
+      "tack": "starboard",
+      "angleBand": "upwind",
+      "actualSpeedKnots": 5.087,
+      "targetSpeedKnots": 6.101,
+      "sampleCount": 1056,
+      "validDurationSeconds": 1056
+    },
+    {
+      "sessionId": "5",
+      "sessionName": "2026-06-24 Wed Nights",
+      "date": "2026-06-24",
+      "windRange": "6-12",
+      "tack": "port",
+      "angleBand": "reach",
+      "actualSpeedKnots": 3.576,
+      "targetSpeedKnots": 6.293,
+      "sampleCount": 36,
+      "validDurationSeconds": 36
+    },
+    {
+      "sessionId": "5",
+      "sessionName": "2026-06-24 Wed Nights",
+      "date": "2026-06-24",
+      "windRange": "0-6",
+      "tack": "port",
+      "angleBand": "reach",
+      "actualSpeedKnots": 3.674,
+      "targetSpeedKnots": 5.55,
       "sampleCount": 1,
       "validDurationSeconds": 1
-    },
-    {
-      "sessionId": "5",
-      "sessionName": "2026-06-24 Wed Nights",
-      "date": "2026-06-24",
-      "windRange": "0-6",
-      "tack": "starboard",
-      "angleBand": "upwind",
-      "actualSpeedKnots": 3.582,
-      "targetSpeedKnots": 5.239,
-      "sampleCount": 40,
-      "validDurationSeconds": 40
-    },
-    {
-      "sessionId": "5",
-      "sessionName": "2026-06-24 Wed Nights",
-      "date": "2026-06-24",
-      "windRange": "6-12",
-      "tack": "starboard",
-      "angleBand": "upwind",
-      "actualSpeedKnots": 4.677,
-      "targetSpeedKnots": 6.068,
-      "sampleCount": 1431,
-      "validDurationSeconds": 1431
-    },
-    {
-      "sessionId": "5",
-      "sessionName": "2026-06-24 Wed Nights",
-      "date": "2026-06-24",
-      "windRange": "0-6",
-      "tack": "port",
-      "angleBand": "upwind",
-      "actualSpeedKnots": 2.677,
-      "targetSpeedKnots": 4.996,
-      "sampleCount": 28,
-      "validDurationSeconds": 28
-    },
-    {
-      "sessionId": "5",
-      "sessionName": "2026-06-24 Wed Nights",
-      "date": "2026-06-24",
-      "windRange": "6-12",
-      "tack": "port",
-      "angleBand": "upwind",
-      "actualSpeedKnots": 4.789,
-      "targetSpeedKnots": 6.027,
-      "sampleCount": 1744,
-      "validDurationSeconds": 1744
-    },
-    {
-      "sessionId": "5",
-      "sessionName": "2026-06-24 Wed Nights",
-      "date": "2026-06-24",
-      "windRange": "6-12",
-      "tack": "starboard",
-      "angleBand": "reach",
-      "actualSpeedKnots": 4.11,
-      "targetSpeedKnots": 6.433,
-      "sampleCount": 775,
-      "validDurationSeconds": 775
-    },
-    {
-      "sessionId": "5",
-      "sessionName": "2026-06-24 Wed Nights",
-      "date": "2026-06-24",
-      "windRange": "0-6",
-      "tack": "starboard",
-      "angleBand": "reach",
-      "actualSpeedKnots": 4.016,
-      "targetSpeedKnots": 5.605,
-      "sampleCount": 20,
-      "validDurationSeconds": 20
-    },
-    {
-      "sessionId": "5",
-      "sessionName": "2026-06-24 Wed Nights",
-      "date": "2026-06-24",
-      "windRange": "12-20",
-      "tack": "starboard",
-      "angleBand": "upwind",
-      "actualSpeedKnots": 5.621,
-      "targetSpeedKnots": 6.529,
-      "sampleCount": 153,
-      "validDurationSeconds": 153
-    },
-    {
-      "sessionId": "5",
-      "sessionName": "2026-06-24 Wed Nights",
-      "date": "2026-06-24",
-      "windRange": "6-12",
-      "tack": "port",
-      "angleBand": "reach",
-      "actualSpeedKnots": 3.951,
-      "targetSpeedKnots": 6.477,
-      "sampleCount": 484,
-      "validDurationSeconds": 484
-    },
-    {
-      "sessionId": "5",
-      "sessionName": "2026-06-24 Wed Nights",
-      "date": "2026-06-24",
-      "windRange": "12-20",
-      "tack": "starboard",
-      "angleBand": "reach",
-      "actualSpeedKnots": 5.45,
-      "targetSpeedKnots": 7.122,
-      "sampleCount": 19,
-      "validDurationSeconds": 19
-    },
-    {
-      "sessionId": "5",
-      "sessionName": "2026-06-24 Wed Nights",
-      "date": "2026-06-24",
-      "windRange": "6-12",
-      "tack": "starboard",
-      "angleBand": "downwind",
-      "actualSpeedKnots": 4.807,
-      "targetSpeedKnots": 5.858,
-      "sampleCount": 1440,
-      "validDurationSeconds": 1440
-    },
-    {
-      "sessionId": "5",
-      "sessionName": "2026-06-24 Wed Nights",
-      "date": "2026-06-24",
-      "windRange": "0-6",
-      "tack": "port",
-      "angleBand": "reach",
-      "actualSpeedKnots": 2.95,
-      "targetSpeedKnots": 5.663,
-      "sampleCount": 17,
-      "validDurationSeconds": 17
-    },
-    {
-      "sessionId": "5",
-      "sessionName": "2026-06-24 Wed Nights",
-      "date": "2026-06-24",
-      "windRange": "6-12",
-      "tack": "port",
-      "angleBand": "downwind",
-      "actualSpeedKnots": 4.205,
-      "targetSpeedKnots": 5.702,
-      "sampleCount": 752,
-      "validDurationSeconds": 752
     },
     {
       "sessionId": "5",
@@ -1020,6 +852,54 @@
       "date": "2026-06-24",
       "windRange": "12-20",
       "tack": "starboard",
+      "angleBand": "upwind",
+      "actualSpeedKnots": 5.633,
+      "targetSpeedKnots": 6.53,
+      "sampleCount": 151,
+      "validDurationSeconds": 151
+    },
+    {
+      "sessionId": "5",
+      "sessionName": "2026-06-24 Wed Nights",
+      "date": "2026-06-24",
+      "windRange": "12-20",
+      "tack": "starboard",
+      "angleBand": "reach",
+      "actualSpeedKnots": 6.354,
+      "targetSpeedKnots": 7.06,
+      "sampleCount": 9,
+      "validDurationSeconds": 9
+    },
+    {
+      "sessionId": "5",
+      "sessionName": "2026-06-24 Wed Nights",
+      "date": "2026-06-24",
+      "windRange": "6-12",
+      "tack": "starboard",
+      "angleBand": "reach",
+      "actualSpeedKnots": 5.557,
+      "targetSpeedKnots": 6.578,
+      "sampleCount": 113,
+      "validDurationSeconds": 113
+    },
+    {
+      "sessionId": "5",
+      "sessionName": "2026-06-24 Wed Nights",
+      "date": "2026-06-24",
+      "windRange": "6-12",
+      "tack": "starboard",
+      "angleBand": "downwind",
+      "actualSpeedKnots": 5.326,
+      "targetSpeedKnots": 6.05,
+      "sampleCount": 1027,
+      "validDurationSeconds": 1027
+    },
+    {
+      "sessionId": "5",
+      "sessionName": "2026-06-24 Wed Nights",
+      "date": "2026-06-24",
+      "windRange": "12-20",
+      "tack": "starboard",
       "angleBand": "downwind",
       "actualSpeedKnots": 6.107,
       "targetSpeedKnots": 6.933,
@@ -1030,13 +910,37 @@
       "sessionId": "5",
       "sessionName": "2026-06-24 Wed Nights",
       "date": "2026-06-24",
+      "windRange": "6-12",
+      "tack": "port",
+      "angleBand": "downwind",
+      "actualSpeedKnots": 4.307,
+      "targetSpeedKnots": 5.624,
+      "sampleCount": 380,
+      "validDurationSeconds": 380
+    },
+    {
+      "sessionId": "5",
+      "sessionName": "2026-06-24 Wed Nights",
+      "date": "2026-06-24",
       "windRange": "12-20",
       "tack": "port",
       "angleBand": "downwind",
-      "actualSpeedKnots": 5.935,
-      "targetSpeedKnots": 7.182,
-      "sampleCount": 41,
-      "validDurationSeconds": 41
+      "actualSpeedKnots": 6.26,
+      "targetSpeedKnots": 7.141,
+      "sampleCount": 34,
+      "validDurationSeconds": 34
+    },
+    {
+      "sessionId": "5",
+      "sessionName": "2026-06-24 Wed Nights",
+      "date": "2026-06-24",
+      "windRange": "0-6",
+      "tack": "starboard",
+      "angleBand": "upwind",
+      "actualSpeedKnots": 3.343,
+      "targetSpeedKnots": 5.006,
+      "sampleCount": 4,
+      "validDurationSeconds": 4
     },
     {
       "sessionId": "5",
@@ -1045,10 +949,10 @@
       "windRange": "0-6",
       "tack": "starboard",
       "angleBand": "downwind",
-      "actualSpeedKnots": 2.676,
-      "targetSpeedKnots": 4.414,
-      "sampleCount": 12,
-      "validDurationSeconds": 12
+      "actualSpeedKnots": 3.016,
+      "targetSpeedKnots": 4.568,
+      "sampleCount": 6,
+      "validDurationSeconds": 6
     },
     {
       "sessionId": "5",
@@ -1057,22 +961,22 @@
       "windRange": "0-6",
       "tack": "port",
       "angleBand": "downwind",
-      "actualSpeedKnots": 2.654,
-      "targetSpeedKnots": 4.299,
-      "sampleCount": 29,
-      "validDurationSeconds": 29
+      "actualSpeedKnots": 2.646,
+      "targetSpeedKnots": 4.264,
+      "sampleCount": 26,
+      "validDurationSeconds": 26
     },
     {
       "sessionId": "5",
       "sessionName": "2026-06-24 Wed Nights",
       "date": "2026-06-24",
-      "windRange": "12-20",
-      "tack": "port",
+      "windRange": "0-6",
+      "tack": "starboard",
       "angleBand": "reach",
-      "actualSpeedKnots": 3.586,
-      "targetSpeedKnots": 7.626,
-      "sampleCount": 2,
-      "validDurationSeconds": 2
+      "actualSpeedKnots": 3.833,
+      "targetSpeedKnots": 5.673,
+      "sampleCount": 5,
+      "validDurationSeconds": 5
     },
     {
       "sessionId": "6",
@@ -2497,10 +2401,10 @@
       "windRange": "6-12",
       "tack": "starboard",
       "angleBand": "downwind",
-      "actualSpeedKnots": 3.9,
-      "targetSpeedKnots": 5.766,
-      "sampleCount": 781,
-      "validDurationSeconds": 781
+      "actualSpeedKnots": 3.966,
+      "targetSpeedKnots": 5.806,
+      "sampleCount": 757,
+      "validDurationSeconds": 757
     },
     {
       "sessionId": "13",
@@ -2509,10 +2413,10 @@
       "windRange": "6-12",
       "tack": "port",
       "angleBand": "downwind",
-      "actualSpeedKnots": 3.379,
-      "targetSpeedKnots": 5.494,
-      "sampleCount": 1693,
-      "validDurationSeconds": 1693
+      "actualSpeedKnots": 3.416,
+      "targetSpeedKnots": 5.501,
+      "sampleCount": 1652,
+      "validDurationSeconds": 1652
     },
     {
       "sessionId": "13",
@@ -2557,10 +2461,10 @@
       "windRange": "0-6",
       "tack": "port",
       "angleBand": "downwind",
-      "actualSpeedKnots": 2.648,
-      "targetSpeedKnots": 4.708,
-      "sampleCount": 252,
-      "validDurationSeconds": 252
+      "actualSpeedKnots": 2.954,
+      "targetSpeedKnots": 4.309,
+      "sampleCount": 81,
+      "validDurationSeconds": 81
     },
     {
       "sessionId": "13",
@@ -2569,10 +2473,10 @@
       "windRange": "0-6",
       "tack": "starboard",
       "angleBand": "downwind",
-      "actualSpeedKnots": 3.033,
-      "targetSpeedKnots": 4.268,
-      "sampleCount": 41,
-      "validDurationSeconds": 41
+      "actualSpeedKnots": 3.196,
+      "targetSpeedKnots": 4.27,
+      "sampleCount": 36,
+      "validDurationSeconds": 36
     },
     {
       "sessionId": "13",
@@ -2609,30 +2513,6 @@
       "targetSpeedKnots": 7.417,
       "sampleCount": 9,
       "validDurationSeconds": 9
-    },
-    {
-      "sessionId": "13",
-      "sessionName": "2026-08-10 Monday Night WOW extension",
-      "date": "2026-08-10",
-      "windRange": "0-6",
-      "tack": "port",
-      "angleBand": "reach",
-      "actualSpeedKnots": 2.049,
-      "targetSpeedKnots": 5.592,
-      "sampleCount": 111,
-      "validDurationSeconds": 111
-    },
-    {
-      "sessionId": "13",
-      "sessionName": "2026-08-10 Monday Night WOW extension",
-      "date": "2026-08-10",
-      "windRange": "0-6",
-      "tack": "port",
-      "angleBand": "upwind",
-      "actualSpeedKnots": 1.926,
-      "targetSpeedKnots": 5.372,
-      "sampleCount": 77,
-      "validDurationSeconds": 77
     },
     {
       "sessionId": "14",
@@ -4242,14 +4122,14 @@
       {
         "race_id": 4,
         "race_date": "2026-06-17",
-        "avg_stw": 3.21,
-        "n": 397
+        "avg_stw": 3.24,
+        "n": 20
       },
       {
         "race_id": 5,
         "race_date": "2026-06-24",
-        "avg_stw": 3.39,
-        "n": 172
+        "avg_stw": 3.58,
+        "n": 15
       },
       {
         "race_id": 6,
@@ -4290,8 +4170,8 @@
       {
         "race_id": 13,
         "race_date": "2026-08-10",
-        "avg_stw": 2.1,
-        "n": 58
+        "avg_stw": 3.0,
+        "n": 6
       },
       {
         "race_id": 15,
@@ -4340,14 +4220,14 @@
       {
         "race_id": 4,
         "race_date": "2026-06-17",
-        "avg_stw": 4.64,
-        "n": 486
+        "avg_stw": 4.84,
+        "n": 22
       },
       {
         "race_id": 5,
         "race_date": "2026-06-24",
-        "avg_stw": 4.25,
-        "n": 363
+        "avg_stw": 3.93,
+        "n": 15
       },
       {
         "race_id": 6,
@@ -4448,16 +4328,10 @@
     ],
     "12-20": [
       {
-        "race_id": 4,
-        "race_date": "2026-06-17",
-        "avg_stw": 5.57,
-        "n": 733
-      },
-      {
         "race_id": 5,
         "race_date": "2026-06-24",
-        "avg_stw": 4.85,
-        "n": 10
+        "avg_stw": 6.98,
+        "n": 1
       },
       {
         "race_id": 1,

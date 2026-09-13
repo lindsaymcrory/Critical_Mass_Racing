@@ -1,6 +1,31 @@
 {
   "races": [
     {
+      "race_id": 1,
+      "filename": "Critical Mass 7-13-2026.vkx",
+      "race_date": "2026-07-13"
+    },
+    {
+      "race_id": 2,
+      "filename": "Critical Mass 7-20-2026.vkx",
+      "race_date": "2026-07-20"
+    },
+    {
+      "race_id": 4,
+      "filename": "Critical Mass 6-17-2026.vkx",
+      "race_date": "2026-06-17"
+    },
+    {
+      "race_id": 5,
+      "filename": "Critical Mass 6-24-2026.vkx",
+      "race_date": "2026-06-24"
+    },
+    {
+      "race_id": 6,
+      "filename": "Critical Mass 7-8-2026.vkx",
+      "race_date": "2026-07-08"
+    },
+    {
       "race_id": 9,
       "filename": "Critical Mass 7-27-2026.vkx",
       "race_date": "2026-07-27"
@@ -19,6 +44,46 @@
       "race_id": 12,
       "filename": "Critical Mass 8-5-2026.vkx",
       "race_date": "2026-08-05"
+    },
+    {
+      "race_id": 13,
+      "filename": "Critical Mass 8-10-2026.vkx",
+      "race_date": "2026-08-10"
+    },
+    {
+      "race_id": 14,
+      "filename": "Critical Mass 8-17-2026.vkx",
+      "race_date": "2026-08-17"
+    },
+    {
+      "race_id": 15,
+      "filename": "Critical Mass 8-19-2026.vkx",
+      "race_date": "2026-08-19"
+    },
+    {
+      "race_id": 17,
+      "filename": "Critical Mass 8-26-2026.vkx",
+      "race_date": "2026-08-26"
+    },
+    {
+      "race_id": 18,
+      "filename": "Critical Mass 8-31-2026.vkx",
+      "race_date": "2026-08-31"
+    },
+    {
+      "race_id": 19,
+      "filename": "Critical Mass 9-2-2026.vkx",
+      "race_date": "2026-09-02"
+    },
+    {
+      "race_id": 20,
+      "filename": "Critical Mass 9-7-2026.vkx",
+      "race_date": "2026-09-07"
+    },
+    {
+      "race_id": 21,
+      "filename": "Critical Mass 9-9-2026.vkx",
+      "race_date": "2026-09-09"
     }
   ]
 }
