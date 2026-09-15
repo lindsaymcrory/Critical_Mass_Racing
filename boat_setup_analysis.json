@@ -4318,6 +4318,13 @@
       "type": "sail-change",
       "label": "sailchange",
       "description": "Back to North AP carbon jib"
+    },
+    {
+      "id": "23",
+      "date": "2026-09-15",
+      "type": "rig-tune",
+      "label": "Rig tune",
+      "description": "28, 12, 5"
     }
   ],
   "wind_bands_hull": [

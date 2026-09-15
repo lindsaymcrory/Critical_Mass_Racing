@@ -1,5 +1,5 @@
 {
-  "next_id": 23,
+  "next_id": 24,
   "entries": [
     {
       "id": 1,
@@ -207,6 +207,16 @@
       "label": "sailchange",
       "values": [
         "Back to North AP carbon jib"
+      ]
+    },
+    {
+      "id": 23,
+      "date": "2026-09-15",
+      "label": "Rig tune",
+      "values": [
+        "28",
+        "12",
+        "5"
       ]
     }
   ]
