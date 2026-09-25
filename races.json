@@ -1,5 +1,5 @@
 {
-  "next_id": 25,
+  "next_id": 26,
   "races": [
     {
       "id": 1,
@@ -1238,6 +1238,31 @@
       "html_path": "races/24.html",
       "trim_start_utc": "2026-09-21 21:00:00",
       "trim_end_utc": "2026-09-21 22:44:08"
+    },
+    {
+      "id": 25,
+      "race_date": "2026-09-23",
+      "local_start_time": "18:00",
+      "series": "Wednesday Night",
+      "boat": "Critical Mass",
+      "crew_count": 2,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000010_093.ebl",
+        "000010_094.ebl",
+        "000010_095.ebl",
+        "000010_096.ebl",
+        "000010_097.ebl",
+        "000010_098.ebl",
+        "000010_099.ebl",
+        "000011_000.ebl",
+        "000011_001.ebl",
+        "000011_002.ebl"
+      ],
+      "notes": "Shorthanded, sailed until the wind wouldn't let us and retired.",
+      "html_path": "races/25.html",
+      "trim_start_utc": "2026-09-23 21:00:00",
+      "trim_end_utc": "2026-09-23 23:00:00"
     }
   ]
 }
