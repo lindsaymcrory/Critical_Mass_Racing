@@ -1,5 +1,5 @@
 {
-  "next_id": 26,
+  "next_id": 27,
   "races": [
     {
       "id": 1,
@@ -1234,7 +1234,7 @@
         "000010_091.ebl",
         "000010_092.ebl"
       ],
-      "notes": "Jayme driving, the basin was a maze of different winds.",
+      "notes": "Jayme driving, the basin was a maze of different winds. Data caveat: boat speed sensor recorded 0 kn, so wind shown on this page is apparent, not true; coaching notes use GPS-reconstructed figures.",
       "html_path": "races/24.html",
       "trim_start_utc": "2026-09-21 21:00:00",
       "trim_end_utc": "2026-09-21 22:44:08"
@@ -1259,10 +1259,35 @@
         "000011_001.ebl",
         "000011_002.ebl"
       ],
-      "notes": "Shorthanded, sailed until the wind wouldn't let us and retired.",
+      "notes": "Shorthanded, sailed until the wind wouldn't let us and retired. Data caveat: boat speed sensor recorded 0 kn, so wind shown on this page is apparent, not true, and speed/maneuver analysis is unavailable.",
       "html_path": "races/25.html",
       "trim_start_utc": "2026-09-23 21:00:00",
       "trim_end_utc": "2026-09-23 23:00:00"
+    },
+    {
+      "id": 26,
+      "race_date": "2026-09-26",
+      "local_start_time": "12:10",
+      "series": "Beancrock Reggata",
+      "boat": "Critical Mass",
+      "crew_count": 2,
+      "timezone": "America/Halifax (ADT, UTC-3)",
+      "files": [
+        "000011_003.ebl",
+        "000011_004.ebl",
+        "000011_005.ebl",
+        "000011_006.ebl",
+        "000011_007.ebl",
+        "000011_008.ebl",
+        "000011_009.ebl",
+        "000011_010.ebl",
+        "000011_011.ebl",
+        "000011_012.ebl"
+      ],
+      "notes": "Class fall race on a classic call day. Data caveat: boat speed sensor recorded 0 kn, so wind shown on this page is apparent, not true; coaching notes use GPS-reconstructed figures.",
+      "html_path": "races/26.html",
+      "trim_start_utc": "2026-09-26 15:10:00",
+      "trim_end_utc": "2026-09-26 17:59:49"
     }
   ]
 }
